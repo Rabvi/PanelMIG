@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <!-- 🔥 CRITICAL: Improved viewport scaling for absolute mobile precision -->
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
-<title>FF.PANEL | PREMIUM</title>
+<title>FF.PANEL MIG | PREMIUM</title>
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
 <!-- FontAwesome -->
@@ -382,7 +382,7 @@
 <input id="signup-email" placeholder="Email Address" type="email"/>
 </div>
 <div class="input-group">
-<input id="signup-pass" placeholder="Password (Min 6 chars)" type="password"/>
+<input id="signup-pass" placeholder="Password (Min 8 chars)" type="password"/>
 </div>
 <button class="btn btn-primary" id="btn-signup"><i class="fas fa-user-plus"></i> Sign Up</button>
 <p class="auth-toggle">Already registered? <span id="go-to-login">Login here</span></p>
@@ -399,7 +399,7 @@
 <nav class="navbar glass">
 <div class="logo">
 <img id="site-logo" src="" style="height:35px;display:none; border-radius: 6px;"/>
-<span id="site-name">FF.PANEL</span>
+<span id="site-name">FF.PANEL-BY.MIG</span>
 </div>
 <div class="nav-right">
 <div class="balance-badge"><i class="fas fa-wallet"></i> ₹<span id="nav-balance">0.00</span></div>
@@ -407,7 +407,7 @@
 </div>
 <!-- DROPDOWN MENU -->
 <div class="dropdown glass" id="dropdown-menu">
-<div class="dropdown-item" onclick="navigate('home')"><i class="fas fa-th-large"></i> Dashboard</div>
+<div class="dropdown-item" onclick="navigate('home')"><i class="fas fa-th-large"></i> My Dashboard</div>
 <div class="dropdown-item" onclick="navigate('add-money')"><i class="fas fa-plus-circle"></i> Add Funds</div>
 <div class="dropdown-item" onclick="navigate('history')"><i class="fas fa-key"></i> My Keys</div>
 <div class="dropdown-item" onclick="navigate('profile')"><i class="fas fa-user-astronaut"></i> Profile</div>
@@ -456,11 +456,11 @@
 <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-bottom:20px;color:#00ff66;font-size:13px;font-weight:600;">
 <span>✔ Fast Delivery</span>
 <span>✔ Instant Service</span>
-<span>✔ Trusted Seller</span>
+<span>✔ India Certificate Trusted No:1 </span>
 </div>
 <p style="color:#aaa;font-size:12px;">
         Terms &amp; Conditions | Privacy Policy <br/>
-        © 2026-2031 Free Fire Panel Store. All rights reserved.
+        © 2026-2199 Free Fire Panel Store. All rights reserved Since 1979.
     </p>
 </div>
 </div>
@@ -1093,14 +1093,27 @@
             openModal('modal-checkout');
         };
 
-        window.applyCouponUI = () => {
+        window.applyCouponUI = async () => {
             let code = document.getElementById('chk-coupon-input').value.trim().toUpperCase();
             if(!code) return showToast('Please enter a coupon code', 'warning');
 
             let price = window.currentCheckout.originalPrice;
-            let coupons = JSON.parse(localStorage.getItem("coupons")) || [];
-            let coupon = coupons.find(c => c.code === code && c.status);
 
+
+                
+const snap = await get(ref(db, `coupons/${code}`));
+
+if (!snap.exists()) {
+    return showToast("Invalid Coupon Code", "error");
+}
+
+const coupon = snap.val();
+
+if (!coupon.status) {
+    return showToast("Coupon Disabled", "error");
+}
+
+                
             if (!coupon) {
                 return showToast("Invalid Coupon Code", "error");
             }
@@ -1304,7 +1317,7 @@
             onValue(ref(db, 'settings/branding'), (snap)=>{
                 const data = snap.val();
                 if(!data) {
-                    document.getElementById('site-name').innerText = "FF.PANEL";
+                    document.getElementById('site-name').innerText = "FF.PANEL-BY.MIG";
                     document.title = "FF.PANEL | PREMIUM";
                     document.getElementById('site-logo').style.display = "none";
                     return;
@@ -1313,7 +1326,7 @@
                 if(data.name){
                     document.getElementById('site-name').innerText = data.name;
                     document.getElementById('site-name').style.display = "inline-block"; 
-                    document.title = data.name + " | PREMIUM";
+                    document.title = data.name + " | PREMIUM-MIG";
                 }
 
                 if(data.logo && data.logo.length > 5){
