@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<!-- 🔥 CRITICAL: Improved viewport scaling for absolute mobile precision -->
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
 <title>FF.PANEL MIG | PREMIUM</title>
 <!-- Google Fonts -->
@@ -10,7 +9,6 @@
 <!-- FontAwesome -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
 <style>
-        /* --- CSS VARIABLES & RESET --- */
         :root {
             --bg-color: #050508;
             --card-bg: rgba(15, 18, 25, 0.6);
@@ -27,7 +25,6 @@
             --tg-color: #0088cc;
         }
 
-        /* 🔥 UI IMPROVEMENT: Global Box Sizing & Overflows */
         * {
             margin: 0; padding: 0; box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
@@ -43,7 +40,6 @@
                 radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.05), transparent 25%);
         }
 
-        /* --- UTILITIES & GLASSMORPHISM --- */
         .hidden { display: none !important; }
         
         .glass {
@@ -54,7 +50,6 @@
             border-radius: 16px;
         }
         
-        /* --- BUTTONS --- */
         .btn {
             background: transparent; color: var(--neon-cyan); border: 1px solid var(--neon-cyan);
             padding: 12px 20px; border-radius: 10px; font-weight: 600; cursor: pointer;
@@ -82,7 +77,6 @@
         }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; filter: grayscale(1); }
 
-        /* --- INPUTS --- */
         .input-group { margin-bottom: 18px; width: 100%; position: relative; }
         .input-group input {
             width: 100%; max-width: 100%; padding: 0 18px; height: 50px; background: rgba(0,0,0,0.5);
@@ -91,7 +85,6 @@
         }
         .input-group input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan-dim), inset 0 2px 4px rgba(0,0,0,0.3); }
 
-        /* --- LOADER --- */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(5, 5, 8, 0.95); z-index: 9999;
@@ -105,7 +98,6 @@
         }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- TOAST --- */
         #toast-container { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px; }
         .toast {
             padding: 14px 20px; border-radius: 12px; color: white; font-weight: 600; font-size: 13px;
@@ -117,7 +109,6 @@
         .toast.error { border-left-color: var(--error); box-shadow: 0 10px 30px rgba(255, 42, 95, 0.2); }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-        /* --- AUTH SCREEN --- */
         #auth-screen { min-height: 100vh; min-height: 100dvh; display: flex; justify-content: center; align-items: center; padding: 20px; }
         .auth-card { width: 100%; max-width: 420px; padding: 40px 30px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-top: 2px solid var(--neon-cyan); margin: auto; }
         .auth-card h1 { color: #fff; margin-bottom: 5px; font-weight: 800; letter-spacing: 3px; text-shadow: 0 0 10px var(--neon-cyan-dim); }
@@ -134,7 +125,6 @@
         .btn-tg { border-color: var(--tg-color); color: var(--tg-color); }
         .btn-tg:hover { background: var(--tg-color); color: #fff; box-shadow: 0 0 15px rgba(0, 136, 204, 0.5); }
 
-        /* --- NAVBAR --- */
         #main-app { display: none; width: 100%; }
         .navbar {
             position: fixed; top: 0; left: 0; width: 100%; height: 75px;
@@ -155,7 +145,6 @@
         .menu-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; transition: 0.3s; }
         .menu-btn:hover { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
 
-        /* DROPDOWN */
         .dropdown {
             position: absolute; top: 85px; right: 25px; width: 220px;
             border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
@@ -169,7 +158,6 @@
         }
         .dropdown-item:hover { background: rgba(0, 240, 255, 0.1); color: var(--neon-cyan); padding-left: 25px; }
 
-        /* --- PAGES CONTENT --- */
         .page-content { padding: 100px 20px 80px 20px; max-width: 1200px; margin: 0 auto; min-height: 100vh; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
@@ -177,7 +165,6 @@
         .page-title { font-size: 26px; font-weight: 800; color: white; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 15px rgba(255,255,255,0.2); }
         .page-title span { color: var(--neon-purple); }
         
-        /* SEARCH BAR */
         .search-container { position: relative; flex: 1; min-width: 280px; max-width: 450px; }
         .search-container input { padding-left: 45px; border-radius: 30px; margin-bottom: 0; background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); }
         .search-container i.fa-search { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 16px; transition: 0.3s; }
@@ -185,7 +172,6 @@
         .search-container input:focus + i { color: var(--neon-purple); }
         .search-loader { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: var(--neon-purple); display: none; animation: spin 1s linear infinite; }
 
-        /* --- PROMOTION SLIDER --- */
         .promo-slider { 
             display: flex; overflow-x: auto; gap: 15px; padding-bottom: 10px; 
             margin-bottom: 30px; scroll-snap-type: x mandatory; scroll-behavior: smooth; 
@@ -199,7 +185,6 @@
         .promo-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px 15px 15px; background: linear-gradient(transparent, rgba(0,0,0,0.95)); }
         .promo-title { color: white; font-weight: 700; font-size: 16px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; }
 
-        /* --- PREMIUM PANEL CARDS --- */
         .panel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
         .panel-card { 
             background: linear-gradient(145deg, rgba(20, 24, 34, 0.9) 0%, rgba(10, 12, 18, 0.95) 100%);
@@ -252,7 +237,6 @@
         }
         .plan-select:focus { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(188, 19, 254, 0.3); }
 
-        /* ADD MONEY PAGE */
         .payment-settings-card { padding: 40px 30px; text-align: center; max-width: 600px; margin: 0 auto 30px auto; width: 100%; }
         .qr-image-container { margin: 20px auto; width: 240px; height: 240px; background: rgba(0,0,0,0.5); border-radius: 16px; overflow: hidden; border: 2px dashed var(--neon-cyan); display: flex; justify-content: center; align-items: center; padding: 10px; box-shadow: inset 0 0 30px rgba(0, 240, 255, 0.1); }
         .qr-image-container img { width: 100%; height: 100%; border-radius: 10px; object-fit: cover; }
@@ -265,7 +249,6 @@
         .upi-box:hover { background: rgba(0, 240, 255, 0.1); transform: scale(1.02); animation: none; box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);}
         .upi-box span { color: var(--neon-cyan); font-weight: 800; font-size: 16px; letter-spacing: 1px; }
 
-        /* DEPOSIT HISTORY TABLE/CARDS */
         .deposit-history-container { max-width: 600px; margin: 0 auto; width: 100%; }
         .deposit-item { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
         .dep-status { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 700; text-transform: uppercase; }
@@ -273,8 +256,7 @@
         .dep-status.approved { background: rgba(0, 255, 102, 0.15); color: var(--success); border: 1px solid var(--success); }
         .dep-status.rejected { background: rgba(255, 42, 95, 0.15); color: var(--error); border: 1px solid var(--error); }
 
-        /* PROFILE & HISTORY */
-        .history-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .history-list { display: flex; flex-direction: column; gap: 20px; max-width: 800px; margin: 0 auto; width: 100%; }
         .history-card { padding: 20px; display: flex; flex-direction: column; gap: 15px; border-left: 4px solid var(--neon-purple); border-radius: 16px; }
         .hist-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; flex-wrap: wrap; gap: 10px; }
         .hist-details h4 { color: white; font-size: 18px; font-weight: 700; margin-bottom: 5px; }
@@ -285,7 +267,6 @@
         .profile-stat { display: flex; justify-content: space-between; padding: 18px 25px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; align-items: center; flex-wrap: wrap; gap: 10px;}
         .profile-stat:last-child { border-bottom: none; }
 
-        /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(8px); padding: 15px; }
         .modal { background: var(--card-bg); border: 1px solid var(--neon-cyan); width: 100%; max-width: 440px; padding: 30px; border-radius: 20px; text-align: center; box-shadow: 0 0 50px rgba(0,240,255,0.2); animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -314,12 +295,10 @@
         .checkout-actions .btn-outline { flex: 1; height: 50px; font-size: 13px; }
         .checkout-actions .btn-purchase { flex: 2; height: 50px; font-size: 14px; }
 
-        /* EMPTY STATE */
         .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); width: 100%; grid-column: 1 / -1; animation: fadeIn 0.3s; }
         .empty-state i { font-size: 60px; color: rgba(188, 19, 254, 0.3); margin-bottom: 20px; filter: drop-shadow(0 0 15px rgba(188, 19, 254, 0.2)); }
         .empty-state p { font-size: 16px; letter-spacing: 1px; font-weight: 600; color: white; }
 
-        /* TELEGRAM BUTTON */
         .telegram-btn {
             position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px;
             background: linear-gradient(135deg, var(--tg-color), #005580); color: white; border-radius: 50%;
@@ -329,7 +308,6 @@
         }
         .telegram-btn:hover { transform: scale(1.1) translateY(-5px); box-shadow: 0 15px 30px rgba(0,136,204,0.7); border-color: white; }
         
-        /* 🔥 MOBILE RESPONSIVE TWEAKS */
         @media (max-width: 480px) {
             .auth-card { padding: 30px 20px; }
             .navbar { padding: 0 15px; height: 70px; }
@@ -365,7 +343,6 @@
 
 <!-- AUTHENTICATION SCREEN -->
 <div id="auth-screen">
-<!-- LOGIN FORM -->
 <div class="auth-card glass" id="login-box">
 <h1>FF.<span>PANEL</span></h1>
 <p>Welcome back! Login to continue.</p>
@@ -382,7 +359,6 @@
 <a class="btn btn-outline btn-tg" href="#" id="auth-tg-link" target="_blank"><i class="fab fa-telegram-plane"></i> Telegram</a>
 </div>
 </div>
-<!-- SIGNUP FORM -->
 <div class="auth-card glass hidden" id="signup-box">
 <h1>JOIN <span>NOW</span></h1>
 <p>Create an account to get premium access.</p>
@@ -403,7 +379,6 @@
 
 <!-- MAIN APP SCREEN -->
 <div id="main-app">
-<!-- NAVBAR -->
 <nav class="navbar glass">
 <div class="logo">
 <img id="site-logo" src="" style="height:35px;display:none; border-radius: 6px;"/>
@@ -413,7 +388,6 @@
 <div class="balance-badge"><i class="fas fa-wallet"></i> ₹<span id="nav-balance">0.00</span></div>
 <button class="menu-btn" id="menu-toggle"><i class="fas fa-bars"></i></button>
 </div>
-<!-- DROPDOWN MENU -->
 <div class="dropdown glass" id="dropdown-menu">
 <div class="dropdown-item" onclick="navigate('home')"><i class="fas fa-th-large"></i> My Dashboard</div>
 <div class="dropdown-item" onclick="navigate('add-money')"><i class="fas fa-plus-circle"></i> Add Funds</div>
@@ -423,11 +397,10 @@
 </div>
 </nav>
 
-<!-- PAGE: HOME (PANEL LIST) -->
+<!-- PAGE: HOME -->
 <div class="page-content" id="page-home">
 <div class="page-header">
 <h2 class="page-title">Premium <span>Store</span></h2>
-<!-- LIVE SEARCH BAR -->
 <div class="search-container input-group">
 <input id="search-input" placeholder="Search panels or features..." type="text"/>
 <i class="fas fa-search" id="search-icon"></i>
@@ -435,16 +408,9 @@
 </div>
 </div>
 
-<!-- PROMOTION SLIDER CONTAINER -->
-<div id="promo-container" class="promo-slider hidden">
-    <!-- Realtime Firebase Promos Injected Here -->
-</div>
+<div id="promo-container" class="promo-slider hidden"></div>
 
-<!-- PANELS CONTAINER -->
-<div class="panel-grid" id="panels-container">
-<!-- Panels Injected via JS -->
-</div>
-<!-- EMPTY STATE FOR SEARCH -->
+<div class="panel-grid" id="panels-container"></div>
 <div class="empty-state hidden" id="search-empty">
 <i class="fas fa-search-minus"></i>
 <p>No Panel Found</p>
@@ -473,7 +439,7 @@
 </div>
 </div>
 
-<!-- PAGE: ADD MONEY & DEPOSIT HISTORY -->
+<!-- PAGE: ADD MONEY -->
 <div class="page-content hidden" id="page-add-money">
 <div class="page-header"><h2 class="page-title">Add <span>Funds</span></h2></div>
 <div class="glass payment-settings-card">
@@ -500,12 +466,9 @@
 <button class="btn btn-purchase" id="btn-submit-payment" style="width: 100%; height: 50px;"><i class="fas fa-paper-plane"></i> Submit Request</button>
 </div>
 
-<!-- DEPOSIT HISTORY LIST -->
 <div class="deposit-history-container">
     <h3 style="color:white; margin-bottom:15px; font-size:18px; font-weight:700;"><i class="fas fa-history" style="color:var(--neon-cyan);"></i> My Deposit History</h3>
-    <div id="deposit-history-list">
-        <!-- Deposit requests injected via JS -->
-    </div>
+    <div id="deposit-history-list"></div>
 </div>
 </div>
 
@@ -539,12 +502,9 @@
 <!-- PAGE: HISTORY (MY KEYS) -->
 <div class="page-content hidden" id="page-history">
 <div class="page-header"><h2 class="page-title">My <span>Keys</span></h2></div>
-<div class="history-list" id="history-container">
-<!-- History injected via JS -->
-</div>
+<div class="history-list" id="history-container"></div>
 </div>
 
-<!-- TELEGRAM BUTTON -->
 <a class="telegram-btn" href="#" id="global-telegram-btn" target="_blank" style="display: none;">
 <i class="fab fa-telegram-plane"></i>
 </a>
@@ -578,7 +538,6 @@
         </div>
     </div>
 
-    <!-- COUPON SECTION -->
     <div class="coupon-wrapper">
         <div class="coupon-header">
             <span>Have a Promo Code?</span>
@@ -617,17 +576,14 @@
 </div>
 </div>
 
-<!-- ========================================== -->
-<!-- FIREBASE & APPLICATION LOGIC (PURE JS)     -->
-<!-- ========================================== -->
+<!-- FIREBASE & APPLICATION LOGIC -->
 <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } 
             from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getDatabase, ref, set, get, onValue, push, runTransaction, serverTimestamp } 
+        import { getDatabase, ref, set, get, onValue, push, runTransaction } 
             from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyAJbJQm_oCXLcZMc4MFPdQbzQ-sh-ch510",
             authDomain: "ffpanelmig-fcd24.firebaseapp.com",
@@ -646,10 +602,8 @@
             db = getDatabase(app);
         } catch (e) {
             console.error("Firebase Init Error:", e);
-            alert("Database connection failed. Please check configuration.");
         }
 
-        // --- STATE & DOM ELEMENTS ---
         let currentUser = null;
         let userData = { balance: 0 };
         let paymentSettings = { upiId: "Not Set", qrImage: null };
@@ -658,7 +612,6 @@
         const authScreen = document.getElementById('auth-screen');
         const mainApp = document.getElementById('main-app');
         
-        // --- UI UTILITIES ---
         window.showLoader = () => loader.classList.remove('hidden');
         window.hideLoader = () => loader.classList.add('hidden');
         
@@ -687,7 +640,7 @@
         window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
         window.openModal = (id) => document.getElementById(id).classList.remove('hidden');
 
-        // Date Format Utility (dd/mm/yyyy, hh:mm:ss)
+        // 🔥 Standard Unified Date & Time Formatter
         function formatFullDate(isoString) {
             if(!isoString) return 'N/A';
             const d = new Date(isoString);
@@ -701,7 +654,6 @@
             return `${day}/${month}/${year}, ${hours}:${mins}:${secs}`;
         }
 
-        // Auth Toggles
         document.getElementById('go-to-signup').onclick = () => {
             document.getElementById('login-box').classList.add('hidden');
             document.getElementById('signup-box').classList.remove('hidden');
@@ -723,20 +675,6 @@
         function initContactLinks() {
             onValue(ref(db, 'support_links'), async (snap) => {
                 let data = snap.val();
-                if (!data) {
-                    try {
-                        const oldSnap = await get(ref(db, 'settings/contact'));
-                        if(oldSnap.exists()) {
-                            const oldData = oldSnap.val();
-                            data = {
-                                whatsapp: oldData.whatsapp || '',
-                                telegram_login: oldData.telegram || '',
-                                telegram_dashboard: oldData.telegram || ''
-                            };
-                        }
-                    } catch(e) { console.warn("Legacy contacts fetch failed", e); }
-                }
-
                 if(data) {
                     const waLink = data.whatsapp || '#';
                     const tgLogin = data.telegram_login || '#';
@@ -755,9 +693,6 @@
         }
         initContactLinks();
 
-        // --- FIREBASE PROMOTIONS SYSTEM ---
-        let autoScrollInterval;
-        
         function initPromotions() {
             onValue(ref(db, 'promotions'), (snapshot) => {
                 let promotions = [];
@@ -784,10 +719,7 @@
             
             activePromos.forEach(p => {
                 let linkAction = p.link ? `onclick="window.open('${p.link}', '_blank')"` : '';
-                let imgHTML = p.image 
-                    ? `<img src="${p.image}" alt="${p.title}" onerror="this.src=''; this.style.display='none'; this.parentElement.innerHTML+='<div style=\\'width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; color:var(--text-muted);\\'>Image Unavailable</div>';">` 
-                    : '<div style="width:100%; height:100%; background:rgba(0,0,0,0.5);"></div>';
-
+                let imgHTML = p.image ? `<img src="${p.image}" alt="${p.title}">` : '';
                 container.innerHTML += `
                     <div class="promo-card glass" ${linkAction}>
                         ${imgHTML}
@@ -797,42 +729,8 @@
                     </div>
                 `;
             });
-            
-            initPromoAutoScroll();
         }
 
-        function initPromoAutoScroll() {
-            const container = document.getElementById('promo-container');
-            if(!container) return;
-            
-            clearInterval(autoScrollInterval);
-            if(container.scrollWidth <= container.clientWidth) return;
-
-            let isPaused = false;
-            
-            const advanceSlider = () => {
-                if(isPaused) return;
-                const scrollPos = container.scrollLeft;
-                const cardWidth = container.querySelector('.promo-card').clientWidth + 15;
-                
-                if (scrollPos + container.clientWidth >= container.scrollWidth - 10) {
-                    container.scrollTo({ left: 0, behavior: 'smooth' });
-                } else {
-                    container.scrollBy({ left: cardWidth, behavior: 'smooth' });
-                }
-            };
-
-            autoScrollInterval = setInterval(advanceSlider, 3500);
-
-            container.addEventListener('mouseenter', () => isPaused = true);
-            container.addEventListener('mouseleave', () => isPaused = false);
-            container.addEventListener('touchstart', () => isPaused = true, {passive: true});
-            container.addEventListener('touchend', () => {
-                setTimeout(() => isPaused = false, 2000);
-            }, {passive: true});
-        }
-
-        // --- AUTHENTICATION LOGIC ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
@@ -842,6 +740,7 @@
                 fetchPaymentSettings();
                 fetchPanels();
                 initPromotions();
+                initGlobalHistoryListener();
                 navigate('home');
             } else {
                 currentUser = null;
@@ -903,7 +802,6 @@
             catch(e) { console.error(e); }
         };
 
-        // --- MAIN APP LOGIC ---
         function initUserData() {
             onValue(ref(db, `users/${currentUser.uid}`), (snapshot) => {
                 if (snapshot.exists()) {
@@ -928,7 +826,6 @@
             
             if(pageId === 'home') document.getElementById('search-input').value = ''; 
             if(pageId === 'add-money') fetchDepositHistory();
-            if(pageId === 'history') fetchHistory();
             if(pageId === 'profile') fetchProfileStats();
             window.scrollTo(0,0);
         };
@@ -951,18 +848,13 @@
             });
         }
 
-        // --- FETCH PANELS WITH REALTIME STOCK COUNT ---
         function fetchPanels() {
             onValue(ref(db, 'panels'), (snapshot) => {
                 const container = document.getElementById('panels-container');
                 container.innerHTML = '';
                 
                 if (!snapshot.exists()) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-box-open"></i>
-                            <p>No premium panels available currently.</p>
-                        </div>`;
+                    container.innerHTML = `<div class="empty-state"><i class="fas fa-box-open"></i><p>No panels available.</p></div>`;
                     return;
                 }
 
@@ -972,7 +864,7 @@
                     
                     if(!p || p.status !== 'active') return; 
                     
-                    let descText = p.description || 'Premium injection tool';
+                    let descText = p.description || '';
                     let featuresArr = descText.split(/\n|-/).filter(f => f.trim().length > 0);
                     let featuresHtml = featuresArr.map(f => `<span class="feature-chip"><i class="fas fa-bolt"></i> ${f.trim()}</span>`).join('');
 
@@ -1004,7 +896,7 @@
                         ` : `
                             <div class="video-wrapper">
                                 <div style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;background:rgba(20,24,34,0.8);border-bottom:2px solid rgba(255,42,95,0.2);">
-                                    <i class="fas fa-video-slash" style="font-size:32px;color:var(--error);margin-bottom:10px;text-shadow:0 0 10px rgba(255,42,95,0.5);"></i>
+                                    <i class="fas fa-video-slash" style="font-size:32px;color:var(--error);margin-bottom:10px;"></i>
                                     <span style="color:var(--text-muted);font-weight:600;letter-spacing:1px;font-size:13px;text-transform:uppercase;">Video Unavailable</span>
                                 </div>
                             </div>
@@ -1040,7 +932,6 @@
             });
         }
 
-        // --- SMART SEARCH SYSTEM ---
         let searchTimeout;
         document.getElementById('search-input').addEventListener('input', (e) => {
             const icon = document.getElementById('search-icon');
@@ -1077,19 +968,15 @@
             }, 300);
         });
 
-        // --- CHECKOUT & COUPON SYSTEM ---
         window.currentCheckout = {};
         window.appliedCoupon = null;
 
         window.handlePurchaseClick = (panelId, panelName, link) => {
             const selectEl = document.getElementById(`plan-${panelId}`);
-            if(!selectEl) return showToast('No plans available for this panel', 'error');
+            if(!selectEl) return showToast('No plans available', 'error');
             
             const planData = JSON.parse(selectEl.value);
-            
-            if(planData.stock <= 0) {
-                return showToast('Sorry! This plan is currently OUT OF STOCK.', 'error');
-            }
+            if(planData.stock <= 0) return showToast('Sorry! This plan is OUT OF STOCK.', 'error');
 
             window.currentCheckout = {
                 panelId: panelId,
@@ -1116,25 +1003,15 @@
 
         window.applyCouponUI = async () => {
             let code = document.getElementById('chk-coupon-input').value.trim().toUpperCase();
-            if(!code) return showToast('Please enter a coupon code', 'warning');
+            if(!code) return showToast('Enter a coupon code', 'warning');
 
             let price = window.currentCheckout.originalPrice;
-
             const snap = await get(ref(db, `coupons/${code}`));
 
-            if (!snap.exists()) {
-                return showToast("Invalid Coupon Code", "error");
-            }
-
+            if (!snap.exists()) return showToast("Invalid Coupon", "error");
             const coupon = snap.val();
-
-            if (!coupon.status) {
-                return showToast("Coupon Disabled", "error");
-            }
-
-            if (coupon.maxUse && coupon.used >= coupon.maxUse) {
-                return showToast("Coupon Limit Reached / Expired", "error");
-            }
+            if (!coupon.status) return showToast("Coupon Disabled", "error");
+            if (coupon.maxUse && coupon.used >= coupon.maxUse) return showToast("Coupon Expired", "error");
 
             let discountAmount = (price * coupon.discount) / 100;
             let finalPrice = price - discountAmount;
@@ -1151,16 +1028,17 @@
             badgeEl.innerText = coupon.discount + '% OFF';
             badgeEl.classList.remove('hidden');
 
-            showToast(`Coupon applied! ${coupon.discount}% OFF`, "success");
+            showToast("Coupon applied successfully!", "success");
         };
 
+        // 🔥 Fixed Multi-Purchase Saving Code using push() with unique IDs
         window.executePurchase = async () => {
             const checkout = window.currentCheckout;
             const priceToPay = checkout.finalPrice;
             const btn = document.getElementById('btn-confirm-pay');
 
             if(userData.balance < priceToPay) {
-                return showToast(`Insufficient balance. You need ₹${priceToPay.toFixed(2)}`, "error");
+                return showToast(`Insufficient balance.`, "error");
             }
 
             showLoader();
@@ -1175,7 +1053,7 @@
                     hideLoader();
                     btn.disabled = false;
                     btn.innerHTML = `CONFIRM PAY`;
-                    return showToast("Out of stock! Admin hasn't added keys for this plan.", "error");
+                    return showToast("Out of stock!", "error");
                 }
 
                 const stockObj = stockSnap.val();
@@ -1191,23 +1069,28 @@
                 });
 
                 if (transactionResult.committed) {
-                    // Remove key from available stock
+                    // Remove key from panel stock
                     await set(ref(db, `panels/${checkout.panelId}/plans/${checkout.planKey}/stock/${firstKeyId}`), null);
 
-                    // Save Purchase Entry in User History
-                    const purchaseRef = push(ref(db, `purchases/${currentUser.uid}`));
                     const nowISO = new Date().toISOString();
+                    // Using push() with unique generated key ID under purchases/${currentUser.uid}
+                    const userPurchasesRef = ref(db, `purchases/${currentUser.uid}`);
+                    const newPurchaseRef = push(userPurchasesRef);
                     
-                    await set(purchaseRef, {
+                    const newPurchaseData = {
+                        id: newPurchaseRef.key,
                         panelId: checkout.panelId,
                         panelName: checkout.panelName,
                         plan: checkout.planKey,
                         label: checkout.label,
                         price: priceToPay,
                         key: realKeyFromStock,
-                        link: checkout.link,
+                        link: checkout.link || "",
+                        timestamp: nowISO,
                         date: nowISO
-                    });
+                    };
+
+                    await set(newPurchaseRef, newPurchaseData);
 
                     if (window.appliedCoupon) {
                         const couponRef = ref(db, `coupons/${window.appliedCoupon.code}/used`);
@@ -1215,7 +1098,6 @@
                     }
                     
                     closeModal('modal-checkout');
-                    
                     document.getElementById('modal-key-display').innerText = realKeyFromStock;
                     
                     const accessBtn = document.getElementById('modal-btn-access');
@@ -1223,11 +1105,11 @@
                     
                     openModal('modal-success');
                 } else {
-                    showToast("Transaction failed. Insufficient funds.", "error");
+                    showToast("Transaction failed.", "error");
                 }
             } catch (error) {
-                console.error(error);
-                showToast("System Error. Try again.", "error");
+                console.error("Purchase error:", error);
+                showToast("System Error: " + error.message, "error");
             } finally {
                 hideLoader();
                 btn.disabled = false;
@@ -1235,7 +1117,6 @@
             }
         };
 
-        // --- ADD MONEY SYSTEM & DEPOSIT HISTORY ---
         document.getElementById('btn-submit-payment').onclick = async () => {
             const amt = document.getElementById('add-amount').value;
             const utr = document.getElementById('add-utr').value.trim();
@@ -1243,8 +1124,8 @@
             const btn = document.getElementById('btn-submit-payment');
 
             if(!amt || amt <= 0) return showToast("Enter a valid amount", "error");
-            if(!utr || utr.length < 8) return showToast("Enter a valid UTR number", "error");
-            if(!phone || phone.length < 10) return showToast("Enter a valid Phone Number", "error");
+            if(!utr || utr.length < 8) return showToast("Enter a valid UTR", "error");
+            if(!phone || phone.length < 10) return showToast("Enter a valid Phone", "error");
 
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Submitting...`;
             btn.disabled = true;
@@ -1260,14 +1141,13 @@
                     status: "pending",
                     timestamp: new Date().toISOString()
                 });
-                showToast("Payment Submitted! Awaiting Admin Approval.");
-                
+                showToast("Payment Submitted!");
                 document.getElementById('add-amount').value = '';
                 document.getElementById('add-utr').value = '';
                 document.getElementById('add-phone').value = '';
                 fetchDepositHistory();
             } catch(e) {
-                showToast("Error submitting request", "error");
+                showToast("Error submitting", "error");
             } finally {
                 btn.innerHTML = `<i class="fas fa-paper-plane"></i> Submit Request`;
                 btn.disabled = false;
@@ -1280,7 +1160,7 @@
                 container.innerHTML = '';
 
                 if (!snapshot.exists()) {
-                    container.innerHTML = `<p style="color:var(--text-muted); font-size:13px; text-align:center; padding:20px;">No deposit requests submitted yet.</p>`;
+                    container.innerHTML = `<p style="color:var(--text-muted); font-size:13px; text-align:center; padding:20px;">No deposits found.</p>`;
                     return;
                 }
 
@@ -1293,7 +1173,7 @@
                 });
 
                 if (myDeposits.length === 0) {
-                    container.innerHTML = `<p style="color:var(--text-muted); font-size:13px; text-align:center; padding:20px;">No deposit requests submitted yet.</p>`;
+                    container.innerHTML = `<p style="color:var(--text-muted); font-size:13px; text-align:center; padding:20px;">No deposits found.</p>`;
                     return;
                 }
 
@@ -1317,11 +1197,12 @@
             });
         }
 
-        // --- MY KEYS (PURCHASE HISTORY) ---
-        function fetchHistory() {
-            showLoader();
+        // 🔥 Realtime Listener for All Purchased Keys (Sorted newest first & stacked vertically)
+        function initGlobalHistoryListener() {
+            if (!currentUser) return;
             onValue(ref(db, `purchases/${currentUser.uid}`), (snapshot) => {
                 const container = document.getElementById('history-container');
+                if(!container) return;
                 container.innerHTML = '';
 
                 if (!snapshot.exists()) {
@@ -1332,12 +1213,16 @@
                         </div>`;
                 } else {
                     let items = [];
-                    snapshot.forEach(child => items.push({ id: child.key, ...child.val() }));
-                    items.sort((a,b) => new Date(b.date || 0) - new Date(a.date || 0));
+                    snapshot.forEach(child => {
+                        items.push({ id: child.key, ...child.val() });
+                    });
+                    
+                    // Sort items by date/timestamp (newest first)
+                    items.sort((a,b) => new Date(b.timestamp || b.date || 0) - new Date(a.timestamp || a.date || 0));
 
                     items.forEach(p => {
-                        const dateStr = formatFullDate(p.date);
-                        const displayLabel = p.label || (p.days ? `${p.days} Days` : 'Premium Access');
+                        const dateStr = formatFullDate(p.timestamp || p.date);
+                        const displayLabel = p.label || 'Premium Access';
 
                         const card = document.createElement('div');
                         card.className = 'history-card glass';
@@ -1362,7 +1247,6 @@
                         container.appendChild(card);
                     });
                 }
-                hideLoader();
             });
         }
 
@@ -1383,33 +1267,288 @@
             });
         }
     
-        // --- SITE BRANDING SYSTEM ---
         function initBranding(){
             onValue(ref(db, 'settings/branding'), (snap)=>{
                 const data = snap.val();
-                if(!data) {
-                    document.getElementById('site-name').innerText = "FF.PANEL-BY.MIG";
-                    document.title = "FF.PANEL | PREMIUM";
-                    document.getElementById('site-logo').style.display = "none";
-                    return;
-                }
-                
-                if(data.name){
+                if(!data) return;
+                if(data.name) {
                     document.getElementById('site-name').innerText = data.name;
-                    document.getElementById('site-name').style.display = "inline-block"; 
-                    document.title = data.name + " | PREMIUM-MIG";
+                    document.title = data.name + " | PREMIUM";
                 }
-
                 if(data.logo && data.logo.length > 5){
                     const logo = document.getElementById('site-logo');
                     logo.src = data.logo;
                     logo.style.display = "inline-block";
-                } else {
-                    document.getElementById('site-logo').style.display = "none";
                 }
             });
         }
         initBranding();
 </script>
 </body>
-</html>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>FF.PANEL MIG | PREMIUM</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- FontAwesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+        :root {
+            --bg-color: #050508;
+            --card-bg: rgba(15, 18, 25, 0.6);
+            --card-border: rgba(0, 240, 255, 0.15);
+            --neon-cyan: #00f0ff;
+            --neon-cyan-dim: rgba(0, 240, 255, 0.4);
+            --neon-purple: #bc13fe;
+            --text-main: #ffffff;
+            --text-muted: #a0a5b5;
+            --error: #ff2a5f;
+            --success: #00ff66;
+            --warning: #ffb800;
+            --wa-color: #25D366;
+            --tg-color: #0088cc;
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%; max-width: 100vw; overflow-x: hidden;
+            background-color: var(--bg-color); color: var(--text-main);
+            min-height: 100vh; min-height: 100dvh;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(188, 19, 254, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.05), transparent 25%);
+        }
+
+        .hidden { display: none !important; }
+        
+        .glass {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+        }
+        
+        .btn {
+            background: transparent; color: var(--neon-cyan); border: 1px solid var(--neon-cyan);
+            padding: 12px 20px; border-radius: 10px; font-weight: 600; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); width: 100%;
+            display: inline-flex; justify-content: center; align-items: center; gap: 8px;
+            text-transform: uppercase; letter-spacing: 1px; font-size: 13px; text-decoration: none;
+            height: 48px;
+        }
+        .btn:hover:not(:disabled) {
+            background: rgba(0, 240, 255, 0.1); box-shadow: 0 0 15px var(--neon-cyan-dim);
+            transform: translateY(-2px);
+        }
+        .btn-primary { background: var(--neon-cyan); color: #000; font-weight: 800; }
+        .btn-primary:hover:not(:disabled) { background: #fff; border-color: #fff; box-shadow: 0 0 20px var(--neon-cyan); }
+        
+        .btn-purchase {
+            background: linear-gradient(90deg, var(--neon-purple), #0073ff);
+            border: none; color: white; font-size: 14px; font-weight: 800;
+            padding: 12px 15px; border-radius: 12px; letter-spacing: 1px;
+            box-shadow: 0 0 15px rgba(188, 19, 254, 0.4);
+        }
+        .btn-purchase:hover:not(:disabled) {
+            background: linear-gradient(90deg, #0073ff, var(--neon-purple));
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.6); transform: translateY(-2px);
+        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; filter: grayscale(1); }
+
+        .input-group { margin-bottom: 18px; width: 100%; position: relative; }
+        .input-group input {
+            width: 100%; max-width: 100%; padding: 0 18px; height: 50px; background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white;
+            outline: none; transition: 0.3s; font-size: 14px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .input-group input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan-dim), inset 0 2px 4px rgba(0,0,0,0.3); }
+
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 8, 0.95); z-index: 9999;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+            backdrop-filter: blur(10px);
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 4px solid rgba(0, 240, 255, 0.1);
+            border-top-color: var(--neon-cyan); border-radius: 50%; animation: spin 1s linear infinite;
+            box-shadow: 0 0 20px var(--neon-cyan-dim);
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        #toast-container { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px; }
+        .toast {
+            padding: 14px 20px; border-radius: 12px; color: white; font-weight: 600; font-size: 13px;
+            background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
+            border-left: 4px solid var(--neon-cyan); animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 12px;
+        }
+        .toast.success { border-left-color: var(--success); box-shadow: 0 10px 30px rgba(0, 255, 102, 0.2); }
+        .toast.error { border-left-color: var(--error); box-shadow: 0 10px 30px rgba(255, 42, 95, 0.2); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        #auth-screen { min-height: 100vh; min-height: 100dvh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .auth-card { width: 100%; max-width: 420px; padding: 40px 30px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-top: 2px solid var(--neon-cyan); margin: auto; }
+        .auth-card h1 { color: #fff; margin-bottom: 5px; font-weight: 800; letter-spacing: 3px; text-shadow: 0 0 10px var(--neon-cyan-dim); }
+        .auth-card h1 span { color: var(--neon-cyan); }
+        .auth-card p { color: var(--text-muted); margin-bottom: 30px; font-size: 14px; }
+        .auth-toggle { margin-top: 20px; color: var(--text-muted); font-size: 14px; }
+        .auth-toggle span { color: var(--neon-cyan); cursor: pointer; font-weight: 700; transition: 0.3s; }
+        .auth-toggle span:hover { text-shadow: 0 0 15px var(--neon-cyan); }
+        
+        .contact-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 25px; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .contact-buttons .btn { flex: 1; min-width: 140px; }
+        .btn-wa { border-color: var(--wa-color); color: var(--wa-color); }
+        .btn-wa:hover { background: var(--wa-color); color: #fff; box-shadow: 0 0 15px rgba(37, 211, 102, 0.5); }
+        .btn-tg { border-color: var(--tg-color); color: var(--tg-color); }
+        .btn-tg:hover { background: var(--tg-color); color: #fff; box-shadow: 0 0 15px rgba(0, 136, 204, 0.5); }
+
+        #main-app { display: none; width: 100%; }
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 75px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 25px; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-radius: 0 0 20px 20px; background: rgba(10, 12, 18, 0.85);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+        }
+        .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 24px; color: white; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0,240,255,0.3); }
+        .logo span { color: var(--neon-cyan); }
+        .nav-right { display: flex; align-items: center; gap: 15px; }
+        .balance-badge {
+            background: rgba(0, 240, 255, 0.1); border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan); padding: 8px 18px; border-radius: 30px;
+            font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 0 10px var(--neon-cyan-dim);
+        }
+        .menu-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; transition: 0.3s; }
+        .menu-btn:hover { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
+
+        .dropdown {
+            position: absolute; top: 85px; right: 25px; width: 220px;
+            border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
+            transform-origin: top right; transform: scale(0.9); opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.9);
+        }
+        .dropdown.active { transform: scale(1); opacity: 1; visibility: visible; }
+        .dropdown-item {
+            padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 500; transition: 0.3s;
+        }
+        .dropdown-item:hover { background: rgba(0, 240, 255, 0.1); color: var(--neon-cyan); padding-left: 25px; }
+
+        .page-content { padding: 100px 20px 80px 20px; max-width: 1200px; margin: 0 auto; min-height: 100vh; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
+        .page-title { font-size: 26px; font-weight: 800; color: white; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 15px rgba(255,255,255,0.2); }
+        .page-title span { color: var(--neon-purple); }
+        
+        .search-container { position: relative; flex: 1; min-width: 280px; max-width: 450px; }
+        .search-container input { padding-left: 45px; border-radius: 30px; margin-bottom: 0; background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); }
+        .search-container i.fa-search { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 16px; transition: 0.3s; }
+        .search-container input:focus { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(188, 19, 254, 0.3); }
+        .search-container input:focus + i { color: var(--neon-purple); }
+        .search-loader { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: var(--neon-purple); display: none; animation: spin 1s linear infinite; }
+
+        .promo-slider { 
+            display: flex; overflow-x: auto; gap: 15px; padding-bottom: 10px; 
+            margin-bottom: 30px; scroll-snap-type: x mandatory; scroll-behavior: smooth; 
+            -ms-overflow-style: none; scrollbar-width: none;
+        }
+        .promo-slider::-webkit-scrollbar { display: none; }
+        .promo-card { flex: 0 0 85%; max-width: 500px; height: 180px; position: relative; border-radius: 16px; overflow: hidden; scroll-snap-align: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        @media (min-width: 768px) { .promo-card { flex: 0 0 45%; } }
+        .promo-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .promo-card:hover img { transform: scale(1.05); }
+        .promo-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px 15px 15px; background: linear-gradient(transparent, rgba(0,0,0,0.95)); }
+        .promo-title { color: white; font-weight: 700; font-size: 16px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; }
+
+        .panel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .panel-card { 
+            background: linear-gradient(145deg, rgba(20, 24, 34, 0.9) 0%, rgba(10, 12, 18, 0.95) 100%);
+            border: 1px solid rgba(0, 240, 255, 0.15); border-radius: 20px; overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative;
+        }
+        .panel-card:hover { 
+            transform: translateY(-8px); border-color: rgba(188, 19, 254, 0.5);
+            box-shadow: 0 15px 40px rgba(0, 240, 255, 0.15), 0 0 20px rgba(188, 19, 254, 0.2); 
+            z-index: 10;
+        }
+        
+        .video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; border-bottom: 2px solid rgba(255,255,255,0.05); }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+        .panel-info { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        .panel-title { font-size: 20px; font-weight: 800; margin-bottom: 15px; color: white; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: space-between; }
+        
+        .features-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .feature-chip {
+            background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--neon-cyan); padding: 6px 12px; border-radius: 8px; font-size: 11px;
+            font-weight: 600; display: inline-flex; align-items: center; gap: 6px; letter-spacing: 0.5px;
+            box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.05);
+        }
+        .feature-chip i { color: var(--warning); text-shadow: 0 0 5px var(--warning); }
+
+        .trust-badges { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); }
+        .badge-item { font-size: 11px; color: var(--success); display: flex; align-items: center; gap: 5px; font-weight: 600; letter-spacing: 0.5px; text-shadow: 0 0 5px rgba(0,255,102,0.3); }
+        
+        .btn-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        .btn-outline { 
+            flex: 1; min-width: 110px; font-size: 11px; padding: 10px; border-color: rgba(255,255,255,0.1); 
+            color: var(--text-muted); background: rgba(0,0,0,0.4); border-radius: 8px; height: 40px;
+            display: inline-flex; justify-content: center; align-items: center; gap: 6px;
+            font-weight: 600; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); color: white; border-color: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan-dim); }
+        
+        .btn-outline.feedback-btn { border-color: rgba(255, 42, 95, 0.4); color: var(--error); }
+        .btn-outline.feedback-btn:hover { background: rgba(255, 42, 95, 0.1); color: white; border-color: var(--error); box-shadow: 0 0 10px rgba(255, 42, 95, 0.4); }
+
+        .plan-select {
+            width: 100%; padding: 0 15px; height: 48px; background: rgba(0,0,0,0.6); border: 1px solid rgba(188, 19, 254, 0.3);
+            border-radius: 12px; color: white; font-size: 14px; font-weight: 600; outline: none;
+            margin-top: auto; margin-bottom: 15px; appearance: none; cursor: pointer; transition: 0.3s;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23bc13fe%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 12px auto;
+        }
+        .plan-select:focus { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(188, 19, 254, 0.3); }
+
+        .payment-settings-card { padding: 40px 30px; text-align: center; max-width: 600px; margin: 0 auto 30px auto; width: 100%; }
+        .qr-image-container { margin: 20px auto; width: 240px; height: 240px; background: rgba(0,0,0,0.5); border-radius: 16px; overflow: hidden; border: 2px dashed var(--neon-cyan); display: flex; justify-content: center; align-items: center; padding: 10px; box-shadow: inset 0 0 30px rgba(0, 240, 255, 0.1); }
+        .qr-image-container img { width: 100%; height: 100%; border-radius: 10px; object-fit: cover; }
+        .upi-box {
+            background: rgba(0,0,0,0.6); padding: 18px; border-radius: 12px; border: 1px solid var(--neon-cyan);
+            text-align: center; margin: 25px 0; word-break: break-all; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 0 15px var(--neon-cyan-dim); animation: pulseBorder 2s infinite; display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        @keyframes pulseBorder { 0% { box-shadow: 0 0 5px var(--neon-cyan-dim); } 50% { box-shadow: 0 0 25px rgba(0, 240, 255, 0.6); } 100% { box-shadow: 0 0 5px var(--neon-cyan-dim); } }
+        .upi-box:hover { background: rgba(0, 240, 255, 0.1); transform: scale(1.02); animation: none; box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);}
+        .upi-box span { color: var(--neon-cyan); font-weight: 800; font-size: 16px; letter-spacing: 1px; }
+
+        .deposit-history-container { max-width: 600px; margin: 0 auto; width: 100%; }
+        .deposit-item { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .dep-status { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 700; text-transform: uppercase; }
+        .dep-status.pending { background: rgba(255, 184, 0, 0.15); color: var(--warning); border: 1px solid var(--warning); }
+        .dep-status.approved { background: rgba(0, 255, 102, 0.15); color: var(--success); border: 1px solid var(--success); }
+        .dep-status.rejected { background: rgba(255, 42, 95, 0.15); color: var(--error); border: 1px solid var(--error); }
+
+        .history-list { display: flex; flex-direction: column; gap: 20px; max-width: 800px; margin: 0 auto; width: 100%; }
+        .history-card { padding: 20px; display: flex; flex-direction: column; gap: 15px; border-left: 4px solid var(--neon-purple); border-radius: 16px; }
+        .hist-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; flex-wrap: wrap; gap: 10px; }
+        .hist-details h4 { color: white; font-size: 18px; font-weight: 700; margin-bottom: 5px; }
+        .hist-details p { font-size: 12px; color: var(--text-muted); }
+        .hist-price { color: var(--neon-cyan); font-weight: 800; font-size: 16px; background: rgba(0,240,255,0.1); padding: 4px 10px; border-radius: 8px; }
+        .key-box { background: rgba(0,0,0,0.6); padding: 12px 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap; gap: 10px; }
+        .key-text { font-family: monospace; font-size: 16px; font-weight: bold; letter-spacing: 1px; color: var(--success); text-shadow: 0 0 5px rgba(0,255,102,0.4); word-break: break-all; }
+        .profile-stat { display: flex; justify-content: space-bet
