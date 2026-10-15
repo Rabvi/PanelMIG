@@ -61,7 +61,7 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); width: 100%;
             display: inline-flex; justify-content: center; align-items: center; gap: 8px;
             text-transform: uppercase; letter-spacing: 1px; font-size: 13px; text-decoration: none;
-            height: 48px; /* Standardize button height */
+            height: 48px;
         }
         .btn:hover:not(:disabled) {
             background: rgba(0, 240, 255, 0.1); box-shadow: 0 0 15px var(--neon-cyan-dim);
@@ -253,7 +253,7 @@
         .plan-select:focus { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(188, 19, 254, 0.3); }
 
         /* ADD MONEY PAGE */
-        .payment-settings-card { padding: 40px 30px; text-align: center; max-width: 600px; margin: 0 auto; width: 100%; }
+        .payment-settings-card { padding: 40px 30px; text-align: center; max-width: 600px; margin: 0 auto 30px auto; width: 100%; }
         .qr-image-container { margin: 20px auto; width: 240px; height: 240px; background: rgba(0,0,0,0.5); border-radius: 16px; overflow: hidden; border: 2px dashed var(--neon-cyan); display: flex; justify-content: center; align-items: center; padding: 10px; box-shadow: inset 0 0 30px rgba(0, 240, 255, 0.1); }
         .qr-image-container img { width: 100%; height: 100%; border-radius: 10px; object-fit: cover; }
         .upi-box {
@@ -264,6 +264,14 @@
         @keyframes pulseBorder { 0% { box-shadow: 0 0 5px var(--neon-cyan-dim); } 50% { box-shadow: 0 0 25px rgba(0, 240, 255, 0.6); } 100% { box-shadow: 0 0 5px var(--neon-cyan-dim); } }
         .upi-box:hover { background: rgba(0, 240, 255, 0.1); transform: scale(1.02); animation: none; box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);}
         .upi-box span { color: var(--neon-cyan); font-weight: 800; font-size: 16px; letter-spacing: 1px; }
+
+        /* DEPOSIT HISTORY TABLE/CARDS */
+        .deposit-history-container { max-width: 600px; margin: 0 auto; width: 100%; }
+        .deposit-item { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .dep-status { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 700; text-transform: uppercase; }
+        .dep-status.pending { background: rgba(255, 184, 0, 0.15); color: var(--warning); border: 1px solid var(--warning); }
+        .dep-status.approved { background: rgba(0, 255, 102, 0.15); color: var(--success); border: 1px solid var(--success); }
+        .dep-status.rejected { background: rgba(255, 42, 95, 0.15); color: var(--error); border: 1px solid var(--error); }
 
         /* PROFILE & HISTORY */
         .history-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
@@ -465,7 +473,7 @@
 </div>
 </div>
 
-<!-- PAGE: ADD MONEY -->
+<!-- PAGE: ADD MONEY & DEPOSIT HISTORY -->
 <div class="page-content hidden" id="page-add-money">
 <div class="page-header"><h2 class="page-title">Add <span>Funds</span></h2></div>
 <div class="glass payment-settings-card">
@@ -490,6 +498,14 @@
 <input id="add-phone" placeholder="Your Phone Number (For verification)" required="" type="tel"/>
 </div>
 <button class="btn btn-purchase" id="btn-submit-payment" style="width: 100%; height: 50px;"><i class="fas fa-paper-plane"></i> Submit Request</button>
+</div>
+
+<!-- DEPOSIT HISTORY LIST -->
+<div class="deposit-history-container">
+    <h3 style="color:white; margin-bottom:15px; font-size:18px; font-weight:700;"><i class="fas fa-history" style="color:var(--neon-cyan);"></i> My Deposit History</h3>
+    <div id="deposit-history-list">
+        <!-- Deposit requests injected via JS -->
+    </div>
 </div>
 </div>
 
@@ -613,14 +629,14 @@
 
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
-  apiKey: "AIzaSyAJbJQm_oCXLcZMc4MFPdQbzQ-sh-ch510",
-  authDomain: "ffpanelmig-fcd24.firebaseapp.com",
-  databaseURL: "https://ffpanelmig-fcd24-default-rtdb.firebaseio.com",
-  projectId: "ffpanelmig-fcd24",
-  storageBucket: "ffpanelmig-fcd24.firebasestorage.app",
-  messagingSenderId: "393091636334",
-  appId: "1:393091636334:web:5938fbab46301796d2da7f",
-  measurementId: "G-E569CL114K"
+            apiKey: "AIzaSyAJbJQm_oCXLcZMc4MFPdQbzQ-sh-ch510",
+            authDomain: "ffpanelmig-fcd24.firebaseapp.com",
+            databaseURL: "https://ffpanelmig-fcd24-default-rtdb.firebaseio.com",
+            projectId: "ffpanelmig-fcd24",
+            storageBucket: "ffpanelmig-fcd24.firebasestorage.app",
+            messagingSenderId: "393091636334",
+            appId: "1:393091636334:web:5938fbab46301796d2da7f",
+            measurementId: "G-E569CL114K"
         };
 
         let app, auth, db;
@@ -670,6 +686,20 @@
 
         window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
         window.openModal = (id) => document.getElementById(id).classList.remove('hidden');
+
+        // Date Format Utility (dd/mm/yyyy, hh:mm:ss)
+        function formatFullDate(isoString) {
+            if(!isoString) return 'N/A';
+            const d = new Date(isoString);
+            if(isNaN(d.getTime())) return isoString;
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            const hours = String(d.getHours()).padStart(2, '0');
+            const mins = String(d.getMinutes()).padStart(2, '0');
+            const secs = String(d.getSeconds()).padStart(2, '0');
+            return `${day}/${month}/${year}, ${hours}:${mins}:${secs}`;
+        }
 
         // Auth Toggles
         document.getElementById('go-to-signup').onclick = () => {
@@ -725,7 +755,7 @@
         }
         initContactLinks();
 
-        // --- 🔥 FIREBASE PROMOTIONS SYSTEM WITH SMOOTH AUTO-SCROLL ---
+        // --- FIREBASE PROMOTIONS SYSTEM ---
         let autoScrollInterval;
         
         function initPromotions() {
@@ -834,7 +864,7 @@
             try {
                 const cred = await createUserWithEmailAndPassword(auth, email, pass);
                 await set(ref(db, `users/${cred.user.uid}`), {
-                    email: email, balance: 0, createdAt: serverTimestamp()
+                    email: email, balance: 0, createdAt: new Date().toISOString()
                 });
                 showToast("Account Created Successfully!");
             } catch (error) { 
@@ -884,8 +914,7 @@
                     document.getElementById('prof-email').innerText = userData.email;
                     
                     if(userData.createdAt) {
-                        const date = new Date(userData.createdAt).toLocaleDateString();
-                        document.getElementById('prof-date').innerText = date;
+                        document.getElementById('prof-date').innerText = formatFullDate(userData.createdAt).split(',')[0];
                     }
                 }
                 hideLoader();
@@ -898,6 +927,7 @@
             document.getElementById('dropdown-menu').classList.remove('active');
             
             if(pageId === 'home') document.getElementById('search-input').value = ''; 
+            if(pageId === 'add-money') fetchDepositHistory();
             if(pageId === 'history') fetchHistory();
             if(pageId === 'profile') fetchProfileStats();
             window.scrollTo(0,0);
@@ -956,7 +986,7 @@
                         const sortedPlans = Object.entries(p.plans).sort((a,b) => a[1].price - b[1].price);
                         plansHtml = `<select class="plan-select" id="plan-${panelId}">`;
                         sortedPlans.forEach(([planKey, planData]) => {
-                            let labelText = planData.label || `${planData.days || 1} Days Access`;
+                            let labelText = planData.label || `${planData.duration || 1} ${planData.unit || 'Days'}`;
                             let stockCount = planData.stock ? Object.keys(planData.stock).length : 0;
                             let stockLabel = stockCount > 0 ? `[Stock: ${stockCount}]` : `[OUT OF STOCK]`;
                             plansHtml += `<option value='${JSON.stringify({key: planKey, label: labelText, price: planData.price, stock: stockCount})}'>${labelText} - ₹${planData.price} ${stockLabel}</option>`;
@@ -1161,9 +1191,13 @@
                 });
 
                 if (transactionResult.committed) {
+                    // Remove key from available stock
                     await set(ref(db, `panels/${checkout.panelId}/plans/${checkout.planKey}/stock/${firstKeyId}`), null);
 
+                    // Save Purchase Entry in User History
                     const purchaseRef = push(ref(db, `purchases/${currentUser.uid}`));
+                    const nowISO = new Date().toISOString();
+                    
                     await set(purchaseRef, {
                         panelId: checkout.panelId,
                         panelName: checkout.panelName,
@@ -1172,7 +1206,7 @@
                         price: priceToPay,
                         key: realKeyFromStock,
                         link: checkout.link,
-                        date: new Date().toISOString()
+                        date: nowISO
                     });
 
                     if (window.appliedCoupon) {
@@ -1201,7 +1235,7 @@
             }
         };
 
-        // --- ADD MONEY SYSTEM ---
+        // --- ADD MONEY SYSTEM & DEPOSIT HISTORY ---
         document.getElementById('btn-submit-payment').onclick = async () => {
             const amt = document.getElementById('add-amount').value;
             const utr = document.getElementById('add-utr').value.trim();
@@ -1224,13 +1258,14 @@
                     utr: utr,
                     phone: phone,
                     status: "pending",
-                    timestamp: serverTimestamp()
+                    timestamp: new Date().toISOString()
                 });
                 showToast("Payment Submitted! Awaiting Admin Approval.");
                 
                 document.getElementById('add-amount').value = '';
                 document.getElementById('add-utr').value = '';
                 document.getElementById('add-phone').value = '';
+                fetchDepositHistory();
             } catch(e) {
                 showToast("Error submitting request", "error");
             } finally {
@@ -1239,10 +1274,53 @@
             }
         };
 
-        // --- HISTORY & PROFILE ---
+        function fetchDepositHistory() {
+            onValue(ref(db, 'payments'), (snapshot) => {
+                const container = document.getElementById('deposit-history-list');
+                container.innerHTML = '';
+
+                if (!snapshot.exists()) {
+                    container.innerHTML = `<p style="color:var(--text-muted); font-size:13px; text-align:center; padding:20px;">No deposit requests submitted yet.</p>`;
+                    return;
+                }
+
+                let myDeposits = [];
+                snapshot.forEach(child => {
+                    const data = child.val();
+                    if(data.uid === currentUser.uid) {
+                        myDeposits.push({ id: child.key, ...data });
+                    }
+                });
+
+                if (myDeposits.length === 0) {
+                    container.innerHTML = `<p style="color:var(--text-muted); font-size:13px; text-align:center; padding:20px;">No deposit requests submitted yet.</p>`;
+                    return;
+                }
+
+                myDeposits.sort((a,b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+
+                myDeposits.forEach(dep => {
+                    const statusClass = dep.status || 'pending';
+                    const dateDisplay = formatFullDate(dep.timestamp);
+
+                    const div = document.createElement('div');
+                    div.className = 'deposit-item';
+                    div.innerHTML = `
+                        <div>
+                            <div style="font-weight:700; color:white; font-size:15px;">₹${parseFloat(dep.amount).toFixed(2)}</div>
+                            <div style="font-size:11px; color:var(--text-muted);">UTR: ${dep.utr} | ${dateDisplay}</div>
+                        </div>
+                        <span class="dep-status ${statusClass}">${statusClass}</span>
+                    `;
+                    container.appendChild(div);
+                });
+            });
+        }
+
+        // --- MY KEYS (PURCHASE HISTORY) ---
         function fetchHistory() {
             showLoader();
-            get(ref(db, `purchases/${currentUser.uid}`)).then((snapshot) => {
+            onValue(ref(db, `purchases/${currentUser.uid}`), (snapshot) => {
                 const container = document.getElementById('history-container');
                 container.innerHTML = '';
 
@@ -1255,10 +1333,10 @@
                 } else {
                     let items = [];
                     snapshot.forEach(child => items.push({ id: child.key, ...child.val() }));
-                    items.sort((a,b) => new Date(b.date) - new Date(a.date));
+                    items.sort((a,b) => new Date(b.date || 0) - new Date(a.date || 0));
 
                     items.forEach(p => {
-                        const dateStr = new Date(p.date).toLocaleString();
+                        const dateStr = formatFullDate(p.date);
                         const displayLabel = p.label || (p.days ? `${p.days} Days` : 'Premium Access');
 
                         const card = document.createElement('div');
@@ -1269,7 +1347,7 @@
                                     <h4>${p.panelName}</h4>
                                     <p><i class="fas fa-tag"></i> ${displayLabel} | ${dateStr}</p>
                                 </div>
-                                <div class="hist-price">₹${p.price.toFixed(2)}</div>
+                                <div class="hist-price">₹${parseFloat(p.price || 0).toFixed(2)}</div>
                             </div>
                             
                             <div class="key-box">
@@ -1277,7 +1355,7 @@
                                 <button class="btn btn-primary" style="padding: 0 12px; height: 35px; width: auto; font-size:11px;" onclick="copyToClipboard('hist-key-${p.id}', 'License Key')"><i class="fas fa-copy"></i> COPY</button>
                             </div>
                             
-                            <button class="btn-outline" style="width: 100%; border-color: var(--neon-cyan); color: var(--neon-cyan); height: 45px;" onclick="window.open('${p.link}', '_blank')">
+                            <button class="btn-outline" style="width: 100%; border-color: var(--neon-cyan); color: var(--neon-cyan); height: 45px;" onclick="window.open('${p.link || '#'}', '_blank')">
                                 <i class="fas fa-download"></i> ACCESS FILES
                             </button>
                         `;
@@ -1285,7 +1363,7 @@
                     });
                 }
                 hideLoader();
-            }).catch(() => { hideLoader(); showToast("Failed to load history", "error"); });
+            });
         }
 
         function fetchProfileStats() {
