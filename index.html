@@ -671,15 +671,6 @@
         window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
         window.openModal = (id) => document.getElementById(id).classList.remove('hidden');
 
-        function generateKey(length = 12) {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let result = '';
-            for (let i = 0; i < length; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return result;
-        }
-
         // Auth Toggles
         document.getElementById('go-to-signup').onclick = () => {
             document.getElementById('login-box').classList.add('hidden');
@@ -751,7 +742,6 @@
 
         function renderPromotionsData(promotions) {
             let container = document.getElementById('promo-container');
-            // Filter only active promos (handles both boolean true and string "true" safely)
             let activePromos = promotions.filter(p => p.status === true || p.status === "true");
             
             if (activePromos.length === 0) {
@@ -764,8 +754,6 @@
             
             activePromos.forEach(p => {
                 let linkAction = p.link ? `onclick="window.open('${p.link}', '_blank')"` : '';
-                
-                // Advanced error handling to prevent broken images from crashing UI
                 let imgHTML = p.image 
                     ? `<img src="${p.image}" alt="${p.title}" onerror="this.src=''; this.style.display='none'; this.parentElement.innerHTML+='<div style=\\'width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; color:var(--text-muted);\\'>Image Unavailable</div>';">` 
                     : '<div style="width:100%; height:100%; background:rgba(0,0,0,0.5);"></div>';
@@ -788,8 +776,6 @@
             if(!container) return;
             
             clearInterval(autoScrollInterval);
-
-            // Only auto-scroll if there are multiple items causing overflow
             if(container.scrollWidth <= container.clientWidth) return;
 
             let isPaused = false;
@@ -797,10 +783,10 @@
             const advanceSlider = () => {
                 if(isPaused) return;
                 const scrollPos = container.scrollLeft;
-                const cardWidth = container.querySelector('.promo-card').clientWidth + 15; // Width + gap
+                const cardWidth = container.querySelector('.promo-card').clientWidth + 15;
                 
                 if (scrollPos + container.clientWidth >= container.scrollWidth - 10) {
-                    container.scrollTo({ left: 0, behavior: 'smooth' }); // Loop back
+                    container.scrollTo({ left: 0, behavior: 'smooth' });
                 } else {
                     container.scrollBy({ left: cardWidth, behavior: 'smooth' });
                 }
@@ -808,12 +794,11 @@
 
             autoScrollInterval = setInterval(advanceSlider, 3500);
 
-            // Pause on interactions
             container.addEventListener('mouseenter', () => isPaused = true);
             container.addEventListener('mouseleave', () => isPaused = false);
             container.addEventListener('touchstart', () => isPaused = true, {passive: true});
             container.addEventListener('touchend', () => {
-                setTimeout(() => isPaused = false, 2000); // Resume 2s after touch ends
+                setTimeout(() => isPaused = false, 2000);
             }, {passive: true});
         }
 
@@ -826,7 +811,7 @@
                 initUserData();
                 fetchPaymentSettings();
                 fetchPanels();
-                initPromotions(); // Calls Firebase real-time promotions function
+                initPromotions();
                 navigate('home');
             } else {
                 currentUser = null;
@@ -936,7 +921,7 @@
             });
         }
 
-        // --- FETCH PANELS ---
+        // --- FETCH PANELS WITH REALTIME STOCK COUNT ---
         function fetchPanels() {
             onValue(ref(db, 'panels'), (snapshot) => {
                 const container = document.getElementById('panels-container');
@@ -971,8 +956,10 @@
                         const sortedPlans = Object.entries(p.plans).sort((a,b) => a[1].price - b[1].price);
                         plansHtml = `<select class="plan-select" id="plan-${panelId}">`;
                         sortedPlans.forEach(([planKey, planData]) => {
-                            let labelText = planData.label || `${planData.days} Days Access`;
-                            plansHtml += `<option value='${JSON.stringify({key: planKey, label: labelText, price: planData.price})}'>${labelText} - ₹${planData.price}</option>`;
+                            let labelText = planData.label || `${planData.days || 1} Days Access`;
+                            let stockCount = planData.stock ? Object.keys(planData.stock).length : 0;
+                            let stockLabel = stockCount > 0 ? `[Stock: ${stockCount}]` : `[OUT OF STOCK]`;
+                            plansHtml += `<option value='${JSON.stringify({key: planKey, label: labelText, price: planData.price, stock: stockCount})}'>${labelText} - ₹${planData.price} ${stockLabel}</option>`;
                         });
                         plansHtml += `</select>`;
                     } else {
@@ -982,7 +969,7 @@
                     const ytID = extractYouTubeID(p.youtube);
                     let videoRenderHtml = ytID ? `
                             <div class="video-wrapper">
-                                <iframe src="https://www.youtube.com/embed/${ytID}?autoplay=1&mute=1&rel=0&modestbranding=1" allowfullscreen></iframe>
+                                <iframe src="https://www.youtube.com/embed/${ytID}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                             </div>
                         ` : `
                             <div class="video-wrapper">
@@ -1070,6 +1057,10 @@
             
             const planData = JSON.parse(selectEl.value);
             
+            if(planData.stock <= 0) {
+                return showToast('Sorry! This plan is currently OUT OF STOCK.', 'error');
+            }
+
             window.currentCheckout = {
                 panelId: panelId,
                 panelName: panelName,
@@ -1099,23 +1090,16 @@
 
             let price = window.currentCheckout.originalPrice;
 
+            const snap = await get(ref(db, `coupons/${code}`));
 
-                
-const snap = await get(ref(db, `coupons/${code}`));
-
-if (!snap.exists()) {
-    return showToast("Invalid Coupon Code", "error");
-}
-
-const coupon = snap.val();
-
-if (!coupon.status) {
-    return showToast("Coupon Disabled", "error");
-}
-
-                
-            if (!coupon) {
+            if (!snap.exists()) {
                 return showToast("Invalid Coupon Code", "error");
+            }
+
+            const coupon = snap.val();
+
+            if (!coupon.status) {
+                return showToast("Coupon Disabled", "error");
             }
 
             if (coupon.maxUse && coupon.used >= coupon.maxUse) {
@@ -1153,9 +1137,23 @@ if (!coupon.status) {
             btn.disabled = true;
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Processing...`;
 
-            const userBalRef = ref(db, `users/${currentUser.uid}/balance`);
-            
             try {
+                const stockRef = ref(db, `panels/${checkout.panelId}/plans/${checkout.planKey}/stock`);
+                const stockSnap = await get(stockRef);
+
+                if(!stockSnap.exists() || Object.keys(stockSnap.val()).length === 0) {
+                    hideLoader();
+                    btn.disabled = false;
+                    btn.innerHTML = `CONFIRM PAY`;
+                    return showToast("Out of stock! Admin hasn't added keys for this plan.", "error");
+                }
+
+                const stockObj = stockSnap.val();
+                const stockKeys = Object.keys(stockObj);
+                const firstKeyId = stockKeys[0];
+                const realKeyFromStock = stockObj[firstKeyId].key;
+
+                const userBalRef = ref(db, `users/${currentUser.uid}/balance`);
                 const transactionResult = await runTransaction(userBalRef, (currentBalance) => {
                     if (currentBalance === null) return 0;
                     if (currentBalance >= priceToPay) return currentBalance - priceToPay; 
@@ -1163,33 +1161,28 @@ if (!coupon.status) {
                 });
 
                 if (transactionResult.committed) {
-                    const newKey = generateKey(12);
+                    await set(ref(db, `panels/${checkout.panelId}/plans/${checkout.planKey}/stock/${firstKeyId}`), null);
+
                     const purchaseRef = push(ref(db, `purchases/${currentUser.uid}`));
-                    
                     await set(purchaseRef, {
                         panelId: checkout.panelId,
                         panelName: checkout.panelName,
                         plan: checkout.planKey,
                         label: checkout.label,
                         price: priceToPay,
-                        key: newKey,
+                        key: realKeyFromStock,
                         link: checkout.link,
                         date: new Date().toISOString()
                     });
 
                     if (window.appliedCoupon) {
-                        let coupons = JSON.parse(localStorage.getItem("coupons")) || [];
-                        let index = coupons.findIndex(c => c.code === window.appliedCoupon.code);
-                        if (index !== -1) {
-                            coupons[index].used = (coupons[index].used || 0) + 1;
-                            localStorage.setItem("coupons", JSON.stringify(coupons));
-                        }
+                        const couponRef = ref(db, `coupons/${window.appliedCoupon.code}/used`);
+                        await runTransaction(couponRef, (usedCount) => (usedCount || 0) + 1);
                     }
                     
                     closeModal('modal-checkout');
                     
-                    document.getElementById('modal-key-display').innerText = newKey;
-                    document.getElementById('modal-key-display').id = `key-${newKey}`; 
+                    document.getElementById('modal-key-display').innerText = realKeyFromStock;
                     
                     const accessBtn = document.getElementById('modal-btn-access');
                     accessBtn.onclick = () => window.open(checkout.link || "https://t.me/", '_blank');
