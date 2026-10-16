@@ -146,10 +146,10 @@
         .menu-btn:hover { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
 
         .dropdown {
-            position: absolute; top: 85px; right: 25px; width: 220px;
+            position: absolute; top: 85px; right: 25px; width: 230px;
             border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
             transform-origin: top right; transform: scale(0.9); opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.9);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.9); background: var(--card-bg);
         }
         .dropdown.active { transform: scale(1); opacity: 1; visibility: visible; }
         .dropdown-item {
@@ -295,6 +295,8 @@
         .checkout-actions .btn-outline { flex: 1; height: 50px; font-size: 13px; }
         .checkout-actions .btn-purchase { flex: 2; height: 50px; font-size: 14px; }
 
+        .user-ref-card { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; text-align: left; }
+
         .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); width: 100%; grid-column: 1 / -1; animation: fadeIn 0.3s; }
         .empty-state i { font-size: 60px; color: rgba(188, 19, 254, 0.3); margin-bottom: 20px; filter: drop-shadow(0 0 15px rgba(188, 19, 254, 0.2)); }
         .empty-state p { font-size: 16px; letter-spacing: 1px; font-weight: 600; color: white; }
@@ -368,6 +370,10 @@
 <div class="input-group">
 <input id="signup-pass" placeholder="Password (Min 8 chars)" type="password"/>
 </div>
+<!-- Auto-filled if opened through referral link -->
+<div class="input-group">
+<input id="signup-ref" placeholder="Referral Code (Optional)" type="text"/>
+</div>
 <button class="btn btn-primary" id="btn-signup"><i class="fas fa-user-plus"></i> Sign Up</button>
 <p class="auth-toggle">Already registered? <span id="go-to-login">Login here</span></p>
 <div class="contact-buttons">
@@ -392,6 +398,7 @@
 <div class="dropdown-item" onclick="navigate('home')"><i class="fas fa-th-large"></i> My Dashboard</div>
 <div class="dropdown-item" onclick="navigate('add-money')"><i class="fas fa-plus-circle"></i> Add Funds</div>
 <div class="dropdown-item" onclick="navigate('history')"><i class="fas fa-key"></i> My Keys</div>
+<div class="dropdown-item" onclick="navigate('reseller')"><i class="fas fa-users-cog" style="color:var(--neon-cyan);"></i> Reseller & Referral</div>
 <div class="dropdown-item" onclick="navigate('profile')"><i class="fas fa-user-astronaut"></i> Profile</div>
 <div class="dropdown-item" id="btn-logout" style="color: var(--error); border-top: 1px solid rgba(255,255,255,0.1);"><i class="fas fa-sign-out-alt"></i> Logout</div>
 </div>
@@ -399,6 +406,15 @@
 
 <!-- PAGE: HOME -->
 <div class="page-content" id="page-home">
+<!-- 500+ Safety Notice -->
+<div class="glass" style="background: rgba(255, 184, 0, 0.08); border: 1px dashed var(--warning); border-radius: 16px; padding: 18px; margin-bottom: 25px; display: flex; align-items: center; gap: 15px;">
+    <i class="fas fa-shield-alt" style="font-size: 26px; color: var(--warning);"></i>
+    <div>
+        <h4 style="color: var(--warning); font-size: 14px; margin-bottom: 3px; font-weight:700;">Account Safety Notice</h4>
+        <p style="font-size: 13px; color: white;">Keep 500+ balance for your account safety and uninterrupted service operations.</p>
+    </div>
+</div>
+
 <div class="page-header">
 <h2 class="page-title">Premium <span>Store</span></h2>
 <div class="search-container input-group">
@@ -437,6 +453,32 @@
         © 2026-2199 Free Fire Panel Store. All rights reserved Since 1979.
     </p>
 </div>
+</div>
+
+<!-- PAGE: RESELLER / REFERRAL -->
+<div class="page-content hidden" id="page-reseller">
+    <div class="page-header"><h2 class="page-title">Reseller <span>& Referral</span></h2></div>
+    
+    <div class="glass" style="padding: 30px; max-width: 650px; margin: 0 auto 30px auto; text-align: center;">
+        <i class="fas fa-handshake" style="font-size: 45px; color: var(--neon-cyan); margin-bottom: 15px;"></i>
+        <h3 style="color:white; margin-bottom:10px;">Grow Your Business With Us</h3>
+        <p style="color:var(--text-muted); font-size:13px; margin-bottom:20px;">
+            Share your referral link below! Users joining with your link will see normal prices until you make them a Reseller.
+        </p>
+        <div class="input-group">
+            <input id="reseller-link-input" readonly type="text" value="Loading..."/>
+        </div>
+        <button class="btn btn-purchase" onclick="copyToClipboard('reseller-link-input', 'Referral Link')"><i class="fas fa-copy"></i> Copy Referral Link</button>
+    </div>
+
+    <!-- 🔥 RESELLER MANAGEMENT SECTION (Only visible to Resellers) -->
+    <div id="reseller-management-box" class="glass hidden" style="padding: 25px; max-width: 650px; margin: 0 auto;">
+        <h3 style="color:white; font-size:18px; margin-bottom:15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+            <i class="fas fa-users" style="color:var(--neon-purple);"></i> My Referred Users & Control
+        </h3>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">You can upgrade your referred users to Resellers or transfer funds to them directly from your balance.</p>
+        <div id="referred-users-list"></div>
+    </div>
 </div>
 
 <!-- PAGE: ADD MONEY -->
@@ -479,6 +521,10 @@
 <div class="profile-stat">
 <span style="color: var(--text-muted);"><i class="fas fa-envelope"></i> Email</span>
 <strong id="prof-email">...</strong>
+</div>
+<div class="profile-stat">
+<span style="color: var(--text-muted);"><i class="fas fa-user-shield"></i> Account Role</span>
+<strong id="prof-role" style="color: var(--neon-cyan);">Normal User</strong>
 </div>
 <div class="profile-stat">
 <span style="color: var(--text-muted);"><i class="fas fa-wallet"></i> Current Balance</span>
@@ -556,6 +602,21 @@
 </div>
 </div>
 
+<!-- TRANSFER BALANCE MODAL -->
+<div class="modal-overlay hidden" id="modal-transfer">
+<div class="modal" style="text-align: left;">
+    <h3 style="color: white; margin-bottom: 15px; font-weight: 800;"><i class="fas fa-paper-plane" style="color: var(--neon-cyan);"></i> Transfer Balance</h3>
+    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">Recipient: <strong id="transfer-target-email" style="color: white;">user@mail.com</strong></p>
+    <div class="input-group">
+        <input id="transfer-amount" placeholder="Amount to transfer (₹)" type="number"/>
+    </div>
+    <div style="display:flex; gap:10px;">
+        <button class="btn btn-outline" onclick="closeModal('modal-transfer')" style="flex:1;">CANCEL</button>
+        <button class="btn btn-purchase" id="btn-execute-transfer" style="flex:2;">SEND FUNDS</button>
+    </div>
+</div>
+</div>
+
 <!-- PURCHASE SUCCESS MODAL -->
 <div class="modal-overlay hidden" id="modal-success">
 <div class="modal">
@@ -581,7 +642,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } 
             from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getDatabase, ref, set, get, onValue, push, runTransaction } 
+        import { getDatabase, ref, set, get, onValue, push, runTransaction, update } 
             from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
@@ -605,8 +666,9 @@
         }
 
         let currentUser = null;
-        let userData = { balance: 0 };
+        let userData = { balance: 0, isReseller: false };
         let paymentSettings = { upiId: "Not Set", qrImage: null };
+        let activeTransferUid = null;
 
         const loader = document.getElementById('loader');
         const authScreen = document.getElementById('auth-screen');
@@ -631,7 +693,8 @@
         };
 
         window.copyToClipboard = (elementId, itemName) => {
-            let text = document.getElementById(elementId).innerText;
+            let el = document.getElementById(elementId);
+            let text = el.tagName === 'INPUT' ? el.value : el.innerText;
             navigator.clipboard.writeText(text).then(() => {
                 showToast(`${itemName} copied!`);
             });
@@ -640,7 +703,18 @@
         window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
         window.openModal = (id) => document.getElementById(id).classList.remove('hidden');
 
-        // 🔥 Standard Unified Date & Time Formatter
+        // 🔥 Auto-catch referral code from URL parameters
+        function checkReferralURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref');
+            if (refCode) {
+                document.getElementById('signup-ref').value = refCode;
+                document.getElementById('login-box').classList.add('hidden');
+                document.getElementById('signup-box').classList.remove('hidden');
+            }
+        }
+        checkReferralURL();
+
         function formatFullDate(isoString) {
             if(!isoString) return 'N/A';
             const d = new Date(isoString);
@@ -738,7 +812,6 @@
                 mainApp.style.display = 'block';
                 initUserData();
                 fetchPaymentSettings();
-                fetchPanels();
                 initPromotions();
                 initGlobalHistoryListener();
                 navigate('home');
@@ -753,6 +826,7 @@
         document.getElementById('btn-signup').onclick = async () => {
             const email = document.getElementById('signup-email').value.trim();
             const pass = document.getElementById('signup-pass').value;
+            const refCode = document.getElementById('signup-ref').value.trim();
             const btn = document.getElementById('btn-signup');
 
             if(!email || pass.length < 6) return showToast("Invalid email or password (<6 chars)", "error");
@@ -763,7 +837,11 @@
             try {
                 const cred = await createUserWithEmailAndPassword(auth, email, pass);
                 await set(ref(db, `users/${cred.user.uid}`), {
-                    email: email, balance: 0, createdAt: new Date().toISOString()
+                    email: email, 
+                    balance: 0, 
+                    isReseller: false, 
+                    referredBy: refCode || "",
+                    createdAt: new Date().toISOString()
                 });
                 showToast("Account Created Successfully!");
             } catch (error) { 
@@ -810,14 +888,122 @@
                     document.getElementById('nav-balance').innerText = bal;
                     document.getElementById('prof-bal').innerText = bal;
                     document.getElementById('prof-email').innerText = userData.email;
+                    document.getElementById('prof-role').innerText = userData.isReseller ? 'Reseller (Discounted Price)' : 'Normal User';
+                    
+                    const myRefCode = currentUser.uid.slice(0,8);
+                    const currentDomain = window.location.origin + window.location.pathname;
+                    document.getElementById('reseller-link-input').value = `${currentDomain}?ref=${myRefCode}`;
                     
                     if(userData.createdAt) {
                         document.getElementById('prof-date').innerText = formatFullDate(userData.createdAt).split(',')[0];
                     }
+
+                    // Check if reseller box needs to be shown
+                    if (userData.isReseller) {
+                        document.getElementById('reseller-management-box').classList.remove('hidden');
+                        fetchReferredUsers(myRefCode);
+                    } else {
+                        document.getElementById('reseller-management-box').classList.add('hidden');
+                    }
                 }
+                fetchPanels();
                 hideLoader();
             });
         }
+
+        // 🔥 Fetch users who registered via current reseller's link
+        function fetchReferredUsers(myRefCode) {
+            onValue(ref(db, 'users'), (snap) => {
+                const container = document.getElementById('referred-users-list');
+                container.innerHTML = '';
+
+                if (!snap.exists()) {
+                    container.innerHTML = `<p style="font-size:12px; color:var(--text-muted);">No referred users found.</p>`;
+                    return;
+                }
+
+                let matches = [];
+                snap.forEach(child => {
+                    const u = child.val();
+                    if (u.referredBy === myRefCode && child.key !== currentUser.uid) {
+                        matches.push({ uid: child.key, ...u });
+                    }
+                });
+
+                if (matches.length === 0) {
+                    container.innerHTML = `<p style="font-size:12px; color:var(--text-muted);">No users have registered with your referral link yet.</p>`;
+                    return;
+                }
+
+                matches.forEach(u => {
+                    const isRes = u.isReseller === true;
+                    const card = document.createElement('div');
+                    card.className = 'user-ref-card';
+                    card.innerHTML = `
+                        <div>
+                            <strong style="color:white; font-size:14px; display:block;">${u.email}</strong>
+                            <span style="font-size:11px; color:var(--text-muted);">Balance: ₹${parseFloat(u.balance || 0).toFixed(2)} | Role: <span style="color:var(--neon-cyan);">${isRes ? 'Reseller' : 'Normal User'}</span></span>
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn btn-outline" style="height:35px; padding:0 10px; font-size:11px;" onclick="toggleUserResellerRole('${u.uid}', ${!isRes})">
+                                ${isRes ? 'Remove Reseller' : 'Make Reseller'}
+                            </button>
+                            <button class="btn btn-primary" style="height:35px; padding:0 10px; font-size:11px;" onclick="openTransferModal('${u.uid}', '${u.email}')">
+                                Transfer ₹
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            });
+        }
+
+        window.toggleUserResellerRole = async (targetUid, newStatus) => {
+            showLoader();
+            try {
+                await update(ref(db, `users/${targetUid}`), { isReseller: newStatus });
+                showToast(newStatus ? "Granted Reseller Status!" : "Removed Reseller Status!");
+            } catch (e) {
+                showToast("Error updating role", "error");
+            } finally {
+                hideLoader();
+            }
+        };
+
+        window.openTransferModal = (targetUid, targetEmail) => {
+            activeTransferUid = targetUid;
+            document.getElementById('transfer-target-email').innerText = targetEmail;
+            document.getElementById('transfer-amount').value = '';
+            openModal('modal-transfer');
+        };
+
+        document.getElementById('btn-execute-transfer').onclick = async () => {
+            const amt = parseFloat(document.getElementById('transfer-amount').value);
+            if (!amt || amt <= 0) return showToast("Enter a valid amount", "error");
+            if (userData.balance < amt) return showToast("Insufficient balance in your wallet", "error");
+
+            showLoader();
+            try {
+                // Deduct from current user
+                const senderRef = ref(db, `users/${currentUser.uid}/balance`);
+                const senderTx = await runTransaction(senderRef, (cur) => (cur || 0) >= amt ? cur - amt : undefined);
+
+                if (senderTx.committed) {
+                    // Add to recipient user
+                    const receiverRef = ref(db, `users/${activeTransferUid}/balance`);
+                    await runTransaction(receiverRef, (cur) => (cur || 0) + amt);
+
+                    showToast(`Transferred ₹${amt.toFixed(2)} successfully!`);
+                    closeModal('modal-transfer');
+                } else {
+                    showToast("Transfer failed", "error");
+                }
+            } catch (e) {
+                showToast("Error executing transfer", "error");
+            } finally {
+                hideLoader();
+            }
+        };
 
         window.navigate = (pageId) => {
             document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
@@ -879,9 +1065,13 @@
                         plansHtml = `<select class="plan-select" id="plan-${panelId}">`;
                         sortedPlans.forEach(([planKey, planData]) => {
                             let labelText = planData.label || `${planData.duration || 1} ${planData.unit || 'Days'}`;
+                            
+                            let activePrice = userData.isReseller ? (planData.resellerPrice !== undefined ? planData.resellerPrice : planData.price) : planData.price;
+                            
                             let stockCount = planData.stock ? Object.keys(planData.stock).length : 0;
                             let stockLabel = stockCount > 0 ? `[Stock: ${stockCount}]` : `[OUT OF STOCK]`;
-                            plansHtml += `<option value='${JSON.stringify({key: planKey, label: labelText, price: planData.price, stock: stockCount})}'>${labelText} - ₹${planData.price} ${stockLabel}</option>`;
+                            
+                            plansHtml += `<option value='${JSON.stringify({key: planKey, label: labelText, price: activePrice, stock: stockCount})}'>${labelText} - ₹${activePrice} ${stockLabel}</option>`;
                         });
                         plansHtml += `</select>`;
                     } else {
@@ -1031,7 +1221,6 @@
             showToast("Coupon applied successfully!", "success");
         };
 
-        // 🔥 Fixed Multi-Purchase Saving Code using push() with unique IDs
         window.executePurchase = async () => {
             const checkout = window.currentCheckout;
             const priceToPay = checkout.finalPrice;
@@ -1069,11 +1258,9 @@
                 });
 
                 if (transactionResult.committed) {
-                    // Remove key from panel stock
                     await set(ref(db, `panels/${checkout.panelId}/plans/${checkout.planKey}/stock/${firstKeyId}`), null);
 
                     const nowISO = new Date().toISOString();
-                    // Using push() with unique generated key ID under purchases/${currentUser.uid}
                     const userPurchasesRef = ref(db, `purchases/${currentUser.uid}`);
                     const newPurchaseRef = push(userPurchasesRef);
                     
@@ -1197,7 +1384,6 @@
             });
         }
 
-        // 🔥 Realtime Listener for All Purchased Keys (Sorted newest first & stacked vertically)
         function initGlobalHistoryListener() {
             if (!currentUser) return;
             onValue(ref(db, `purchases/${currentUser.uid}`), (snapshot) => {
@@ -1217,7 +1403,6 @@
                         items.push({ id: child.key, ...child.val() });
                     });
                     
-                    // Sort items by date/timestamp (newest first)
                     items.sort((a,b) => new Date(b.timestamp || b.date || 0) - new Date(a.timestamp || a.date || 0));
 
                     items.forEach(p => {
@@ -1285,270 +1470,4 @@
         initBranding();
 </script>
 </body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
-<title>FF.PANEL MIG | PREMIUM</title>
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<!-- FontAwesome -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-<style>
-        :root {
-            --bg-color: #050508;
-            --card-bg: rgba(15, 18, 25, 0.6);
-            --card-border: rgba(0, 240, 255, 0.15);
-            --neon-cyan: #00f0ff;
-            --neon-cyan-dim: rgba(0, 240, 255, 0.4);
-            --neon-purple: #bc13fe;
-            --text-main: #ffffff;
-            --text-muted: #a0a5b5;
-            --error: #ff2a5f;
-            --success: #00ff66;
-            --warning: #ffb800;
-            --wa-color: #25D366;
-            --tg-color: #0088cc;
-        }
-
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        html, body {
-            width: 100%; max-width: 100vw; overflow-x: hidden;
-            background-color: var(--bg-color); color: var(--text-main);
-            min-height: 100vh; min-height: 100dvh;
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(188, 19, 254, 0.05), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.05), transparent 25%);
-        }
-
-        .hidden { display: none !important; }
-        
-        .glass {
-            background: var(--card-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--card-border);
-            border-radius: 16px;
-        }
-        
-        .btn {
-            background: transparent; color: var(--neon-cyan); border: 1px solid var(--neon-cyan);
-            padding: 12px 20px; border-radius: 10px; font-weight: 600; cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); width: 100%;
-            display: inline-flex; justify-content: center; align-items: center; gap: 8px;
-            text-transform: uppercase; letter-spacing: 1px; font-size: 13px; text-decoration: none;
-            height: 48px;
-        }
-        .btn:hover:not(:disabled) {
-            background: rgba(0, 240, 255, 0.1); box-shadow: 0 0 15px var(--neon-cyan-dim);
-            transform: translateY(-2px);
-        }
-        .btn-primary { background: var(--neon-cyan); color: #000; font-weight: 800; }
-        .btn-primary:hover:not(:disabled) { background: #fff; border-color: #fff; box-shadow: 0 0 20px var(--neon-cyan); }
-        
-        .btn-purchase {
-            background: linear-gradient(90deg, var(--neon-purple), #0073ff);
-            border: none; color: white; font-size: 14px; font-weight: 800;
-            padding: 12px 15px; border-radius: 12px; letter-spacing: 1px;
-            box-shadow: 0 0 15px rgba(188, 19, 254, 0.4);
-        }
-        .btn-purchase:hover:not(:disabled) {
-            background: linear-gradient(90deg, #0073ff, var(--neon-purple));
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.6); transform: translateY(-2px);
-        }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; filter: grayscale(1); }
-
-        .input-group { margin-bottom: 18px; width: 100%; position: relative; }
-        .input-group input {
-            width: 100%; max-width: 100%; padding: 0 18px; height: 50px; background: rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white;
-            outline: none; transition: 0.3s; font-size: 14px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
-        }
-        .input-group input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan-dim), inset 0 2px 4px rgba(0,0,0,0.3); }
-
-        #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 5, 8, 0.95); z-index: 9999;
-            display: flex; justify-content: center; align-items: center; flex-direction: column;
-            backdrop-filter: blur(10px);
-        }
-        .spinner {
-            width: 50px; height: 50px; border: 4px solid rgba(0, 240, 255, 0.1);
-            border-top-color: var(--neon-cyan); border-radius: 50%; animation: spin 1s linear infinite;
-            box-shadow: 0 0 20px var(--neon-cyan-dim);
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        #toast-container { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px; }
-        .toast {
-            padding: 14px 20px; border-radius: 12px; color: white; font-weight: 600; font-size: 13px;
-            background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
-            border-left: 4px solid var(--neon-cyan); animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 12px;
-        }
-        .toast.success { border-left-color: var(--success); box-shadow: 0 10px 30px rgba(0, 255, 102, 0.2); }
-        .toast.error { border-left-color: var(--error); box-shadow: 0 10px 30px rgba(255, 42, 95, 0.2); }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
-
-        #auth-screen { min-height: 100vh; min-height: 100dvh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .auth-card { width: 100%; max-width: 420px; padding: 40px 30px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-top: 2px solid var(--neon-cyan); margin: auto; }
-        .auth-card h1 { color: #fff; margin-bottom: 5px; font-weight: 800; letter-spacing: 3px; text-shadow: 0 0 10px var(--neon-cyan-dim); }
-        .auth-card h1 span { color: var(--neon-cyan); }
-        .auth-card p { color: var(--text-muted); margin-bottom: 30px; font-size: 14px; }
-        .auth-toggle { margin-top: 20px; color: var(--text-muted); font-size: 14px; }
-        .auth-toggle span { color: var(--neon-cyan); cursor: pointer; font-weight: 700; transition: 0.3s; }
-        .auth-toggle span:hover { text-shadow: 0 0 15px var(--neon-cyan); }
-        
-        .contact-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 25px; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .contact-buttons .btn { flex: 1; min-width: 140px; }
-        .btn-wa { border-color: var(--wa-color); color: var(--wa-color); }
-        .btn-wa:hover { background: var(--wa-color); color: #fff; box-shadow: 0 0 15px rgba(37, 211, 102, 0.5); }
-        .btn-tg { border-color: var(--tg-color); color: var(--tg-color); }
-        .btn-tg:hover { background: var(--tg-color); color: #fff; box-shadow: 0 0 15px rgba(0, 136, 204, 0.5); }
-
-        #main-app { display: none; width: 100%; }
-        .navbar {
-            position: fixed; top: 0; left: 0; width: 100%; height: 75px;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 25px; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.05);
-            border-radius: 0 0 20px 20px; background: rgba(10, 12, 18, 0.85);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-        }
-        .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 24px; color: white; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0,240,255,0.3); }
-        .logo span { color: var(--neon-cyan); }
-        .nav-right { display: flex; align-items: center; gap: 15px; }
-        .balance-badge {
-            background: rgba(0, 240, 255, 0.1); border: 1px solid var(--neon-cyan);
-            color: var(--neon-cyan); padding: 8px 18px; border-radius: 30px;
-            font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 0 10px var(--neon-cyan-dim);
-        }
-        .menu-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; transition: 0.3s; }
-        .menu-btn:hover { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
-
-        .dropdown {
-            position: absolute; top: 85px; right: 25px; width: 220px;
-            border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
-            transform-origin: top right; transform: scale(0.9); opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.9);
-        }
-        .dropdown.active { transform: scale(1); opacity: 1; visibility: visible; }
-        .dropdown-item {
-            padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
-            cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 500; transition: 0.3s;
-        }
-        .dropdown-item:hover { background: rgba(0, 240, 255, 0.1); color: var(--neon-cyan); padding-left: 25px; }
-
-        .page-content { padding: 100px 20px 80px 20px; max-width: 1200px; margin: 0 auto; min-height: 100vh; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
-        .page-title { font-size: 26px; font-weight: 800; color: white; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 15px rgba(255,255,255,0.2); }
-        .page-title span { color: var(--neon-purple); }
-        
-        .search-container { position: relative; flex: 1; min-width: 280px; max-width: 450px; }
-        .search-container input { padding-left: 45px; border-radius: 30px; margin-bottom: 0; background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); }
-        .search-container i.fa-search { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 16px; transition: 0.3s; }
-        .search-container input:focus { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(188, 19, 254, 0.3); }
-        .search-container input:focus + i { color: var(--neon-purple); }
-        .search-loader { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: var(--neon-purple); display: none; animation: spin 1s linear infinite; }
-
-        .promo-slider { 
-            display: flex; overflow-x: auto; gap: 15px; padding-bottom: 10px; 
-            margin-bottom: 30px; scroll-snap-type: x mandatory; scroll-behavior: smooth; 
-            -ms-overflow-style: none; scrollbar-width: none;
-        }
-        .promo-slider::-webkit-scrollbar { display: none; }
-        .promo-card { flex: 0 0 85%; max-width: 500px; height: 180px; position: relative; border-radius: 16px; overflow: hidden; scroll-snap-align: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        @media (min-width: 768px) { .promo-card { flex: 0 0 45%; } }
-        .promo-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-        .promo-card:hover img { transform: scale(1.05); }
-        .promo-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px 15px 15px; background: linear-gradient(transparent, rgba(0,0,0,0.95)); }
-        .promo-title { color: white; font-weight: 700; font-size: 16px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; }
-
-        .panel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-        .panel-card { 
-            background: linear-gradient(145deg, rgba(20, 24, 34, 0.9) 0%, rgba(10, 12, 18, 0.95) 100%);
-            border: 1px solid rgba(0, 240, 255, 0.15); border-radius: 20px; overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative;
-        }
-        .panel-card:hover { 
-            transform: translateY(-8px); border-color: rgba(188, 19, 254, 0.5);
-            box-shadow: 0 15px 40px rgba(0, 240, 255, 0.15), 0 0 20px rgba(188, 19, 254, 0.2); 
-            z-index: 10;
-        }
-        
-        .video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; border-bottom: 2px solid rgba(255,255,255,0.05); }
-        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-
-        .panel-info { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
-        .panel-title { font-size: 20px; font-weight: 800; margin-bottom: 15px; color: white; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: space-between; }
-        
-        .features-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-        .feature-chip {
-            background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2);
-            color: var(--neon-cyan); padding: 6px 12px; border-radius: 8px; font-size: 11px;
-            font-weight: 600; display: inline-flex; align-items: center; gap: 6px; letter-spacing: 0.5px;
-            box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.05);
-        }
-        .feature-chip i { color: var(--warning); text-shadow: 0 0 5px var(--warning); }
-
-        .trust-badges { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); }
-        .badge-item { font-size: 11px; color: var(--success); display: flex; align-items: center; gap: 5px; font-weight: 600; letter-spacing: 0.5px; text-shadow: 0 0 5px rgba(0,255,102,0.3); }
-        
-        .btn-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-        .btn-outline { 
-            flex: 1; min-width: 110px; font-size: 11px; padding: 10px; border-color: rgba(255,255,255,0.1); 
-            color: var(--text-muted); background: rgba(0,0,0,0.4); border-radius: 8px; height: 40px;
-            display: inline-flex; justify-content: center; align-items: center; gap: 6px;
-            font-weight: 600; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1);
-        }
-        .btn-outline:hover { background: rgba(255,255,255,0.05); color: white; border-color: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan-dim); }
-        
-        .btn-outline.feedback-btn { border-color: rgba(255, 42, 95, 0.4); color: var(--error); }
-        .btn-outline.feedback-btn:hover { background: rgba(255, 42, 95, 0.1); color: white; border-color: var(--error); box-shadow: 0 0 10px rgba(255, 42, 95, 0.4); }
-
-        .plan-select {
-            width: 100%; padding: 0 15px; height: 48px; background: rgba(0,0,0,0.6); border: 1px solid rgba(188, 19, 254, 0.3);
-            border-radius: 12px; color: white; font-size: 14px; font-weight: 600; outline: none;
-            margin-top: auto; margin-bottom: 15px; appearance: none; cursor: pointer; transition: 0.3s;
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23bc13fe%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 12px auto;
-        }
-        .plan-select:focus { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(188, 19, 254, 0.3); }
-
-        .payment-settings-card { padding: 40px 30px; text-align: center; max-width: 600px; margin: 0 auto 30px auto; width: 100%; }
-        .qr-image-container { margin: 20px auto; width: 240px; height: 240px; background: rgba(0,0,0,0.5); border-radius: 16px; overflow: hidden; border: 2px dashed var(--neon-cyan); display: flex; justify-content: center; align-items: center; padding: 10px; box-shadow: inset 0 0 30px rgba(0, 240, 255, 0.1); }
-        .qr-image-container img { width: 100%; height: 100%; border-radius: 10px; object-fit: cover; }
-        .upi-box {
-            background: rgba(0,0,0,0.6); padding: 18px; border-radius: 12px; border: 1px solid var(--neon-cyan);
-            text-align: center; margin: 25px 0; word-break: break-all; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 0 15px var(--neon-cyan-dim); animation: pulseBorder 2s infinite; display: flex; justify-content: center; align-items: center; gap: 10px;
-        }
-        @keyframes pulseBorder { 0% { box-shadow: 0 0 5px var(--neon-cyan-dim); } 50% { box-shadow: 0 0 25px rgba(0, 240, 255, 0.6); } 100% { box-shadow: 0 0 5px var(--neon-cyan-dim); } }
-        .upi-box:hover { background: rgba(0, 240, 255, 0.1); transform: scale(1.02); animation: none; box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);}
-        .upi-box span { color: var(--neon-cyan); font-weight: 800; font-size: 16px; letter-spacing: 1px; }
-
-        .deposit-history-container { max-width: 600px; margin: 0 auto; width: 100%; }
-        .deposit-item { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
-        .dep-status { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 700; text-transform: uppercase; }
-        .dep-status.pending { background: rgba(255, 184, 0, 0.15); color: var(--warning); border: 1px solid var(--warning); }
-        .dep-status.approved { background: rgba(0, 255, 102, 0.15); color: var(--success); border: 1px solid var(--success); }
-        .dep-status.rejected { background: rgba(255, 42, 95, 0.15); color: var(--error); border: 1px solid var(--error); }
-
-        .history-list { display: flex; flex-direction: column; gap: 20px; max-width: 800px; margin: 0 auto; width: 100%; }
-        .history-card { padding: 20px; display: flex; flex-direction: column; gap: 15px; border-left: 4px solid var(--neon-purple); border-radius: 16px; }
-        .hist-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; flex-wrap: wrap; gap: 10px; }
-        .hist-details h4 { color: white; font-size: 18px; font-weight: 700; margin-bottom: 5px; }
-        .hist-details p { font-size: 12px; color: var(--text-muted); }
-        .hist-price { color: var(--neon-cyan); font-weight: 800; font-size: 16px; background: rgba(0,240,255,0.1); padding: 4px 10px; border-radius: 8px; }
-        .key-box { background: rgba(0,0,0,0.6); padding: 12px 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap; gap: 10px; }
-        .key-text { font-family: monospace; font-size: 16px; font-weight: bold; letter-spacing: 1px; color: var(--success); text-shadow: 0 0 5px rgba(0,255,102,0.4); word-break: break-all; }
-        .profile-stat { display: flex; justify-content: space-bet
+</html>
