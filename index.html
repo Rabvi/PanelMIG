@@ -360,13 +360,17 @@
 <div class="auth-card glass hidden" id="signup-box">
 <h1>JOIN <span>NOW</span></h1>
 <p>Create an account to get premium access.</p>
+<!-- 🔥 Referral Badge Notification if user opened via Referral Link -->
+<div id="ref-applied-banner" class="hidden" style="background: rgba(0, 240, 255, 0.1); border: 1px dashed var(--neon-cyan); padding: 10px; border-radius: 8px; margin-bottom: 18px; color: var(--neon-cyan); font-size: 12px; font-weight: 600;">
+    <i class="fas fa-handshake"></i> Referral Applied Successfully! (<span id="ref-num-display"></span>)
+</div>
 <div class="input-group">
 <input id="signup-email" placeholder="Email Address" type="email"/>
 </div>
 <div class="input-group">
 <input id="signup-pass" placeholder="Password (Min 8 chars)" type="password"/>
 </div>
-<!-- Hidden Input for Referral code captured from link automatically without showing on UI -->
+<!-- Hidden Input for Referral code captured from link automatically without showing weird boxes -->
 <input id="signup-ref" type="hidden" value=""/>
 <button class="btn btn-primary" id="btn-signup"><i class="fas fa-user-plus"></i> Sign Up</button>
 <p class="auth-toggle">Already registered? <span id="go-to-login">Login here</span></p>
@@ -678,7 +682,7 @@
         window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
         window.openModal = (id) => document.getElementById(id).classList.remove('hidden');
 
-        // 🔥 Auto-catch sequential numeric referral code from URL parameter (?ref=1, 2, 3...)
+        // 🔥 Auto-catch referral code from URL parameter and show visual success banner
         function checkReferralURL() {
             const urlParams = new URLSearchParams(window.location.search);
             const refNum = urlParams.get('ref');
@@ -686,6 +690,14 @@
                 document.getElementById('signup-ref').value = refNum;
                 document.getElementById('login-box').classList.add('hidden');
                 document.getElementById('signup-box').classList.remove('hidden');
+                
+                // Show banner indicating referral is active
+                const banner = document.getElementById('ref-applied-banner');
+                const displaySpan = document.getElementById('ref-num-display');
+                if(banner && displaySpan) {
+                    displaySpan.innerText = `ID: ${refNum}`;
+                    banner.classList.remove('hidden');
+                }
             }
         }
         checkReferralURL();
@@ -798,7 +810,7 @@
             }
         });
 
-        // 🔥 Sequential Numeric Referral Generation & Registration
+        // 🔥 Signup Logic with Numeric Referral Registration
         document.getElementById('btn-signup').onclick = async () => {
             const email = document.getElementById('signup-email').value.trim();
             const pass = document.getElementById('signup-pass').value;
@@ -812,8 +824,6 @@
             
             try {
                 const cred = await createUserWithEmailAndPassword(auth, email, pass);
-                
-                // Client-side sequential unique numeric ID generator
                 const assignedRefNum = Math.floor(Date.now() / 1000) % 100000;
 
                 await set(ref(db, `users/${cred.user.uid}`), {
