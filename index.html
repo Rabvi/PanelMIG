@@ -360,7 +360,6 @@
 <div class="auth-card glass hidden" id="signup-box">
 <h1>JOIN <span>NOW</span></h1>
 <p>Create an account to get premium access.</p>
-<!-- 🔥 Referral Badge Notification if user opened via Referral Link -->
 <div id="ref-applied-banner" class="hidden" style="background: rgba(0, 240, 255, 0.1); border: 1px dashed var(--neon-cyan); padding: 10px; border-radius: 8px; margin-bottom: 18px; color: var(--neon-cyan); font-size: 12px; font-weight: 600;">
     <i class="fas fa-handshake"></i> Referral Applied Successfully! (<span id="ref-num-display"></span>)
 </div>
@@ -370,7 +369,6 @@
 <div class="input-group">
 <input id="signup-pass" placeholder="Password (Min 8 chars)" type="password"/>
 </div>
-<!-- Hidden Input for Referral code captured from link automatically without showing weird boxes -->
 <input id="signup-ref" type="hidden" value=""/>
 <button class="btn btn-primary" id="btn-signup"><i class="fas fa-user-plus"></i> Sign Up</button>
 <p class="auth-toggle">Already registered? <span id="go-to-login">Login here</span></p>
@@ -682,7 +680,7 @@
         window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
         window.openModal = (id) => document.getElementById(id).classList.remove('hidden');
 
-        // 🔥 Auto-catch referral code from URL parameter and show visual success banner
+        // 🔥 Auto-catch referral code from URL parameter & display banner
         function checkReferralURL() {
             const urlParams = new URLSearchParams(window.location.search);
             const refNum = urlParams.get('ref');
@@ -691,7 +689,6 @@
                 document.getElementById('login-box').classList.add('hidden');
                 document.getElementById('signup-box').classList.remove('hidden');
                 
-                // Show banner indicating referral is active
                 const banner = document.getElementById('ref-applied-banner');
                 const displaySpan = document.getElementById('ref-num-display');
                 if(banner && displaySpan) {
@@ -810,7 +807,7 @@
             }
         });
 
-        // 🔥 Signup Logic with Numeric Referral Registration
+        // 🔥 Signup Logic with Dynamic Numeric ID
         document.getElementById('btn-signup').onclick = async () => {
             const email = document.getElementById('signup-email').value.trim();
             const pass = document.getElementById('signup-pass').value;
@@ -824,7 +821,8 @@
             
             try {
                 const cred = await createUserWithEmailAndPassword(auth, email, pass);
-                const assignedRefNum = Math.floor(Date.now() / 1000) % 100000;
+                // Unique 5 to 6-digit numeric referral code generator
+                const assignedRefNum = Math.floor(100000 + Math.random() * 900000);
 
                 await set(ref(db, `users/${cred.user.uid}`), {
                     email: email, 
@@ -881,7 +879,13 @@
                     document.getElementById('prof-email').innerText = userData.email;
                     document.getElementById('prof-role').innerText = userData.isReseller ? 'Reseller (Discounted Price)' : 'Normal User';
                     
-                    const myRefNum = userData.refCodeNum || 1;
+                    // Fixed: Automatic random generation if refCodeNum is missing
+                    let myRefNum = userData.refCodeNum;
+                    if (!myRefNum) {
+                        myRefNum = Math.floor(100000 + Math.random() * 900000);
+                        update(ref(db, `users/${currentUser.uid}`), { refCodeNum: myRefNum });
+                    }
+
                     const currentDomain = window.location.origin + window.location.pathname;
                     document.getElementById('reseller-link-input').value = `${currentDomain}?ref=${myRefNum}`;
                     
