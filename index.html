@@ -234,7 +234,7 @@
             z-index: 10;
         }
         
-        /* CUSTOM VIDEO OVERLAY (SCREENSHOT 115866.jpg UI) */
+        /* VIDEO WRAPPER & TOP BADGES (SCREENSHOT 115875.jpg UI) */
         .video-wrapper { 
             position: relative; width: 100%; padding-bottom: 56.25%; background: #000; 
             border-bottom: 2px solid rgba(255,255,255,0.05); overflow: hidden;
@@ -270,7 +270,7 @@
         .panel-info { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
         .panel-title { font-size: 20px; font-weight: 800; margin-bottom: 15px; color: white; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px rgba(255,255,255,0.3); text-align: center; }
         
-        /* HORIZONTAL FEATURES BADGES / DABBEY (SCREENSHOT 115870.jpg UI) */
+        /* HORIZONTAL FEATURES BADGES (DABBEY WALA) */
         .features-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; justify-content: flex-start; }
         .feature-chip {
             background: rgba(0, 240, 255, 0.06); border: 1px solid var(--neon-cyan-dim);
@@ -1263,7 +1263,7 @@
                     
                     let descText = p.description || '';
                     let featuresArr = descText.split(/\n|-/).filter(f => f.trim().length > 0);
-                    // DABBEY WALA DESIGN WITH YELLOW LIGHTNING & THEME TEXT COLOR
+                    // DABBEY WALA DESIGN WITH YELLOW LIGHTNING
                     let featuresHtml = featuresArr.map(f => `<div class="feature-chip"><i class="fas fa-bolt"></i> ${f.trim()}</div>`).join('');
 
                     let updateLink = p.link ? `window.open('${p.link}', '_blank')` : "showToast('File link not available', 'warning')";
@@ -1302,16 +1302,21 @@
                     const ytID = extractYouTubeID(p.youtube);
                     const wrapperId = `video-box-${panelId}`;
                     const thumbUrl = ytID ? `https://img.youtube.com/vi/${ytID}/hqdefault.jpg` : 'https://i.imgur.com/3Z50P0X.jpg';
-                    const gameBadgeText = (p.gameCategory || 'FREEFIRE').toUpperCase();
-                    const deviceBadgeText = (p.deviceCategory || 'ROOT + NONROOT + IOS IPHONE + PC').replace(/_/g, ' ').toUpperCase();
+                    
+                    // PROPER GAME & DEVICE FORMATTING WITH PLUS (+) SYMBOLS AS REQUESTED
+                    let rawGame = (p.gameCategory || 'Free Fire').toUpperCase();
+                    let rawDevice = (p.deviceCategory || 'Root + Nonroot').toUpperCase();
+                    if(rawDevice === 'ROOT_NONROOT' || rawDevice === 'ROOT NONROOT') rawDevice = 'ROOT + NONROOT';
+                    else if(rawDevice === 'ROOT_NONROOT_IOS_PC') rawDevice = 'ROOT + NONROOT + IOS IPHONE + PC';
+                    else if(rawDevice === 'IOS_IPHONE') rawDevice = 'IOS + IPHONE';
 
-                    // NO YOUTUBE LOGO DISPLAY / CUSTOM NEON PLAY OVERLAY
+                    // VIDEO OVERLAY WITH TOP LEFT (DEVICE) AND TOP RIGHT (GAME) BADGES
                     let videoRenderHtml = `
                         <div class="video-wrapper" id="${wrapperId}">
                             <img src="${thumbUrl}" class="thumb-img" alt="Panel Preview">
                             <div class="video-top-badges">
-                                <span class="badge-device-tag">${deviceBadgeText}</span>
-                                <span class="badge-game-tag">${gameBadgeText}</span>
+                                <span class="badge-device-tag">${rawDevice}</span>
+                                <span class="badge-game-tag">${rawGame}</span>
                             </div>
                             ${ytID ? `<div class="play-btn-overlay" onclick="playVideoInline('${wrapperId}', '${ytID}')"><i class="fas fa-play"></i></div>` : ''}
                         </div>
