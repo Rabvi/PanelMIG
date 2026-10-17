@@ -135,7 +135,22 @@
         }
         .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 24px; color: white; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0,240,255,0.3); }
         .logo span { color: var(--neon-cyan); }
-        .nav-right { display: flex; align-items: center; gap: 15px; }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+
+        .btn-how-to {
+            background: linear-gradient(135deg, #ff2a5f, #ff0040); color: white; border: none;
+            padding: 7px 14px; border-radius: 20px; font-weight: 700; font-size: 11px;
+            display: flex; align-items: center; gap: 6px; cursor: pointer; text-transform: uppercase;
+            box-shadow: 0 0 15px rgba(255, 42, 95, 0.5); text-decoration: none; transition: 0.3s;
+        }
+        .btn-how-to:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 42, 95, 0.8); }
+        .btn-palette-icon {
+            background: rgba(0, 240, 255, 0.1); border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
+            width: 38px; height: 38px; border-radius: 10px; display: flex; justify-content: center;
+            align-items: center; cursor: pointer; font-size: 16px; box-shadow: 0 0 10px var(--neon-cyan-dim); transition: 0.3s;
+        }
+        .btn-palette-icon:hover { background: var(--neon-cyan); color: #000; }
+
         .balance-badge {
             background: rgba(0, 240, 255, 0.1); border: 1px solid var(--neon-cyan);
             color: var(--neon-cyan); padding: 8px 18px; border-radius: 30px;
@@ -165,11 +180,32 @@
         .page-title { font-size: 26px; font-weight: 800; color: white; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 15px rgba(255,255,255,0.2); }
         .page-title span { color: var(--neon-purple); }
         
-        .search-container { position: relative; flex: 1; min-width: 280px; max-width: 450px; }
-        .search-container input { padding-left: 45px; border-radius: 30px; margin-bottom: 0; background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); }
-        .search-container i.fa-search { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 16px; transition: 0.3s; }
-        .search-container input:focus { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(188, 19, 254, 0.3); }
-        .search-container input:focus + i { color: var(--neon-purple); }
+        .dashboard-section-title {
+            color: var(--neon-cyan); font-size: 15px; font-weight: 800; letter-spacing: 1px;
+            text-transform: uppercase; margin: 20px 0 12px 0; display: flex; align-items: center; gap: 8px;
+            text-shadow: 0 0 10px var(--neon-cyan-dim);
+        }
+        .filter-container-box {
+            background: rgba(15, 18, 25, 0.8); border: 1px solid var(--card-border);
+            border-radius: 16px; padding: 18px; margin-bottom: 25px;
+        }
+        .filter-label { font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
+        .filter-scroll-wrapper { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+        .filter-scroll-wrapper::-webkit-scrollbar { display: none; }
+        .filter-btn-chip {
+            background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15); color: var(--text-muted);
+            padding: 8px 18px; border-radius: 10px; font-size: 12px; font-weight: 700; white-space: nowrap;
+            cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .filter-btn-chip.active {
+            background: var(--neon-cyan); border-color: var(--neon-cyan); color: #000;
+            box-shadow: 0 0 15px var(--neon-cyan-dim);
+        }
+
+        .search-container { position: relative; flex: 1; min-width: 280px; max-width: 100%; margin-bottom: 15px; }
+        .search-container input { padding-left: 45px; border-radius: 12px; margin-bottom: 0; background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.1); }
+        .search-container i.fa-search { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--neon-cyan); font-size: 16px; transition: 0.3s; }
+        .search-container input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan-dim); }
         .search-loader { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: var(--neon-purple); display: none; animation: spin 1s linear infinite; }
 
         .promo-slider { 
@@ -222,20 +258,44 @@
             color: var(--text-muted); background: rgba(0,0,0,0.4); border-radius: 8px; height: 40px;
             display: inline-flex; justify-content: center; align-items: center; gap: 6px;
             font-weight: 600; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1);
+            text-decoration: none;
         }
         .btn-outline:hover { background: rgba(255,255,255,0.05); color: white; border-color: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan-dim); }
         
         .btn-outline.feedback-btn { border-color: rgba(255, 42, 95, 0.4); color: var(--error); }
         .btn-outline.feedback-btn:hover { background: rgba(255, 42, 95, 0.1); color: white; border-color: var(--error); box-shadow: 0 0 10px rgba(255, 42, 95, 0.4); }
 
-        .plan-select {
-            width: 100%; padding: 0 15px; height: 48px; background: rgba(0,0,0,0.6); border: 1px solid rgba(188, 19, 254, 0.3);
-            border-radius: 12px; color: white; font-size: 14px; font-weight: 600; outline: none;
-            margin-top: auto; margin-bottom: 15px; appearance: none; cursor: pointer; transition: 0.3s;
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23bc13fe%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 12px auto;
+        /* Plans List UI as per Screenshot 115830.jpg */
+        .plans-container-stack { display: flex; flex-direction: column; gap: 10px; margin-top: auto; margin-bottom: 15px; }
+        .plan-row-item {
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;
+            padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+            transition: 0.3s;
         }
-        .plan-select:focus { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(188, 19, 254, 0.3); }
+        .plan-row-item:hover { border-color: var(--neon-cyan); background: rgba(0,240,255,0.03); }
+        .plan-info-text .p-label { font-size: 13px; font-weight: 700; color: var(--neon-cyan); display: block; }
+        .plan-info-text .p-price { font-size: 15px; font-weight: 800; color: white; }
+        .plan-action-box { display: flex; align-items: center; gap: 8px; }
+        .plan-qty-input {
+            width: 45px; height: 38px; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px; color: white; text-align: center; font-weight: 700; font-size: 13px; outline: none;
+        }
+        .btn-plan-buy {
+            background: linear-gradient(135deg, var(--neon-purple), #ff007f); color: white; border: none;
+            padding: 8px 18px; border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 0.5px; transition: 0.3s; box-shadow: 0 0 10px rgba(188,19,254,0.4);
+        }
+        .btn-plan-buy:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(255,0,127,0.7); }
+
+        /* THEME SELECTOR MODAL AS PER SCREENSHOT 115826.jpg */
+        .theme-modal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+        .theme-option-card {
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+            padding: 15px 10px; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 8px;
+        }
+        .theme-option-card:hover { border-color: var(--neon-cyan); background: rgba(0,240,255,0.05); }
+        .theme-circle { width: 28px; height: 28px; border-radius: 50%; box-shadow: 0 0 10px currentColor; }
+        .theme-option-card span { font-size: 11px; font-weight: 600; color: white; }
 
         .payment-settings-card { padding: 40px 30px; text-align: center; max-width: 600px; margin: 0 auto 30px auto; width: 100%; }
         .qr-image-container { margin: 20px auto; width: 240px; height: 240px; background: rgba(0,0,0,0.5); border-radius: 16px; overflow: hidden; border: 2px dashed var(--neon-cyan); display: flex; justify-content: center; align-items: center; padding: 10px; box-shadow: inset 0 0 30px rgba(0, 240, 255, 0.1); }
@@ -312,9 +372,10 @@
         
         @media (max-width: 480px) {
             .auth-card { padding: 30px 20px; }
-            .navbar { padding: 0 15px; height: 70px; }
-            .logo { font-size: 18px; }
-            .balance-badge { padding: 6px 12px; font-size: 12px; }
+            .navbar { padding: 0 12px; height: 70px; }
+            .logo { font-size: 16px; }
+            .balance-badge { padding: 6px 10px; font-size: 11px; }
+            .btn-how-to { padding: 5px 8px; font-size: 9px; }
             .page-header { flex-direction: column; align-items: stretch; gap: 15px; margin-bottom: 20px; }
             .search-container { max-width: 100%; width: 100%; flex: none; }
             .page-title { font-size: 22px; text-align: center; }
@@ -387,6 +448,8 @@
 <span id="site-name">FF.PANEL-BY.MIG</span>
 </div>
 <div class="nav-right">
+<a href="#" class="btn-how-to" onclick="navigate('add-money'); return false;"><i class="fab fa-youtube"></i> How To Deposit?</a>
+<div class="btn-palette-icon" onclick="openModal('modal-theme')"><i class="fas fa-palette"></i></div>
 <div class="balance-badge"><i class="fas fa-wallet"></i> ₹<span id="nav-balance">0.00</span></div>
 <button class="menu-btn" id="menu-toggle"><i class="fas fa-bars"></i></button>
 </div>
@@ -410,14 +473,45 @@
     </div>
 </div>
 
-<div class="page-header">
-<h2 class="page-title">Premium <span>Store</span></h2>
+<div class="glass" style="padding: 16px 20px; border-radius: 14px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--neon-cyan-dim);">
+    <span style="font-weight: 700; color: white; font-size: 13px; letter-spacing: 1px;">RESELLER BALANCE:</span>
+    <span style="font-weight: 800; color: var(--neon-cyan); font-size: 20px; text-shadow: 0 0 10px var(--neon-cyan-dim);">₹<span id="reseller-display-bal">0.00</span></span>
+</div>
+
+<div class="dashboard-section-title">&gt;&gt; SEARCH PRODUCT</div>
 <div class="search-container input-group">
-<input id="search-input" placeholder="Search panels or features..." type="text"/>
+<input id="search-input" placeholder="TYPE PRODUCT OR ITEM NAME TO SEARCH..." type="text"/>
 <i class="fas fa-search" id="search-icon"></i>
 <i class="fas fa-spinner search-loader" id="search-loader"></i>
 </div>
+
+<!-- UPDATED FILTER DASHBOARD WITH ALL REQUESTED GAMES & DEVICES -->
+<div class="dashboard-section-title">&gt;&gt; FILTER DASHBOARD</div>
+<div class="filter-container-box">
+    <div class="filter-label">GAMES FILTER</div>
+    <div class="filter-scroll-wrapper" id="game-filter-buttons">
+        <div class="filter-btn-chip active" onclick="setGameFilter('all', this)">All Games</div>
+        <div class="filter-btn-chip" onclick="setGameFilter('freefire', this)">FREEFIRE</div>
+        <div class="filter-btn-chip" onclick="setGameFilter('carrom', this)">CARROM POOL</div>
+        <div class="filter-btn-chip" onclick="setGameFilter('8ball', this)">8 BALL POOL</div>
+        <div class="filter-btn-chip" onclick="setGameFilter('soccerstars', this)">SOCCER STARS</div>
+        <div class="filter-btn-chip" onclick="setGameFilter('codm', this)">COD M</div>
+        <div class="filter-btn-chip" onclick="setGameFilter('gbox', this)">G BOX</div>
+        <div class="filter-btn-chip" onclick="setGameFilter('esigning', this)">E SIGNING CERTIFICATE</div>
+        <div class="filter-btn-chip" onclick="setGameFilter('mlbb', this)">MLBB</div>
+    </div>
+
+    <div class="filter-label" style="margin-top: 15px;">DEVICE FILTER</div>
+    <div class="filter-scroll-wrapper" id="device-filter-buttons">
+        <div class="filter-btn-chip active" onclick="setDeviceFilter('all', this)">All Systems</div>
+        <div class="filter-btn-chip" onclick="setDeviceFilter('root_nonroot', this)">ROOT + NONROOT</div>
+        <div class="filter-btn-chip" onclick="setDeviceFilter('root_nonroot_ios_pc', this)">ROOT + NONROOT + IOS IPHONE + PC</div>
+        <div class="filter-btn-chip" onclick="setDeviceFilter('ios_iphone', this)">IOS + IPHONE</div>
+        <div class="filter-btn-chip" onclick="setDeviceFilter('only_pc', this)">ONLY PC</div>
+    </div>
 </div>
+
+<div class="dashboard-section-title">&gt;&gt; MARKETPLACE / USER STOCK</div>
 
 <div id="promo-container" class="promo-slider hidden"></div>
 
@@ -533,6 +627,40 @@
 </a>
 </div>
 
+<!-- COLOR THEME SELECTOR MODAL (SCREENSHOT 115826.jpg) -->
+<div class="modal-overlay hidden" id="modal-theme">
+<div class="modal" style="max-width: 380px;">
+    <h3 style="color: var(--neon-cyan); margin-bottom: 5px; font-weight: 800; font-size: 18px;"><i class="fas fa-palette"></i> SELECT COLOR THEME</h3>
+    <div class="theme-modal-grid">
+        <div class="theme-option-card" onclick="setTheme('#00f0ff', 'rgba(0, 240, 255, 0.4)')">
+            <div class="theme-circle" style="background: #00f0ff; color: #00f0ff;"></div>
+            <span>Sky Blue</span>
+        </div>
+        <div class="theme-option-card" onclick="setTheme('#bc13fe', 'rgba(188, 19, 254, 0.4)')">
+            <div class="theme-circle" style="background: #bc13fe; color: #bc13fe;"></div>
+            <span>Purple</span>
+        </div>
+        <div class="theme-option-card" onclick="setTheme('#ff007f', 'rgba(255, 0, 127, 0.4)')">
+            <div class="theme-circle" style="background: #ff007f; color: #ff007f;"></div>
+            <span>Pink Neon</span>
+        </div>
+        <div class="theme-option-card" onclick="setTheme('#ffb800', 'rgba(255, 184, 0, 0.4)')">
+            <div class="theme-circle" style="background: #ffb800; color: #ffb800;"></div>
+            <span>Golden</span>
+        </div>
+        <div class="theme-option-card" onclick="setTheme('#00ff66', 'rgba(0, 255, 102, 0.4)')">
+            <div class="theme-circle" style="background: #00ff66; color: #00ff66;"></div>
+            <span>Green</span>
+        </div>
+        <div class="theme-option-card" onclick="setTheme('#ff2a5f', 'rgba(255, 42, 95, 0.4)')">
+            <div class="theme-circle" style="background: #ff2a5f; color: #ff2a5f;"></div>
+            <span>Red Neon</span>
+        </div>
+    </div>
+    <button class="btn btn-outline" onclick="closeModal('modal-theme')" style="margin-top: 10px;">CLOSE</button>
+</div>
+</div>
+
 <!-- CHECKOUT MODAL -->
 <div class="modal-overlay hidden" id="modal-checkout">
 <div class="modal checkout-modal">
@@ -546,6 +674,10 @@
         <div class="checkout-row">
             <span>Plan:</span>
             <strong id="chk-plan-label" style="color:var(--warning);">Plan Label</strong>
+        </div>
+        <div class="checkout-row">
+            <span>Quantity:</span>
+            <strong id="chk-qty">1</strong>
         </div>
         <div class="checkout-row">
             <span>Original Price:</span>
@@ -646,6 +778,9 @@
         let userData = { balance: 0, isReseller: false, refCodeNum: 1 };
         let paymentSettings = { upiId: "Not Set", qrImage: null };
         let activeTransferUid = null;
+        
+        let selectedGameFilter = 'all';
+        let selectedDeviceFilter = 'all';
 
         const loader = document.getElementById('loader');
         const authScreen = document.getElementById('auth-screen');
@@ -680,7 +815,14 @@
         window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
         window.openModal = (id) => document.getElementById(id).classList.remove('hidden');
 
-        // 🔥 Auto-catch referral code from URL parameter & display banner
+        // Color Theme Switcher Function
+        window.setTheme = (colorHex, dimColor) => {
+            document.documentElement.style.setProperty('--neon-cyan', colorHex);
+            document.documentElement.style.setProperty('--neon-cyan-dim', dimColor);
+            showToast("Theme Updated Successfully!", "success");
+            closeModal('modal-theme');
+        };
+
         function checkReferralURL() {
             const urlParams = new URLSearchParams(window.location.search);
             const refNum = urlParams.get('ref');
@@ -807,7 +949,6 @@
             }
         });
 
-        // 🔥 Signup Logic with Dynamic Numeric ID
         document.getElementById('btn-signup').onclick = async () => {
             const email = document.getElementById('signup-email').value.trim();
             const pass = document.getElementById('signup-pass').value;
@@ -821,7 +962,6 @@
             
             try {
                 const cred = await createUserWithEmailAndPassword(auth, email, pass);
-                // Unique 5 to 6-digit numeric referral code generator
                 const assignedRefNum = Math.floor(100000 + Math.random() * 900000);
 
                 await set(ref(db, `users/${cred.user.uid}`), {
@@ -875,11 +1015,11 @@
                     userData = snapshot.val();
                     const bal = parseFloat(userData.balance || 0).toFixed(2);
                     document.getElementById('nav-balance').innerText = bal;
+                    document.getElementById('reseller-display-bal').innerText = bal;
                     document.getElementById('prof-bal').innerText = bal;
                     document.getElementById('prof-email').innerText = userData.email;
                     document.getElementById('prof-role').innerText = userData.isReseller ? 'Reseller (Discounted Price)' : 'Normal User';
                     
-                    // Fixed: Automatic random generation if refCodeNum is missing
                     let myRefNum = userData.refCodeNum;
                     if (!myRefNum) {
                         myRefNum = Math.floor(100000 + Math.random() * 900000);
@@ -1025,6 +1165,50 @@
             });
         }
 
+        window.setGameFilter = (game, el) => {
+            selectedGameFilter = game;
+            document.querySelectorAll('#game-filter-buttons .filter-btn-chip').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            filterPanelsDisplay();
+        };
+
+        window.setDeviceFilter = (device, el) => {
+            selectedDeviceFilter = device;
+            document.querySelectorAll('#device-filter-buttons .filter-btn-chip').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            filterPanelsDisplay();
+        };
+
+        function filterPanelsDisplay() {
+            const term = document.getElementById('search-input').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.panel-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const searchData = card.getAttribute('data-search') || '';
+                const gameCategory = card.getAttribute('data-game') || 'all';
+                const deviceCategory = card.getAttribute('data-device') || 'all';
+
+                const matchesSearch = searchData.includes(term);
+                const matchesGame = (selectedGameFilter === 'all') || gameCategory.toLowerCase().includes(selectedGameFilter);
+                const matchesDevice = (selectedDeviceFilter === 'all') || deviceCategory.toLowerCase().includes(selectedDeviceFilter);
+
+                if (matchesSearch && matchesGame && matchesDevice) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            const emptyState = document.getElementById('search-empty');
+            if(visibleCount === 0 && cards.length > 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+        }
+
         function fetchPanels() {
             onValue(ref(db, 'panels'), (snapshot) => {
                 const container = document.getElementById('panels-container');
@@ -1053,16 +1237,27 @@
                     let plansHtml = '';
                     if(p.plans && Object.keys(p.plans).length > 0) {
                         const sortedPlans = Object.entries(p.plans).sort((a,b) => a[1].price - b[1].price);
-                        plansHtml = `<select class="plan-select" id="plan-${panelId}">`;
+                        plansHtml = `<div class="plans-container-stack">`;
                         sortedPlans.forEach(([planKey, planData]) => {
                             let labelText = planData.label || `${planData.duration || 1} ${planData.unit || 'Days'}`;
                             let activePrice = userData.isReseller ? (planData.resellerPrice !== undefined ? planData.resellerPrice : planData.price) : planData.price;
                             let stockCount = planData.stock ? Object.keys(planData.stock).length : 0;
                             let stockLabel = stockCount > 0 ? `[Stock: ${stockCount}]` : `[OUT OF STOCK]`;
                             
-                            plansHtml += `<option value='${JSON.stringify({key: planKey, label: labelText, price: activePrice, stock: stockCount})}'>${labelText} - ₹${activePrice} ${stockLabel}</option>`;
+                            plansHtml += `
+                                <div class="plan-row-item">
+                                    <div class="plan-info-text">
+                                        <span class="p-label">${labelText}</span>
+                                        <span class="p-price">₹${activePrice} <small style="font-size:10px; color:${stockCount>0?'var(--success)':'var(--error)'};">${stockLabel}</small></span>
+                                    </div>
+                                    <div class="plan-action-box">
+                                        <input type="number" class="plan-qty-input" id="qty-${panelId}-${planKey}" value="1" min="1" max="10">
+                                        <button class="btn-plan-buy" onclick="handleDirectBuy('${panelId}', '${p.name.replace(/'/g, "\\'")}', '${p.link || ''}', '${planKey}', '${labelText}', ${activePrice}, ${stockCount})">BUY</button>
+                                    </div>
+                                </div>
+                            `;
                         });
-                        plansHtml += `</select>`;
+                        plansHtml += `</div>`;
                     } else {
                         plansHtml = `<p style="color:var(--error); font-size:13px; text-align:center; margin-top:auto; margin-bottom:15px; font-weight:600;">Pricing unavailable.</p>`;
                     }
@@ -1084,6 +1279,8 @@
                     const card = document.createElement('div');
                     card.className = 'panel-card';
                     card.setAttribute('data-search', `${p.name.toLowerCase()} ${descText.toLowerCase()}`);
+                    card.setAttribute('data-game', p.gameCategory || 'all');
+                    card.setAttribute('data-device', p.deviceCategory || 'all');
                     
                     card.innerHTML = `
                         ${videoRenderHtml}
@@ -1099,15 +1296,12 @@
                                 ${feedbackBtn}
                             </div>
                             ${plansHtml}
-                            <button class="btn btn-purchase" onclick="handlePurchaseClick('${panelId}', '${p.name.replace(/'/g, "\\'")}', '${p.link || ''}')" style="width: 100%; height: 50px;">
-                                <i class="fas fa-shopping-cart"></i> PURCHASE KEY
-                            </button>
                         </div>
                     `;
                     container.appendChild(card);
                 });
                 
-                document.getElementById('search-input').dispatchEvent(new Event('input'));
+                filterPanelsDisplay();
             });
         }
 
@@ -1121,27 +1315,7 @@
 
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
-                const term = e.target.value.toLowerCase().trim();
-                const cards = document.querySelectorAll('.panel-card');
-                let visibleCount = 0;
-
-                cards.forEach(card => {
-                    const searchData = card.getAttribute('data-search');
-                    if(searchData.includes(term)) {
-                        card.style.display = 'flex';
-                        visibleCount++;
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-
-                const emptyState = document.getElementById('search-empty');
-                if(visibleCount === 0 && cards.length > 0) {
-                    emptyState.classList.remove('hidden');
-                } else {
-                    emptyState.classList.add('hidden');
-                }
-
+                filterPanelsDisplay();
                 loader.style.display = 'none';
                 icon.style.display = 'block';
             }, 300);
@@ -1150,28 +1324,33 @@
         window.currentCheckout = {};
         window.appliedCoupon = null;
 
-        window.handlePurchaseClick = (panelId, panelName, link) => {
-            const selectEl = document.getElementById(`plan-${panelId}`);
-            if(!selectEl) return showToast('No plans available', 'error');
-            
-            const planData = JSON.parse(selectEl.value);
-            if(planData.stock <= 0) return showToast('Sorry! This plan is OUT OF STOCK.', 'error');
+        window.handleDirectBuy = (panelId, panelName, link, planKey, planLabel, unitPrice, stockCount) => {
+            const qtyInput = document.getElementById(`qty-${panelId}-${planKey}`);
+            const qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
+
+            if(stockCount <= 0) return showToast('Sorry! This plan is OUT OF STOCK.', 'error');
+            if(qty > stockCount) return showToast(`Only ${stockCount} keys available in stock!`, 'warning');
+
+            let totalPrice = unitPrice * qty;
 
             window.currentCheckout = {
                 panelId: panelId,
                 panelName: panelName,
                 link: link,
-                planKey: planData.key,
-                label: planData.label,
-                originalPrice: parseFloat(planData.price),
-                finalPrice: parseFloat(planData.price)
+                planKey: planKey,
+                label: planLabel,
+                quantity: qty,
+                unitPrice: unitPrice,
+                originalPrice: totalPrice,
+                finalPrice: totalPrice
             };
             window.appliedCoupon = null;
 
             document.getElementById('chk-panel-name').innerText = panelName;
-            document.getElementById('chk-plan-label').innerText = planData.label;
-            document.getElementById('chk-orig-price').innerText = planData.price.toFixed(2);
-            document.getElementById('chk-final-price').innerText = planData.price.toFixed(2);
+            document.getElementById('chk-plan-label').innerText = planLabel;
+            document.getElementById('chk-qty').innerText = qty;
+            document.getElementById('chk-orig-price').innerText = totalPrice.toFixed(2);
+            document.getElementById('chk-final-price').innerText = totalPrice.toFixed(2);
             
             document.getElementById('chk-coupon-input').value = '';
             document.getElementById('chk-strike-price').classList.add('hidden');
@@ -1227,17 +1406,24 @@
                 const stockRef = ref(db, `panels/${checkout.panelId}/plans/${checkout.planKey}/stock`);
                 const stockSnap = await get(stockRef);
 
-                if(!stockSnap.exists() || Object.keys(stockSnap.val()).length === 0) {
+                if(!stockSnap.exists() || Object.keys(stockSnap.val()).length < checkout.quantity) {
                     hideLoader();
                     btn.disabled = false;
                     btn.innerHTML = `CONFIRM PAY`;
-                    return showToast("Out of stock!", "error");
+                    return showToast("Not enough stock available!", "error");
                 }
 
                 const stockObj = stockSnap.val();
                 const stockKeys = Object.keys(stockObj);
-                const firstKeyId = stockKeys[0];
-                const realKeyFromStock = stockObj[firstKeyId].key;
+                
+                let purchasedKeys = [];
+                let keysToRemove = {};
+                
+                for(let i = 0; i < checkout.quantity; i++) {
+                    let kId = stockKeys[i];
+                    purchasedKeys.push(stockObj[kId].key);
+                    keysToRemove[kId] = null;
+                }
 
                 const userBalRef = ref(db, `users/${currentUser.uid}/balance`);
                 const transactionResult = await runTransaction(userBalRef, (currentBalance) => {
@@ -1247,20 +1433,23 @@
                 });
 
                 if (transactionResult.committed) {
-                    await set(ref(db, `panels/${checkout.panelId}/plans/${checkout.planKey}/stock/${firstKeyId}`), null);
+                    await update(stockRef, keysToRemove);
 
                     const nowISO = new Date().toISOString();
                     const userPurchasesRef = ref(db, `purchases/${currentUser.uid}`);
                     const newPurchaseRef = push(userPurchasesRef);
                     
+                    const primaryKey = purchasedKeys.join('\n');
+
                     const newPurchaseData = {
                         id: newPurchaseRef.key,
                         panelId: checkout.panelId,
                         panelName: checkout.panelName,
                         plan: checkout.planKey,
                         label: checkout.label,
+                        quantity: checkout.quantity,
                         price: priceToPay,
-                        key: realKeyFromStock,
+                        key: primaryKey,
                         link: checkout.link || "",
                         timestamp: nowISO,
                         date: nowISO
@@ -1270,11 +1459,11 @@
 
                     if (window.appliedCoupon) {
                         const couponRef = ref(db, `coupons/${window.appliedCoupon.code}/used`);
-                        await runTransaction(couponRef, (usedCount) => (usedCount || 0) + 1);
+                        await runTransaction(couponRef, (usedCount) => (usedCount || 0) + checkout.quantity);
                     }
                     
                     closeModal('modal-checkout');
-                    document.getElementById('modal-key-display').innerText = realKeyFromStock;
+                    document.getElementById('modal-key-display').innerText = primaryKey;
                     
                     const accessBtn = document.getElementById('modal-btn-access');
                     accessBtn.onclick = () => window.open(checkout.link || "https://t.me/", '_blank');
@@ -1404,13 +1593,13 @@
                             <div class="hist-header">
                                 <div class="hist-details">
                                     <h4>${p.panelName}</h4>
-                                    <p><i class="fas fa-tag"></i> ${displayLabel} | ${dateStr}</p>
+                                    <p><i class="fas fa-tag"></i> ${displayLabel} | Qty: ${p.quantity || 1} | ${dateStr}</p>
                                 </div>
                                 <div class="hist-price">₹${parseFloat(p.price || 0).toFixed(2)}</div>
                             </div>
                             
                             <div class="key-box">
-                                <span class="key-text" id="hist-key-${p.id}">${p.key}</span>
+                                <span class="key-text" id="hist-key-${p.id}" style="white-space: pre-line;">${p.key}</span>
                                 <button class="btn btn-primary" style="padding: 0 12px; height: 35px; width: auto; font-size:11px;" onclick="copyToClipboard('hist-key-${p.id}', 'License Key')"><i class="fas fa-copy"></i> COPY</button>
                             </div>
                             
