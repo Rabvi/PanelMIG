@@ -92,6 +92,7 @@
         }
         .input-group input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan-dim), inset 0 2px 4px rgba(0,0,0,0.3); }
 
+        /* SECURITY VALIDATION / INITIALIZING LOADER (WHITE SPINNER) */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(5, 5, 8, 0.95); z-index: 9999;
@@ -99,11 +100,39 @@
             backdrop-filter: blur(10px);
         }
         .spinner {
-            width: 50px; height: 50px; border: 4px solid rgba(0, 240, 255, 0.1);
-            border-top-color: var(--neon-cyan); border-radius: 50%; animation: spin 1s linear infinite;
-            box-shadow: 0 0 20px var(--neon-cyan-dim);
+            width: 60px; height: 60px; border: 4px solid rgba(255, 255, 255, 0.15);
+            border-top-color: #ffffff; border-radius: 50%; animation: spin 1s linear infinite;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
         }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* SECURITY VALIDATION MODAL (RED BAR & ACCENT) */
+        #security-validation-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 8, 0.95); z-index: 99998;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+            backdrop-filter: blur(10px); padding: 20px;
+        }
+        .sec-card {
+            background: var(--card-bg); border: 1px solid var(--error); border-radius: 20px;
+            padding: 35px 25px; width: 100%; max-width: 400px; text-align: center;
+            box-shadow: 0 0 40px rgba(255, 42, 95, 0.3);
+        }
+        .sec-title { color: var(--error); font-size: 18px; font-weight: 800; letter-spacing: 2px; margin-bottom: 25px; text-shadow: 0 0 10px rgba(255, 42, 95, 0.5); }
+        .sec-spinner {
+            width: 55px; height: 55px; border: 4px solid rgba(255, 42, 95, 0.2);
+            border-top-color: var(--error); border-radius: 50%; animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto; box-shadow: 0 0 15px rgba(255, 42, 95, 0.4);
+        }
+        .sec-text { color: var(--text-muted); font-size: 13px; font-weight: 600; letter-spacing: 1px; margin-bottom: 25px; }
+        .sec-progress-bar {
+            width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden; position: relative;
+        }
+        .sec-progress-fill {
+            position: absolute; top: 0; left: 0; height: 100%; width: 0%;
+            background: var(--error); box-shadow: 0 0 12px var(--error);
+            transition: width 0.3s ease;
+        }
 
         #toast-container { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px; }
         .toast {
@@ -427,11 +456,27 @@
 </style>
 </head>
 <body>
-<!-- LOADER -->
+<!-- INITIALIZING LOADER (WHITE SPINNER) -->
 <div id="loader">
 <div class="spinner"></div>
-<p style="margin-top: 20px; color: var(--neon-cyan); font-weight: 700; letter-spacing: 2px; text-shadow: 0 0 10px var(--neon-cyan-dim);">INITIALIZING...</p>
+<p style="margin-top: 20px; color: #ffffff; font-weight: 700; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,255,255,0.5);">INITIALIZING...</p>
 </div>
+
+<!-- SECURITY VALIDATION SCREEN (RED THEME) -->
+<div id="security-validation-screen" class="hidden">
+<div class="sec-card">
+<div style="margin-bottom: 15px;">
+<i class="fas fa-shield-alt" style="font-size: 45px; color: var(--error); filter: drop-shadow(0 0 10px rgba(255,42,95,0.6));"></i>
+</div>
+<div class="sec-title">SECURITY VALIDATION</div>
+<div class="sec-spinner"></div>
+<div class="sec-text" id="sec-status-text">Verifying browser...</div>
+<div class="sec-progress-bar">
+<div class="sec-progress-fill" id="sec-progress-fill"></div>
+</div>
+</div>
+</div>
+
 <!-- TOAST CONTAINER -->
 <div id="toast-container"></div>
 
@@ -833,11 +878,31 @@
         let selectedDeviceFilter = 'all';
 
         const loader = document.getElementById('loader');
+        const secValidationScreen = document.getElementById('security-validation-screen');
         const authScreen = document.getElementById('auth-screen');
         const mainApp = document.getElementById('main-app');
         
         window.showLoader = () => loader.classList.remove('hidden');
         window.hideLoader = () => loader.classList.add('hidden');
+
+        // Security Validation Simulation (Red theme progress bar)
+        window.showSecurityValidation = (callback) => {
+            secValidationScreen.classList.remove('hidden');
+            const fill = document.getElementById('sec-progress-fill');
+            const statusTxt = document.getElementById('sec-status-text');
+            fill.style.width = '0%';
+            
+            setTimeout(() => { statusTxt.innerText = "Verifying browser..."; fill.style.width = '35%'; }, 400);
+            setTimeout(() => { statusTxt.innerText = "Checking security tokens..."; fill.style.width = '75%'; }, 900);
+            setTimeout(() => { 
+                statusTxt.innerText = "Verification Complete!"; 
+                fill.style.width = '100%'; 
+            }, 1400);
+            setTimeout(() => {
+                secValidationScreen.classList.add('hidden');
+                if(callback) callback();
+            }, 1700);
+        };
         
         window.showToast = (msg, type = 'success') => {
             const container = document.getElementById('toast-container');
@@ -1025,40 +1090,42 @@
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const uRef = ref(db, `users/${user.uid}`);
-                const uSnap = await get(uRef);
-                
-                if(uSnap.exists() && uSnap.val().isBanned === true) {
-                    showToast("Your account has been banned by admin!", "error");
-                    signOut(auth);
-                    return;
-                }
+                showSecurityValidation(async () => {
+                    const uRef = ref(db, `users/${user.uid}`);
+                    const uSnap = await get(uRef);
+                    
+                    if(uSnap.exists() && uSnap.val().isBanned === true) {
+                        showToast("Your account has been banned by admin!", "error");
+                        signOut(auth);
+                        return;
+                    }
 
-                if (!uSnap.exists()) {
-                    const assignedRefNum = Math.floor(100000 + Math.random() * 900000);
-                    const refCodeInput = document.getElementById('signup-ref').value.trim();
-                    await set(uRef, {
-                        email: user.email, 
-                        balance: 0, 
-                        isReseller: false, 
-                        resellerTier: 'Normal',
-                        totalSpend: 0,
-                        affiliateEarnings: 0,
-                        refCodeNum: assignedRefNum,
-                        referredBy: refCodeInput || "",
-                        createdAt: new Date().toISOString()
-                    });
-                }
+                    if (!uSnap.exists()) {
+                        const assignedRefNum = Math.floor(100000 + Math.random() * 900000);
+                        const refCodeInput = document.getElementById('signup-ref').value.trim();
+                        await set(uRef, {
+                            email: user.email, 
+                            balance: 0, 
+                            isReseller: false, 
+                            resellerTier: 'Normal',
+                            totalSpend: 0,
+                            affiliateEarnings: 0,
+                            refCodeNum: assignedRefNum,
+                            referredBy: refCodeInput || "",
+                            createdAt: new Date().toISOString()
+                        });
+                    }
 
-                currentUser = user;
-                authScreen.classList.add('hidden');
-                mainApp.style.display = 'block';
-                logVisitorInfo(user);
-                initUserData();
-                fetchPaymentSettings();
-                initPromotions();
-                initGlobalHistoryListener();
-                navigate('home');
+                    currentUser = user;
+                    authScreen.classList.add('hidden');
+                    mainApp.style.display = 'block';
+                    logVisitorInfo(user);
+                    initUserData();
+                    fetchPaymentSettings();
+                    initPromotions();
+                    initGlobalHistoryListener();
+                    navigate('home');
+                });
             } else {
                 currentUser = null;
                 mainApp.style.display = 'none';
@@ -1067,7 +1134,6 @@
             }
         });
 
-        // Safe Fallback Auth Handler (Tries Popup first, falls back to Redirect)
         async function handleGoogleAuth() {
             showLoader();
             const provider = new GoogleAuthProvider();
