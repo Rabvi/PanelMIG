@@ -65,6 +65,13 @@
         .btn-primary { background: var(--neon-cyan); color: #000; font-weight: 800; }
         .btn-primary:hover:not(:disabled) { background: #fff; border-color: #fff; box-shadow: 0 0 20px var(--neon-cyan); }
         
+        .btn-google {
+            background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,255,255,0.15);
+            font-weight: 700; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 10px;
+            letter-spacing: 1px; border-radius: 12px; height: 50px; font-size: 13px;
+        }
+        .btn-google:hover:not(:disabled) { background: rgba(255,255,255,0.05); border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan-dim); }
+
         .btn-purchase {
             background: linear-gradient(90deg, var(--neon-purple), #0073ff);
             border: none; color: white; font-size: 14px; font-weight: 800;
@@ -447,6 +454,7 @@
 <input id="login-pass" placeholder="Password" type="password"/>
 </div>
 <button class="btn btn-primary" id="btn-login"><i class="fas fa-sign-in-alt"></i> Secure Login</button>
+<button class="btn btn-google" id="btn-google-login"><i class="fab fa-google" style="color:#ea4335;"></i> LOG IN WITH GOOGLE</button>
 <p class="auth-toggle">New user? <span id="go-to-signup">Create Account</span></p>
 <div class="contact-buttons">
 <a class="btn btn-outline btn-wa" href="#" id="auth-wa-link" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
@@ -467,6 +475,7 @@
 </div>
 <input id="signup-ref" type="hidden" value=""/>
 <button class="btn btn-primary" id="btn-signup"><i class="fas fa-user-plus"></i> Sign Up</button>
+<button class="btn btn-google" id="btn-google-signup"><i class="fab fa-google" style="color:#ea4335;"></i> LOG IN WITH GOOGLE</button>
 <p class="auth-toggle">Already registered? <span id="go-to-login">Login here</span></p>
 <div class="contact-buttons">
 <a class="btn btn-outline btn-wa" href="#" id="auth-wa-link-2" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
@@ -790,7 +799,7 @@
 <!-- FIREBASE & APPLICATION LOGIC -->
 <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } 
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } 
             from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getDatabase, ref, set, get, onValue, push, runTransaction, update } 
             from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -880,6 +889,13 @@
             }
         }
         checkReferralURL();
+
+        // Check Redirect Auth Result
+        getRedirectResult(auth).catch((error) => {
+            if(error && error.message) {
+                showToast(error.message, "error");
+            }
+        });
 
         // --- MAINTENANCE MODE LISTENER & DEVICE LOGGING ---
         function initMaintenanceListener() {
@@ -1016,12 +1032,29 @@
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Check if user is banned
-                const uSnap = await get(ref(db, `users/${user.uid}`));
+                const uRef = ref(db, `users/${user.uid}`);
+                const uSnap = await get(uRef);
+                
                 if(uSnap.exists() && uSnap.val().isBanned === true) {
                     showToast("Your account has been banned by admin!", "error");
                     signOut(auth);
                     return;
+                }
+
+                if (!uSnap.exists()) {
+                    const assignedRefNum = Math.floor(100000 + Math.random() * 900000);
+                    const refCodeInput = document.getElementById('signup-ref').value.trim();
+                    await set(uRef, {
+                        email: user.email, 
+                        balance: 0, 
+                        isReseller: false, 
+                        resellerTier: 'Normal',
+                        totalSpend: 0,
+                        affiliateEarnings: 0,
+                        refCodeNum: assignedRefNum,
+                        referredBy: refCodeInput || "",
+                        createdAt: new Date().toISOString()
+                    });
                 }
 
                 currentUser = user;
@@ -1040,6 +1073,21 @@
                 hideLoader();
             }
         });
+
+        // --- GOOGLE AUTHENTICATION VIA REDIRECT ---
+        async function handleGoogleAuth() {
+            showLoader();
+            try {
+                const provider = new GoogleAuthProvider();
+                await signInWithRedirect(auth, provider);
+            } catch (error) {
+                showToast(error.message, "error");
+                hideLoader();
+            }
+        }
+
+        document.getElementById('btn-google-login').onclick = handleGoogleAuth;
+        document.getElementById('btn-google-signup').onclick = handleGoogleAuth;
 
         document.getElementById('btn-signup').onclick = async () => {
             const email = document.getElementById('signup-email').value.trim();
@@ -1507,7 +1555,6 @@
             try {
                 let purchasedKeys = [];
 
-                // FETCH FROM EXTERNAL API DIRECTLY OR FALLBACK TO MANUAL STOCKS
                 const apiConfigSnap = await get(ref(db, `panels/${checkout.panelId}/api_config`));
                 if(apiConfigSnap.exists() && apiConfigSnap.val().apiKey && apiConfigSnap.val().url && checkout.productPid) {
                     const apiCfg = apiConfigSnap.val();
@@ -1546,7 +1593,6 @@
                         return showToast(apiErr.message || "Failed to fetch key from supplier API!", "error");
                     }
                 } else {
-                    // Fallback to manual stock keys
                     const stockRef = ref(db, `stocks/${checkout.panelId}/${checkout.planKey}`);
                     const stockSnap = await get(stockRef);
                     if(!stockSnap.exists()) {
@@ -1578,7 +1624,6 @@
                     }
                 }
 
-                // DEDUCT WALLET BALANCE UPON SUCCESSFUL KEY FULFILLMENT AND TRACK TOTAL SPEND
                 const userRef = ref(db, `users/${currentUser.uid}`);
                 const userSnap = await get(userRef);
                 let currentTotalSpend = userSnap.exists() ? (parseFloat(userSnap.val().totalSpend) || 0) : 0;
@@ -1588,7 +1633,6 @@
                     const newSpend = currentTotalSpend + priceToPay;
                     const newBal = currentBal - priceToPay;
 
-                    // Automatic Spend-Based Tier Upgrade Logic
                     let newTier = userData.resellerTier || 'Normal';
                     if (newSpend >= 10000) newTier = 'Global';
                     else if (newSpend >= 7000) newTier = 'Ace';
@@ -1637,7 +1681,7 @@
                     const accessBtn = document.getElementById('modal-btn-access');
                     accessBtn.onclick = () => window.open(checkout.link || "https://t.me/", '_blank');
                     
-                    openModal('modal-success');
+ openModal('modal-success');
                 } else {
                     showToast("Wallet Transaction failed. Insufficient funds.", "error");
                 }
@@ -1756,9 +1800,8 @@
                         const dateStr = formatFullDate(p.timestamp || p.date);
                         const displayLabel = p.label || 'Premium Access';
 
-                        // Key Expiry Counter & Renewal Reminder Simulation (Default validity 30 days or based on label)
                         let purchaseDate = new Date(p.timestamp || p.date);
-                        let expiryDate = new Date(purchaseDate.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30 days validity
+                        let expiryDate = new Date(purchaseDate.getTime() + (30 * 24 * 60 * 60 * 1000));
                         let diffTime = expiryDate - new Date();
                         let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                         let expiryBadge = diffDays > 0 ? `<span style="color:var(--success); font-size:11px; font-weight:700;"><i class="fas fa-clock"></i> Expires in ${diffDays} Days</span>` : `<span style="color:var(--error); font-size:11px; font-weight:700;"><i class="fas fa-exclamation-triangle"></i> Key Expired / Needs Renewal</span>`;
