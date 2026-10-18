@@ -234,7 +234,6 @@
             z-index: 10;
         }
         
-        /* VIDEO WRAPPER & TOP BADGES (SCREENSHOT 115875.jpg UI) */
         .video-wrapper { 
             position: relative; width: 100%; padding-bottom: 56.25%; background: #000; 
             border-bottom: 2px solid rgba(255,255,255,0.05); overflow: hidden;
@@ -270,7 +269,6 @@
         .panel-info { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
         .panel-title { font-size: 20px; font-weight: 800; margin-bottom: 15px; color: white; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px rgba(255,255,255,0.3); text-align: center; }
         
-        /* HORIZONTAL FEATURES BADGES (DABBEY WALA) */
         .features-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; justify-content: flex-start; }
         .feature-chip {
             background: rgba(0, 240, 255, 0.06); border: 1px solid var(--neon-cyan-dim);
@@ -278,7 +276,6 @@
             font-weight: 700; display: inline-flex; align-items: center; gap: 8px; letter-spacing: 0.5px;
             box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.05); transition: 0.3s;
         }
-        /* ALWAYS BRIGHT YELLOW LIGHTNING ICON */
         .feature-chip i.fa-bolt { 
             color: #ffb800 !important; 
             text-shadow: 0 0 8px rgba(255, 184, 0, 0.8); 
@@ -420,7 +417,7 @@
             .payment-settings-card { padding: 30px 15px; }
             .qr-image-container { width: 200px; height: 200px; }
         }
-    </style>
+</style>
 </head>
 <body>
 <!-- LOADER -->
@@ -430,6 +427,13 @@
 </div>
 <!-- TOAST CONTAINER -->
 <div id="toast-container"></div>
+
+<!-- MAINTENANCE OVERLAY SCREEN -->
+<div id="maintenance-screen" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(5,5,8,0.98); z-index:99999; display:flex; justify-content:center; align-items:center; flex-direction:column; text-align:center; padding:20px;">
+    <i class="fas fa-tools" style="font-size:60px; color:var(--warning); margin-bottom:20px; animation:spin 3s linear infinite;"></i>
+    <h1 style="color:white; font-size:26px; font-weight:800; margin-bottom:10px;">SYSTEM UNDER MAINTENANCE</h1>
+    <p style="color:var(--text-muted); font-size:14px; max-width:400px;">We are currently upgrading our servers for better performance. Please check back soon!</p>
+</div>
 
 <!-- AUTHENTICATION SCREEN -->
 <div id="auth-screen">
@@ -870,6 +874,42 @@
         }
         checkReferralURL();
 
+        // --- MAINTENANCE MODE LISTENER & DEVICE LOGGING ---
+        function initMaintenanceListener() {
+            onValue(ref(db, 'settings/maintenance'), (snap) => {
+                const isMaintained = snap.val() === true;
+                const mScreen = document.getElementById('maintenance-screen');
+                if (isMaintained) {
+                    mScreen.classList.remove('hidden');
+                } else {
+                    mScreen.classList.add('hidden');
+                }
+            });
+        }
+        initMaintenanceListener();
+
+        async function logVisitorInfo(userObj) {
+            if(!userObj) return;
+            try {
+                let ipRes = await fetch('https://api.ipify.org?format=json').then(r => r.json()).catch(() => ({ip: '127.0.0.1'}));
+                let ip = ipRes.ip || '127.0.0.1';
+                let ua = navigator.userAgent;
+                let device = /Mobile|Android|iP(hone|od|ad)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|webOS|Opera M(obi|ini))/i.test(navigator.userAgent) ? 'Mobile' : 'PC / Desktop';
+                
+                const logRef = ref(db, `user_logs/${userObj.uid}`);
+                await set(logRef, {
+                    uid: userObj.uid,
+                    email: userObj.email,
+                    ip: ip,
+                    device: `${device} (${ua.substring(0, 45)}...)`,
+                    location: 'India / Local',
+                    lastActive: new Date().toISOString()
+                });
+            } catch(e) {
+                console.error("Logging error", e);
+            }
+        }
+
         function formatFullDate(isoString) {
             if(!isoString) return 'N/A';
             const d = new Date(isoString);
@@ -967,11 +1007,20 @@
             });
         }
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
+                // Check if user is banned
+                const uSnap = await get(ref(db, `users/${user.uid}`));
+                if(uSnap.exists() && uSnap.val().isBanned === true) {
+                    showToast("Your account has been banned by admin!", "error");
+                    signOut(auth);
+                    return;
+                }
+
                 currentUser = user;
                 authScreen.classList.add('hidden');
                 mainApp.style.display = 'block';
+                logVisitorInfo(user);
                 initUserData();
                 fetchPaymentSettings();
                 initPromotions();
@@ -1004,6 +1053,7 @@
                     email: email, 
                     balance: 0, 
                     isReseller: false, 
+                    resellerTier: 'Normal',
                     refCodeNum: assignedRefNum,
                     referredBy: refCode || "",
                     createdAt: new Date().toISOString()
@@ -1049,12 +1099,20 @@
             onValue(ref(db, `users/${currentUser.uid}`), (snapshot) => {
                 if (snapshot.exists()) {
                     userData = snapshot.val();
+                    if(userData.isBanned === true) {
+                        showToast("Account is banned!", "error");
+                        signOut(auth);
+                        return;
+                    }
+
                     const bal = parseFloat(userData.balance || 0).toFixed(2);
                     document.getElementById('nav-balance').innerText = bal;
                     document.getElementById('reseller-display-bal').innerText = bal;
                     document.getElementById('prof-bal').innerText = bal;
                     document.getElementById('prof-email').innerText = userData.email;
-                    document.getElementById('prof-role').innerText = userData.isReseller ? 'Reseller (Discounted Price)' : 'Normal User';
+                    
+                    const userTier = userData.resellerTier || (userData.isReseller ? 'Gold' : 'Normal');
+                    document.getElementById('prof-role').innerText = userTier.toUpperCase() + (userTier !== 'Normal' ? ' RESELLER' : ' USER');
                     
                     let myRefNum = userData.refCodeNum;
                     if (!myRefNum) {
@@ -1069,7 +1127,7 @@
                         document.getElementById('prof-date').innerText = formatFullDate(userData.createdAt).split(',')[0];
                     }
 
-                    if (userData.isReseller) {
+                    if (userData.isReseller || userData.resellerTier && userData.resellerTier !== 'Normal') {
                         document.getElementById('reseller-management-box').classList.remove('hidden');
                         fetchReferredUsers(myRefNum);
                     } else {
@@ -1111,11 +1169,11 @@
                     card.innerHTML = `
                         <div>
                             <strong style="color:white; font-size:14px; display:block;">${u.email}</strong>
-                            <span style="font-size:11px; color:var(--text-muted);">Balance: ₹${parseFloat(u.balance || 0).toFixed(2)} | Role: <span style="color:var(--neon-cyan);">${isRes ? 'Reseller' : 'Normal User'}</span></span>
+                            <span style="font-size:11px; color:var(--text-muted);">Balance: ₹${parseFloat(u.balance || 0).toFixed(2)} | Tier: <span style="color:var(--neon-cyan);">${u.resellerTier || 'Normal'}</span></span>
                         </div>
                         <div style="display:flex; gap:8px;">
                             <button class="btn btn-outline" style="height:35px; padding:0 10px; font-size:11px;" onclick="toggleUserResellerRole('${u.uid}', ${!isRes})">
-                                ${isRes ? 'Remove Reseller' : 'Make Reseller'}
+                                ${isRes ? 'Make Normal' : 'Make Reseller'}
                             </button>
                             <button class="btn btn-primary" style="height:35px; padding:0 10px; font-size:11px;" onclick="openTransferModal('${u.uid}', '${u.email}')">
                                 Transfer ₹
@@ -1130,7 +1188,7 @@
         window.toggleUserResellerRole = async (targetUid, newStatus) => {
             showLoader();
             try {
-                await update(ref(db, `users/${targetUid}`), { isReseller: newStatus });
+                await update(ref(db, `users/${targetUid}`), { isReseller: newStatus, resellerTier: newStatus ? 'Gold' : 'Normal' });
                 showToast(newStatus ? "Granted Reseller Status!" : "Removed Reseller Status!");
             } catch (e) {
                 showToast("Error updating role", "error");
@@ -1263,7 +1321,6 @@
                     
                     let descText = p.description || '';
                     let featuresArr = descText.split(/\n|-/).filter(f => f.trim().length > 0);
-                    // DABBEY WALA DESIGN WITH YELLOW LIGHTNING
                     let featuresHtml = featuresArr.map(f => `<div class="feature-chip"><i class="fas fa-bolt"></i> ${f.trim()}</div>`).join('');
 
                     let updateLink = p.link ? `window.open('${p.link}', '_blank')` : "showToast('File link not available', 'warning')";
@@ -1277,19 +1334,17 @@
                         plansHtml = `<div class="plans-container-stack">`;
                         sortedPlans.forEach(([planKey, planData]) => {
                             let labelText = planData.label || `${planData.duration || 1} ${planData.unit || 'Days'}`;
-                            let activePrice = userData.isReseller ? (planData.resellerPrice !== undefined ? planData.resellerPrice : planData.price) : planData.price;
-                            let stockCount = planData.stock ? Object.keys(planData.stock).length : 0;
-                            let stockLabel = stockCount > 0 ? `[Stock: ${stockCount}]` : `[OUT OF STOCK]`;
+                            let activePrice = (userData.isReseller || (userData.resellerTier && userData.resellerTier !== 'Normal')) ? (planData.resellerPrice !== undefined ? planData.resellerPrice : planData.price) : planData.price;
                             
                             plansHtml += `
                                 <div class="plan-row-item">
                                     <div class="plan-info-text">
                                         <span class="p-label">${labelText}</span>
-                                        <span class="p-price">₹${activePrice} <small style="font-size:10px; color:${stockCount>0?'var(--success)':'var(--error)'};">${stockLabel}</small></span>
+                                        <span class="p-price">₹${activePrice}</span>
                                     </div>
                                     <div class="plan-action-box">
-                                        <input type="number" class="plan-qty-input" id="qty-${panelId}-${planKey}" value="1" min="1" max="10">
-                                        <button class="btn-plan-buy" onclick="handleDirectBuy('${panelId}', '${p.name.replace(/'/g, "\\'")}', '${p.link || ''}', '${planKey}', '${labelText}', ${activePrice}, ${stockCount})">BUY</button>
+                                        <input type="number" class="plan-qty-input" id="qty-${panelId}-${planKey}" value="1" min="1" max="100">
+                                        <button class="btn-plan-buy" onclick="handleDirectBuy('${panelId}', '${p.name.replace(/'/g, "\\'")}', '${p.link || ''}', '${planKey}', '${labelText}', ${activePrice}, '${planData.pid || ''}')">BUY</button>
                                     </div>
                                 </div>
                             `;
@@ -1303,14 +1358,9 @@
                     const wrapperId = `video-box-${panelId}`;
                     const thumbUrl = ytID ? `https://img.youtube.com/vi/${ytID}/hqdefault.jpg` : 'https://i.imgur.com/3Z50P0X.jpg';
                     
-                    // PROPER GAME & DEVICE FORMATTING WITH PLUS (+) SYMBOLS AS REQUESTED
                     let rawGame = (p.gameCategory || 'Free Fire').toUpperCase();
                     let rawDevice = (p.deviceCategory || 'Root + Nonroot').toUpperCase();
-                    if(rawDevice === 'ROOT_NONROOT' || rawDevice === 'ROOT NONROOT') rawDevice = 'ROOT + NONROOT';
-                    else if(rawDevice === 'ROOT_NONROOT_IOS_PC') rawDevice = 'ROOT + NONROOT + IOS IPHONE + PC';
-                    else if(rawDevice === 'IOS_IPHONE') rawDevice = 'IOS + IPHONE';
 
-                    // VIDEO OVERLAY WITH TOP LEFT (DEVICE) AND TOP RIGHT (GAME) BADGES
                     let videoRenderHtml = `
                         <div class="video-wrapper" id="${wrapperId}">
                             <img src="${thumbUrl}" class="thumb-img" alt="Panel Preview">
@@ -1366,12 +1416,9 @@
         window.currentCheckout = {};
         window.appliedCoupon = null;
 
-        window.handleDirectBuy = (panelId, panelName, link, planKey, planLabel, unitPrice, stockCount) => {
+        window.handleDirectBuy = (panelId, panelName, link, planKey, planLabel, unitPrice, productPid) => {
             const qtyInput = document.getElementById(`qty-${panelId}-${planKey}`);
             const qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
-
-            if(stockCount <= 0) return showToast('Sorry! This plan is OUT OF STOCK.', 'error');
-            if(qty > stockCount) return showToast(`Only ${stockCount} keys available in stock!`, 'warning');
 
             let totalPrice = unitPrice * qty;
 
@@ -1384,7 +1431,8 @@
                 quantity: qty,
                 unitPrice: unitPrice,
                 originalPrice: totalPrice,
-                finalPrice: totalPrice
+                finalPrice: totalPrice,
+                productPid: productPid
             };
             window.appliedCoupon = null;
 
@@ -1445,28 +1493,80 @@
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Processing...`;
 
             try {
-                const stockRef = ref(db, `panels/${checkout.panelId}/plans/${checkout.planKey}/stock`);
-                const stockSnap = await get(stockRef);
-
-                if(!stockSnap.exists() || Object.keys(stockSnap.val()).length < checkout.quantity) {
-                    hideLoader();
-                    btn.disabled = false;
-                    btn.innerHTML = `CONFIRM PAY`;
-                    return showToast("Not enough stock available!", "error");
-                }
-
-                const stockObj = stockSnap.val();
-                const stockKeys = Object.keys(stockObj);
-                
                 let purchasedKeys = [];
-                let keysToRemove = {};
-                
-                for(let i = 0; i < checkout.quantity; i++) {
-                    let kId = stockKeys[i];
-                    purchasedKeys.push(stockObj[kId].key);
-                    keysToRemove[kId] = null;
+
+                // FETCH FROM EXTERNAL API DIRECTLY OR FALLBACK TO MANUAL STOCKS
+                const apiConfigSnap = await get(ref(db, `panels/${checkout.panelId}/api_config`));
+                if(apiConfigSnap.exists() && apiConfigSnap.val().apiKey && apiConfigSnap.val().url && checkout.productPid) {
+                    const apiCfg = apiConfigSnap.val();
+                    try {
+                        const formData = new URLSearchParams();
+                        formData.append('api_key', apiCfg.apiKey);
+                        formData.append('action', 'buy');
+                        formData.append('product_id', checkout.productPid);
+                        formData.append('duration', checkout.label);
+                        formData.append('quantity', checkout.quantity);
+
+                        const apiResp = await fetch(apiCfg.url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'x-master-key': apiCfg.masterKey || ''
+                            },
+                            body: formData.toString()
+                        });
+
+                        const apiResult = await apiResp.json();
+                        if(apiResult && (apiResult.status === true || apiResult.success === true || apiResult.keys || apiResult.key)) {
+                            if(Array.isArray(apiResult.keys)) {
+                                purchasedKeys = apiResult.keys;
+                            } else if(apiResult.key) {
+                                purchasedKeys = [apiResult.key];
+                            }
+                        } else {
+                            throw new Error(apiResult.message || "Supplier API purchase failed");
+                        }
+                    } catch (apiErr) {
+                        console.error("External API Buy Error:", apiErr);
+                        hideLoader();
+                        btn.disabled = false;
+                        btn.innerHTML = `CONFIRM PAY`;
+                        return showToast(apiErr.message || "Failed to fetch key from supplier API!", "error");
+                    }
+                } else {
+                    // Fallback to manual stock keys
+                    const stockRef = ref(db, `stocks/${checkout.panelId}/${checkout.planKey}`);
+                    const stockSnap = await get(stockRef);
+                    if(!stockSnap.exists()) {
+                        hideLoader();
+                        btn.disabled = false;
+                        btn.innerHTML = `CONFIRM PAY`;
+                        return showToast("Stock currently out of stock for this plan!", "error");
+                    }
+
+                    let availableKeys = [];
+                    stockSnap.forEach(child => {
+                        const sData = child.val();
+                        if(sData.status === 'available') {
+                            availableKeys.push({ id: child.key, ...sData });
+                        }
+                    });
+
+                    if(availableKeys.length < checkout.quantity) {
+                        hideLoader();
+                        btn.disabled = false;
+                        btn.innerHTML = `CONFIRM PAY`;
+                        return showToast(`Not enough stock available! Only ${availableKeys.length} left.`, "error");
+                    }
+
+                    for(let i = 0; i < checkout.quantity; i++) {
+                        let selectedStock = availableKeys[i];
+                        purchasedKeys.push(selectedStock.key);
+                        await update(ref(db, `stocks/${checkout.panelId}/${checkout.planKey}/${selectedStock.id}`), { status: 'sold', soldTo: currentUser.email });
+                    }
                 }
 
+                // DEDUCT WALLET BALANCE UPON SUCCESSFUL KEY FULFILLMENT
                 const userBalRef = ref(db, `users/${currentUser.uid}/balance`);
                 const transactionResult = await runTransaction(userBalRef, (currentBalance) => {
                     if (currentBalance === null) return 0;
@@ -1475,8 +1575,6 @@
                 });
 
                 if (transactionResult.committed) {
-                    await update(stockRef, keysToRemove);
-
                     const nowISO = new Date().toISOString();
                     const userPurchasesRef = ref(db, `purchases/${currentUser.uid}`);
                     const newPurchaseRef = push(userPurchasesRef);
@@ -1512,7 +1610,7 @@
                     
                     openModal('modal-success');
                 } else {
-                    showToast("Transaction failed.", "error");
+                    showToast("Wallet Transaction failed.", "error");
                 }
             } catch (error) {
                 console.error("Purchase error:", error);
@@ -1629,6 +1727,13 @@
                         const dateStr = formatFullDate(p.timestamp || p.date);
                         const displayLabel = p.label || 'Premium Access';
 
+                        // Key Expiry Counter & Renewal Reminder Simulation (Default validity 30 days or based on label)
+                        let purchaseDate = new Date(p.timestamp || p.date);
+                        let expiryDate = new Date(purchaseDate.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30 days validity
+                        let diffTime = expiryDate - new Date();
+                        let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        let expiryBadge = diffDays > 0 ? `<span style="color:var(--success); font-size:11px; font-weight:700;"><i class="fas fa-clock"></i> Expires in ${diffDays} Days</span>` : `<span style="color:var(--error); font-size:11px; font-weight:700;"><i class="fas fa-exclamation-triangle"></i> Key Expired / Needs Renewal</span>`;
+
                         const card = document.createElement('div');
                         card.className = 'history-card glass';
                         card.innerHTML = `
@@ -1636,6 +1741,7 @@
                                 <div class="hist-details">
                                     <h4>${p.panelName}</h4>
                                     <p><i class="fas fa-tag"></i> ${displayLabel} | Qty: ${p.quantity || 1} | ${dateStr}</p>
+                                    <div style="margin-top:6px;">${expiryBadge}</div>
                                 </div>
                                 <div class="hist-price">₹${parseFloat(p.price || 0).toFixed(2)}</div>
                             </div>
