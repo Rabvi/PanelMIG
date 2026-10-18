@@ -509,8 +509,11 @@
 </div>
 
 <div class="glass" style="padding: 16px 20px; border-radius: 14px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--neon-cyan-dim);">
-    <span style="font-weight: 700; color: white; font-size: 13px; letter-spacing: 1px;">RESELLER BALANCE:</span>
-    <span style="font-weight: 800; color: var(--neon-cyan); font-size: 20px; text-shadow: 0 0 10px var(--neon-cyan-dim);">₹<span id="reseller-display-bal">0.00</span></span>
+    <span style="font-weight: 700; color: white; font-size: 13px; letter-spacing: 1px;">MY TIER & BALANCE:</span>
+    <div style="text-align: right;">
+        <span id="user-tier-badge" style="background: rgba(0, 240, 255, 0.2); color: var(--neon-cyan); padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 12px; margin-right: 8px;">NORMAL</span>
+        <span style="font-weight: 800; color: var(--neon-cyan); font-size: 20px; text-shadow: 0 0 10px var(--neon-cyan-dim);">₹<span id="reseller-display-bal">0.00</span></span>
+    </div>
 </div>
 
 <div class="dashboard-section-title">&gt;&gt; SEARCH PRODUCT</div>
@@ -572,7 +575,7 @@
         <i class="fas fa-handshake" style="font-size: 45px; color: var(--neon-cyan); margin-bottom: 15px;"></i>
         <h3 style="color:white; margin-bottom:10px;">Grow Your Business With Us</h3>
         <p style="color:var(--text-muted); font-size:13px; margin-bottom:20px;">
-            Share your referral link below! Users joining with your link will see normal prices until you make them a Reseller.
+            Share your referral link below! Users joining with your link will give you tier-based affiliate commissions when they deposit money!
         </p>
         <div class="input-group">
             <input id="reseller-link-input" readonly type="text" value="Loading..."/>
@@ -628,7 +631,7 @@
 <strong id="prof-email">...</strong>
 </div>
 <div class="profile-stat">
-<span style="color: var(--text-muted);"><i class="fas fa-user-shield"></i> Account Role</span>
+<span style="color: var(--text-muted);"><i class="fas fa-user-shield"></i> Tier / Role</span>
 <strong id="prof-role" style="color: var(--neon-cyan);">Normal User</strong>
 </div>
 <div class="profile-stat">
@@ -642,6 +645,10 @@
 <div class="profile-stat">
 <span style="color: var(--text-muted);"><i class="fas fa-chart-line"></i> Total Spent</span>
 <strong style="color: var(--neon-cyan); font-size: 16px;">₹ <span id="prof-spent">0.00</span></strong>
+</div>
+<div class="profile-stat">
+<span style="color: var(--text-muted);"><i class="fas fa-hand-holding-usd"></i> Affiliate Earnings</span>
+<strong style="color: var(--warning); font-size: 16px;">₹ <span id="prof-affiliate">0.00</span></strong>
 </div>
 <div class="profile-stat">
 <span style="color: var(--text-muted);"><i class="fas fa-calendar-alt"></i> Joined Date</span>
@@ -809,7 +816,7 @@
         }
 
         let currentUser = null;
-        let userData = { balance: 0, isReseller: false, refCodeNum: 1 };
+        let userData = { balance: 0, isReseller: false, resellerTier: 'Normal', refCodeNum: 1, totalSpend: 0, affiliateEarnings: 0 };
         let paymentSettings = { upiId: "Not Set", qrImage: null };
         let activeTransferUid = null;
         
@@ -1054,6 +1061,8 @@
                     balance: 0, 
                     isReseller: false, 
                     resellerTier: 'Normal',
+                    totalSpend: 0,
+                    affiliateEarnings: 0,
                     refCodeNum: assignedRefNum,
                     referredBy: refCode || "",
                     createdAt: new Date().toISOString()
@@ -1110,8 +1119,10 @@
                     document.getElementById('reseller-display-bal').innerText = bal;
                     document.getElementById('prof-bal').innerText = bal;
                     document.getElementById('prof-email').innerText = userData.email;
+                    document.getElementById('prof-affiliate').innerText = parseFloat(userData.affiliateEarnings || 0).toFixed(2);
                     
                     const userTier = userData.resellerTier || (userData.isReseller ? 'Gold' : 'Normal');
+                    document.getElementById('user-tier-badge').innerText = userTier.toUpperCase();
                     document.getElementById('prof-role').innerText = userTier.toUpperCase() + (userTier !== 'Normal' ? ' RESELLER' : ' USER');
                     
                     let myRefNum = userData.refCodeNum;
@@ -1127,7 +1138,7 @@
                         document.getElementById('prof-date').innerText = formatFullDate(userData.createdAt).split(',')[0];
                     }
 
-                    if (userData.isReseller || userData.resellerTier && userData.resellerTier !== 'Normal') {
+                    if (userData.isReseller || (userData.resellerTier && userData.resellerTier !== 'Normal')) {
                         document.getElementById('reseller-management-box').classList.remove('hidden');
                         fetchReferredUsers(myRefNum);
                     } else {
@@ -1163,7 +1174,7 @@
                 }
 
                 matches.forEach(u => {
-                    const isRes = u.isReseller === true;
+                    const isRes = u.isReseller === true || (u.resellerTier && u.resellerTier !== 'Normal');
                     const card = document.createElement('div');
                     card.className = 'user-ref-card';
                     card.innerHTML = `
@@ -1188,8 +1199,8 @@
         window.toggleUserResellerRole = async (targetUid, newStatus) => {
             showLoader();
             try {
-                await update(ref(db, `users/${targetUid}`), { isReseller: newStatus, resellerTier: newStatus ? 'Gold' : 'Normal' });
-                showToast(newStatus ? "Granted Reseller Status!" : "Removed Reseller Status!");
+                await update(ref(db, `users/${targetUid}`), { isReseller: newStatus, resellerTier: newStatus ? 'Silver' : 'Normal' });
+                showToast(newStatus ? "Granted Reseller Status (Silver)!" : "Changed Status to Normal User!");
             } catch (e) {
                 showToast("Error updating role", "error");
             } finally {
@@ -1334,7 +1345,8 @@
                         plansHtml = `<div class="plans-container-stack">`;
                         sortedPlans.forEach(([planKey, planData]) => {
                             let labelText = planData.label || `${planData.duration || 1} ${planData.unit || 'Days'}`;
-                            let activePrice = (userData.isReseller || (userData.resellerTier && userData.resellerTier !== 'Normal')) ? (planData.resellerPrice !== undefined ? planData.resellerPrice : planData.price) : planData.price;
+                            let isResellerRole = userData.isReseller || (userData.resellerTier && userData.resellerTier !== 'Normal');
+                            let activePrice = isResellerRole ? (planData.resellerPrice !== undefined ? planData.resellerPrice : planData.price) : planData.price;
                             
                             plansHtml += `
                                 <div class="plan-row-item">
@@ -1566,15 +1578,32 @@
                     }
                 }
 
-                // DEDUCT WALLET BALANCE UPON SUCCESSFUL KEY FULFILLMENT
-                const userBalRef = ref(db, `users/${currentUser.uid}/balance`);
-                const transactionResult = await runTransaction(userBalRef, (currentBalance) => {
-                    if (currentBalance === null) return 0;
-                    if (currentBalance >= priceToPay) return currentBalance - priceToPay; 
-                    return undefined;
-                });
+                // DEDUCT WALLET BALANCE UPON SUCCESSFUL KEY FULFILLMENT AND TRACK TOTAL SPEND
+                const userRef = ref(db, `users/${currentUser.uid}`);
+                const userSnap = await get(userRef);
+                let currentTotalSpend = userSnap.exists() ? (parseFloat(userSnap.val().totalSpend) || 0) : 0;
+                let currentBal = userSnap.exists() ? (parseFloat(userSnap.val().balance) || 0) : 0;
 
-                if (transactionResult.committed) {
+                if (currentBal >= priceToPay) {
+                    const newSpend = currentTotalSpend + priceToPay;
+                    const newBal = currentBal - priceToPay;
+
+                    // Automatic Spend-Based Tier Upgrade Logic
+                    let newTier = userData.resellerTier || 'Normal';
+                    if (newSpend >= 10000) newTier = 'Global';
+                    else if (newSpend >= 7000) newTier = 'Ace';
+                    else if (newSpend >= 5000) newTier = 'Diamond';
+                    else if (newSpend >= 3000) newTier = 'Platinum';
+                    else if (newSpend >= 2000) newTier = 'Gold';
+                    else if (newSpend >= 1000) newTier = 'Silver';
+
+                    await update(userRef, {
+                        balance: newBal,
+                        totalSpend: newSpend,
+                        resellerTier: newTier,
+                        isReseller: newTier !== 'Normal'
+                    });
+
                     const nowISO = new Date().toISOString();
                     const userPurchasesRef = ref(db, `purchases/${currentUser.uid}`);
                     const newPurchaseRef = push(userPurchasesRef);
@@ -1610,7 +1639,7 @@
                     
                     openModal('modal-success');
                 } else {
-                    showToast("Wallet Transaction failed.", "error");
+                    showToast("Wallet Transaction failed. Insufficient funds.", "error");
                 }
             } catch (error) {
                 console.error("Purchase error:", error);
