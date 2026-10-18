@@ -799,7 +799,7 @@
 <!-- FIREBASE & APPLICATION LOGIC -->
 <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } 
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } 
             from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getDatabase, ref, set, get, onValue, push, runTransaction, update } 
             from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -889,13 +889,6 @@
             }
         }
         checkReferralURL();
-
-        // Check Redirect Auth Result
-        getRedirectResult(auth).catch((error) => {
-            if(error && error.message) {
-                showToast(error.message, "error");
-            }
-        });
 
         // --- MAINTENANCE MODE LISTENER & DEVICE LOGGING ---
         function initMaintenanceListener() {
@@ -1074,15 +1067,26 @@
             }
         });
 
-        // --- GOOGLE AUTHENTICATION VIA REDIRECT ---
+        // Safe Fallback Auth Handler (Tries Popup first, falls back to Redirect)
         async function handleGoogleAuth() {
             showLoader();
+            const provider = new GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: 'select_account' });
             try {
-                const provider = new GoogleAuthProvider();
-                await signInWithRedirect(auth, provider);
+                await signInWithPopup(auth, provider);
+                showToast("Google Sign-In Successful!");
             } catch (error) {
-                showToast(error.message, "error");
-                hideLoader();
+                if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+                    try {
+                        await signInWithRedirect(auth, provider);
+                    } catch (err) {
+                        showToast(err.message, "error");
+                        hideLoader();
+                    }
+                } else {
+                    showToast(error.message, "error");
+                    hideLoader();
+                }
             }
         }
 
@@ -1681,7 +1685,7 @@
                     const accessBtn = document.getElementById('modal-btn-access');
                     accessBtn.onclick = () => window.open(checkout.link || "https://t.me/", '_blank');
                     
- openModal('modal-success');
+                    openModal('modal-success');
                 } else {
                     showToast("Wallet Transaction failed. Insufficient funds.", "error");
                 }
