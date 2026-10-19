@@ -1684,9 +1684,11 @@
                         formData.append('duration', checkout.label);
                         formData.append('quantity', checkout.quantity);
 
-                        const apiResp = await fetch(apiCfg.url, {
+                        // CORS Bypass via Proxy
+                        const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(apiCfg.url);
+
+                        const apiResp = await fetch(proxyUrl, {
                             method: 'POST',
-                            mode: 'cors',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded',
                                 'x-master-key': apiCfg.masterKey || ''
@@ -1694,22 +1696,31 @@
                             body: formData.toString()
                         });
 
-                        const apiResult = await apiResp.json();
-                        if(apiResult && (apiResult.status === true || apiResult.success === true || apiResult.keys || apiResult.key)) {
+                        const apiText = await apiResp.text();
+                        let apiResult;
+                        try {
+                            apiResult = JSON.parse(apiText);
+                        } catch(e) {
+                            throw new Error("Invalid API Response from supplier server");
+                        }
+
+                        if(apiResult && (apiResult.status === true || apiResult.success === true || apiResult.status === 'success' || apiResult.keys || apiResult.key)) {
                             if(Array.isArray(apiResult.keys)) {
                                 purchasedKeys = apiResult.keys;
                             } else if(apiResult.key) {
                                 purchasedKeys = [apiResult.key];
+                            } else if(apiResult.data && apiResult.data.key) {
+                                purchasedKeys = [apiResult.data.key];
                             }
                         } else {
-                            throw new Error(apiResult.message || "Supplier API purchase failed");
+                            throw new Error(apiResult.message || apiResult.error || "Supplier API purchase failed");
                         }
                     } catch (apiErr) {
                         console.error("External API Buy Error:", apiErr);
                         hideLoader();
                         btn.disabled = false;
                         btn.innerHTML = `CONFIRM PAY`;
-                        return showToast("API Failed to fetch: " + (apiErr.message || "Check CORS or URL"), "error");
+                        return showToast("API Error: " + (apiErr.message || "Failed to fetch from supplier"), "error");
                     }
                 } else {
                     const stockRef = ref(db, `stocks/${checkout.panelId}/${checkout.planKey}`);
@@ -1937,7 +1948,7 @@
                                 <div class="hist-price">₹${parseFloat(p.price || 0).toFixed(2)}</div>
                             </div>
                             
-                             yeh<div class="key-box">
+                            <div class="key-box">
                                 <span class="key-text" id="hist-key-${p.id}" style="white-space: pre-line;">${p.key}</span>
                                 <button class="btn btn-primary" style="padding: 0 12px; height: 35px; width: auto; font-size:11px;" onclick="copyToClipboard('hist-key-${p.id}', 'License Key')"><i class="fas fa-copy"></i> COPY</button>
                             </div>
