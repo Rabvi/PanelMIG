@@ -939,15 +939,15 @@
             fill.style.width = '0%';
             statusTxt.innerText = customText || "Verifying browser...";
             
-            setTimeout(() => { fill.style.width = '40%'; }, 300);
-            setTimeout(() => { fill.style.width = '80%'; }, 800);
+            setTimeout(() => { fill.style.width = '40%'; }, 200);
+            setTimeout(() => { fill.style.width = '80%'; }, 500);
             setTimeout(() => { 
                 fill.style.width = '100%'; 
-            }, 1200);
+            }, 800);
             setTimeout(() => {
                 secValidationScreen.classList.add('hidden');
                 if(callback) callback();
-            }, 1500);
+            }, 1000);
         };
         
         window.showToast = (msg, type = 'success') => {
@@ -1657,6 +1657,7 @@
             showToast("Coupon applied successfully!", "success");
         };
 
+        // DIRECT OLD-STYLE API FETCH WITHOUT PROXY
         window.executePurchase = async () => {
             const checkout = window.currentCheckout;
             const priceToPay = checkout.finalPrice;
@@ -1678,17 +1679,16 @@
                     const apiCfg = apiConfigSnap.val();
                     try {
                         const formData = new URLSearchParams();
-                        formData.append('api_key', apiCfg.apiKey);
+                        formData.append('api_key', apiCfg.apiKey.trim());
                         formData.append('action', 'buy');
                         formData.append('product_id', checkout.productPid);
                         formData.append('duration', checkout.label);
                         formData.append('quantity', checkout.quantity);
 
-                        // Fixed CORS Proxy using allorigins to bypass proxy restrictions
-                        const targetApiUrl = apiCfg.url.trim();
-                        const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(targetApiUrl + '?' + formData.toString());
+                        // Direct API call without proxy (Old Working Code Style)
+                        const targetApiUrl = apiCfg.url.trim() + '?' + formData.toString();
 
-                        const apiResp = await fetch(proxyUrl, {
+                        const apiResp = await fetch(targetApiUrl, {
                             method: 'GET',
                             headers: {
                                 'x-master-key': apiCfg.masterKey ? apiCfg.masterKey.trim() : ''
