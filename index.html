@@ -92,7 +92,7 @@
         }
         .input-group input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan-dim), inset 0 2px 4px rgba(0,0,0,0.3); }
 
-        /* SECURITY VALIDATION / INITIALIZING LOADER (WHITE SPINNER) */
+        /* INITIALIZING LOADER (WHITE SPINNER) */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(5, 5, 8, 0.95); z-index: 9999;
@@ -106,7 +106,7 @@
         }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* SECURITY VALIDATION MODAL (RED BAR & ACCENT) */
+        /* SECURITY VALIDATION MODAL (RED THEME) */
         #security-validation-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(5, 5, 8, 0.95); z-index: 99998;
@@ -885,23 +885,23 @@
         window.showLoader = () => loader.classList.remove('hidden');
         window.hideLoader = () => loader.classList.add('hidden');
 
-        // Security Validation Simulation (Red theme progress bar)
-        window.showSecurityValidation = (callback) => {
+        // Security Validation Simulation (Red theme progress bar for Login & Logout)
+        window.showSecurityValidation = (customText, callback) => {
             secValidationScreen.classList.remove('hidden');
             const fill = document.getElementById('sec-progress-fill');
             const statusTxt = document.getElementById('sec-status-text');
             fill.style.width = '0%';
+            statusTxt.innerText = customText || "Verifying browser...";
             
-            setTimeout(() => { statusTxt.innerText = "Verifying browser..."; fill.style.width = '35%'; }, 400);
-            setTimeout(() => { statusTxt.innerText = "Checking security tokens..."; fill.style.width = '75%'; }, 900);
+            setTimeout(() => { fill.style.width = '40%'; }, 300);
+            setTimeout(() => { fill.style.width = '80%'; }, 800);
             setTimeout(() => { 
-                statusTxt.innerText = "Verification Complete!"; 
                 fill.style.width = '100%'; 
-            }, 1400);
+            }, 1200);
             setTimeout(() => {
                 secValidationScreen.classList.add('hidden');
                 if(callback) callback();
-            }, 1700);
+            }, 1500);
         };
         
         window.showToast = (msg, type = 'success') => {
@@ -1090,7 +1090,7 @@
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                showSecurityValidation(async () => {
+                showSecurityValidation("Verifying browser...", async () => {
                     const uRef = ref(db, `users/${user.uid}`);
                     const uSnap = await get(uRef);
                     
@@ -1217,9 +1217,14 @@
         };
 
         document.getElementById('btn-logout').onclick = async () => {
-            showLoader(); 
-            try { await signOut(auth); document.getElementById('dropdown-menu').classList.remove('active'); }
-            catch(e) { console.error(e); }
+            document.getElementById('dropdown-menu').classList.remove('active');
+            showSecurityValidation("Logging out safely...", async () => {
+                try { 
+                    await signOut(auth); 
+                } catch(e) { 
+                    console.error(e); 
+                }
+            });
         };
 
         function initUserData() {
@@ -1886,7 +1891,7 @@
                                     <div style="margin-top:6px;">${expiryBadge}</div>
                                 </div>
                                 <div class="hist-price">₹${parseFloat(p.price || 0).toFixed(2)}</div>
-                            </div>
+                        </div>
                             
                             <div class="key-box">
                                 <span class="key-text" id="hist-key-${p.id}" style="white-space: pre-line;">${p.key}</span>
