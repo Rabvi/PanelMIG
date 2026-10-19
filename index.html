@@ -92,21 +92,32 @@
         }
         .input-group input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan-dim), inset 0 2px 4px rgba(0,0,0,0.3); }
 
-        /* INITIALIZING LOADER (WHITE SPINNER) */
+        /* INITIALIZING AUDIO EQUALIZER LOADER (FIRST SCREENSHOT STYLE)[span_4](start_span)[span_4](end_span) */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(5, 5, 8, 0.95); z-index: 9999;
             display: flex; justify-content: center; align-items: center; flex-direction: column;
             backdrop-filter: blur(10px);
         }
-        .spinner {
-            width: 60px; height: 60px; border: 4px solid rgba(255, 255, 255, 0.15);
-            border-top-color: #ffffff; border-radius: 50%; animation: spin 1s linear infinite;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        .equalizer-spinner {
+            display: flex; align-items: center; gap: 6px; height: 40px;
         }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .eq-bar {
+            width: 6px; background: var(--neon-cyan); border-radius: 4px;
+            box-shadow: 0 0 10px var(--neon-cyan-dim);
+            animation: bounceBar 0.8s ease-in-out infinite alternate;
+        }
+        .eq-bar:nth-child(1) { height: 15px; animation-delay: 0.1s; }
+        .eq-bar:nth-child(2) { height: 28px; animation-delay: 0.3s; }
+        .eq-bar:nth-child(3) { height: 40px; animation-delay: 0.2s; }
+        .eq-bar:nth-child(4) { height: 25px; animation-delay: 0.4s; }
+        .eq-bar:nth-child(5) { height: 18px; animation-delay: 0.2s; }
+        @keyframes bounceBar {
+            0% { transform: scaleY(0.4); opacity: 0.5; }
+            100% { transform: scaleY(1.2); opacity: 1; box-shadow: 0 0 15px var(--neon-cyan); }
+        }
 
-        /* SECURITY VALIDATION MODAL (RED THEME) */
+        /* SECURITY VALIDATION MODAL (LOGOUT / VERIFYING BROWSER - RED THEME)[span_5](start_span)[span_5](end_span) */
         #security-validation-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(5, 5, 8, 0.95); z-index: 99998;
@@ -124,6 +135,7 @@
             border-top-color: var(--error); border-radius: 50%; animation: spin 1s linear infinite;
             margin: 0 auto 20px auto; box-shadow: 0 0 15px rgba(255, 42, 95, 0.4);
         }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
         .sec-text { color: var(--text-muted); font-size: 13px; font-weight: 600; letter-spacing: 1px; margin-bottom: 25px; }
         .sec-progress-bar {
             width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden; position: relative;
@@ -456,13 +468,19 @@
 </style>
 </head>
 <body>
-<!-- INITIALIZING LOADER (WHITE SPINNER) -->
+<!-- INITIALIZING EQUALIZER LOADER (FIRST SCREENSHOT STYLE)[span_6](start_span)[span_6](end_span) -->
 <div id="loader">
-<div class="spinner"></div>
-<p style="margin-top: 20px; color: #ffffff; font-weight: 700; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,255,255,0.5);">INITIALIZING...</p>
+<div class="equalizer-spinner">
+    <div class="eq-bar"></div>
+    <div class="eq-bar"></div>
+    <div class="eq-bar"></div>
+    <div class="eq-bar"></div>
+    <div class="eq-bar"></div>
+</div>
+<p style="margin-top: 20px; color: var(--neon-cyan); font-weight: 700; letter-spacing: 2px; text-shadow: 0 0 10px var(--neon-cyan-dim);">INITIALIZING...</p>
 </div>
 
-<!-- SECURITY VALIDATION SCREEN (RED THEME) -->
+<!-- SECURITY VALIDATION SCREEN (LOGOUT - RED THEME)[span_7](start_span)[span_7](end_span) -->
 <div id="security-validation-screen" class="hidden">
 <div class="sec-card">
 <div style="margin-bottom: 15px;">
@@ -885,7 +903,7 @@
         window.showLoader = () => loader.classList.remove('hidden');
         window.hideLoader = () => loader.classList.add('hidden');
 
-        // Security Validation Simulation (Red theme progress bar for Login & Logout)
+        // Security Validation Simulation (Red theme progress bar for Logout)[span_8](start_span)[span_8](end_span)
         window.showSecurityValidation = (customText, callback) => {
             secValidationScreen.classList.remove('hidden');
             const fill = document.getElementById('sec-progress-fill');
@@ -1090,42 +1108,40 @@
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                showSecurityValidation("Verifying browser...", async () => {
-                    const uRef = ref(db, `users/${user.uid}`);
-                    const uSnap = await get(uRef);
-                    
-                    if(uSnap.exists() && uSnap.val().isBanned === true) {
-                        showToast("Your account has been banned by admin!", "error");
-                        signOut(auth);
-                        return;
-                    }
+                const uRef = ref(db, `users/${user.uid}`);
+                const uSnap = await get(uRef);
+                
+                if(uSnap.exists() && uSnap.val().isBanned === true) {
+                    showToast("Your account has been banned by admin!", "error");
+                    signOut(auth);
+                    return;
+                }
 
-                    if (!uSnap.exists()) {
-                        const assignedRefNum = Math.floor(100000 + Math.random() * 900000);
-                        const refCodeInput = document.getElementById('signup-ref').value.trim();
-                        await set(uRef, {
-                            email: user.email, 
-                            balance: 0, 
-                            isReseller: false, 
-                            resellerTier: 'Normal',
-                            totalSpend: 0,
-                            affiliateEarnings: 0,
-                            refCodeNum: assignedRefNum,
-                            referredBy: refCodeInput || "",
-                            createdAt: new Date().toISOString()
-                        });
-                    }
+                if (!uSnap.exists()) {
+                    const assignedRefNum = Math.floor(100000 + Math.random() * 900000);
+                    const refCodeInput = document.getElementById('signup-ref').value.trim();
+                    await set(uRef, {
+                        email: user.email, 
+                        balance: 0, 
+                        isReseller: false, 
+                        resellerTier: 'Normal',
+                        totalSpend: 0,
+                        affiliateEarnings: 0,
+                        refCodeNum: assignedRefNum,
+                        referredBy: refCodeInput || "",
+                        createdAt: new Date().toISOString()
+                    });
+                }
 
-                    currentUser = user;
-                    authScreen.classList.add('hidden');
-                    mainApp.style.display = 'block';
-                    logVisitorInfo(user);
-                    initUserData();
-                    fetchPaymentSettings();
-                    initPromotions();
-                    initGlobalHistoryListener();
-                    navigate('home');
-                });
+                currentUser = user;
+                authScreen.classList.add('hidden');
+                mainApp.style.display = 'block';
+                logVisitorInfo(user);
+                initUserData();
+                fetchPaymentSettings();
+                initPromotions();
+                initGlobalHistoryListener();
+                navigate('home');
             } else {
                 currentUser = null;
                 mainApp.style.display = 'none';
@@ -1891,7 +1907,7 @@
                                     <div style="margin-top:6px;">${expiryBadge}</div>
                                 </div>
                                 <div class="hist-price">₹${parseFloat(p.price || 0).toFixed(2)}</div>
-                        </div>
+                            </div>
                             
                             <div class="key-box">
                                 <span class="key-text" id="hist-key-${p.id}" style="white-space: pre-line;">${p.key}</span>
