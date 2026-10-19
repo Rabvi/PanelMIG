@@ -1684,16 +1684,15 @@
                         formData.append('duration', checkout.label);
                         formData.append('quantity', checkout.quantity);
 
-                        // CORS Bypass via Proxy
-                        const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(apiCfg.url);
+                        // Fixed CORS Proxy using allorigins to bypass proxy restrictions
+                        const targetApiUrl = apiCfg.url.trim();
+                        const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(targetApiUrl + '?' + formData.toString());
 
                         const apiResp = await fetch(proxyUrl, {
-                            method: 'POST',
+                            method: 'GET',
                             headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                                'x-master-key': apiCfg.masterKey || ''
-                            },
-                            body: formData.toString()
+                                'x-master-key': apiCfg.masterKey ? apiCfg.masterKey.trim() : ''
+                            }
                         });
 
                         const apiText = await apiResp.text();
