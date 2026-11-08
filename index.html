@@ -86,14 +86,14 @@
         .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; filter: grayscale(1); }
 
         .input-group { margin-bottom: 18px; width: 100%; position: relative; }
-        .input-group input {
+        .input-group input, .input-group textarea, .input-group select {
             width: 100%; max-width: 100%; padding: 0 18px; height: 50px; background: rgba(0,0,0,0.5);
             border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white;
             outline: none; transition: 0.3s; font-size: 14px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
         }
-        .input-group input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan-dim), inset 0 2px 4px rgba(0,0,0,0.3); }
+        .input-group textarea { height: 100px; padding: 12px 18px; resize: vertical; }
+        .input-group input:focus, .input-group textarea:focus, .input-group select:focus { border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan-dim), inset 0 2px 4px rgba(0,0,0,0.3); }
 
-        /* MARQUEE NOTICE TICKER BAR */
         .notice-marquee-bar {
             background: linear-gradient(90deg, rgba(188, 19, 254, 0.25), rgba(0, 240, 255, 0.25));
             border: 1px solid var(--neon-purple); border-radius: 12px; padding: 10px 15px;
@@ -103,7 +103,13 @@
         .notice-marquee-bar i { color: var(--neon-cyan); font-size: 18px; animation: pulseBorder 1.5s infinite; }
         .notice-marquee-text { width: 100%; overflow: hidden; white-space: nowrap; color: #fff; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; }
 
-        /* EQUALIZER LOADER */
+        .live-ticker-banner {
+            background: rgba(0, 255, 102, 0.08); border: 1px solid rgba(0, 255, 102, 0.3);
+            border-radius: 12px; padding: 10px 15px; margin-bottom: 20px;
+            display: flex; align-items: center; gap: 12px; font-size: 13px;
+        }
+        .live-ticker-banner i { color: var(--success); font-size: 16px; animation: pulseBorder 1s infinite; }
+
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(5, 5, 8, 0.95); z-index: 9999;
@@ -128,7 +134,6 @@
             100% { transform: scaleY(1.2); opacity: 1; box-shadow: 0 0 15px var(--neon-cyan); }
         }
 
-        /* SECURITY VALIDATION SCREEN */
         #security-validation-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(5, 5, 8, 0.95); z-index: 99998;
@@ -220,17 +225,18 @@
         .menu-btn:hover { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
 
         .dropdown {
-            position: absolute; top: 85px; right: 25px; width: 230px;
+            position: absolute; top: 85px; right: 25px; width: 245px;
             border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
             transform-origin: top right; transform: scale(0.9); opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 15px 40px rgba(0,0,0,0.9); background: var(--card-bg);
+            max-height: 80vh; overflow-y: auto; scrollbar-width: thin;
         }
         .dropdown.active { transform: scale(1); opacity: 1; visibility: visible; }
         .dropdown-item {
-            padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
-            cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 500; transition: 0.3s;
+            padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 500; transition: 0.3s;
         }
-        .dropdown-item:hover { background: rgba(0, 240, 255, 0.1); color: var(--neon-cyan); padding-left: 25px; }
+        .dropdown-item:hover { background: rgba(0, 240, 255, 0.1); color: var(--neon-cyan); padding-left: 22px; }
 
         .page-content { padding: 100px 20px 80px 20px; max-width: 1200px; margin: 0 auto; min-height: 100vh; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -335,11 +341,7 @@
             font-weight: 700; display: inline-flex; align-items: center; gap: 8px; letter-spacing: 0.5px;
             box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.05); transition: 0.3s;
         }
-        .feature-chip i.fa-bolt { 
-            color: #ffb800 !important; 
-            text-shadow: 0 0 8px rgba(255, 184, 0, 0.8); 
-            font-size: 13px; 
-        }
+        .feature-chip i.fa-bolt { color: #ffb800 !important; text-shadow: 0 0 8px rgba(255, 184, 0, 0.8); font-size: 13px; }
 
         .btn-grid { display: flex; gap: 10px; margin-bottom: 20px; }
         .btn-outline { 
@@ -456,7 +458,35 @@
             transition: 0.3s; text-decoration: none; border: 2px solid rgba(255,255,255,0.2);
         }
         .telegram-btn:hover { transform: scale(1.1) translateY(-5px); box-shadow: 0 15px 30px rgba(0,136,204,0.7); border-color: white; }
-        
+
+        /* PROFESSIONAL SPIN WHEEL CONTAINER STYLES */
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 20px auto;
+        }
+        #spin-canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.4);
+            border: 4px solid var(--neon-cyan);
+        }
+        .wheel-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-top: 24px solid var(--neon-pro);
+            z-index: 10;
+            filter: drop-shadow(0 0 8px var(--neon-pro));
+        }
+
         @media (max-width: 480px) {
             .auth-card { padding: 30px 20px; }
             .navbar { padding: 0 12px; height: 70px; }
@@ -475,6 +505,7 @@
             .checkout-actions .btn { width: 100%; }
             .payment-settings-card { padding: 30px 15px; }
             .qr-image-container { width: 200px; height: 200px; }
+            .wheel-container { width: 260px; height: 260px; }
         }
 </style>
 </head>
@@ -580,24 +611,37 @@
 </div>
 <div class="dropdown glass" id="dropdown-menu">
 <div class="dropdown-item" onclick="navigate('home')"><i class="fas fa-th-large"></i> My Dashboard</div>
-<div class="dropdown-item" onclick="navigate('daily-checkin')"><i class="fas fa-calendar-check" style="color:var(--success);"></i> Daily Check-in Bonus</div>
-<div class="dropdown-item" onclick="navigate('notifications')"><i class="fas fa-bell" style="color:var(--neon-purple);"></i> Notifications</div>
+<div class="dropdown-item" onclick="navigate('profile')"><i class="fas fa-user-astronaut" style="color:var(--neon-cyan);"></i> My Profile</div>
 <div class="dropdown-item" onclick="navigate('add-money')"><i class="fas fa-plus-circle"></i> Add Funds</div>
 <div class="dropdown-item" onclick="navigate('history')"><i class="fas fa-key"></i> My Keys</div>
+<div class="dropdown-item" onclick="navigate('notifications')"><i class="fas fa-bell" style="color:var(--neon-purple);"></i> Notifications</div>
+<div class="dropdown-item" onclick="navigate('spin-wheel')"><i class="fas fa-dharmachakra" style="color:var(--warning);"></i> Lucky Spin Wheel (New)</div>
+<div class="dropdown-item" onclick="navigate('daily-checkin')"><i class="fas fa-calendar-check" style="color:var(--success);"></i> Daily Check-in Bonus</div>
+<div class="dropdown-item" onclick="navigate('coming-soon')"><i class="fas fa-clock" style="color:var(--neon-pro);"></i> Coming Soon Features</div>
 <div class="dropdown-item" onclick="navigate('reseller')"><i class="fas fa-users-cog" style="color:var(--neon-cyan);"></i> Reseller & Referral</div>
+<div class="dropdown-item" onclick="navigate('feedback')"><i class="fas fa-comments" style="color:var(--success);"></i> Feedback & Reviews</div>
+<div class="dropdown-item" onclick="navigate('support')"><i class="fas fa-headset" style="color:var(--warning);"></i> Support & Tickets</div>
 <div class="dropdown-item" onclick="navigate('resell-plans')"><i class="fas fa-crown" style="color:var(--neon-purple);"></i> Buy Reseller Plans</div>
-<div class="dropdown-item" onclick="navigate('profile')"><i class="fas fa-user-astronaut"></i> Profile</div>
+<div class="dropdown-item" onclick="navigate('donate')"><i class="fas fa-hand-holding-heart" style="color:var(--success);"></i> Donate & Support Us</div>
 <div class="dropdown-item" id="btn-logout" style="color: var(--error); border-top: 1px solid rgba(255,255,255,0.1);"><i class="fas fa-sign-out-alt"></i> Logout</div>
 </div>
 </nav>
 
 <!-- PAGE: HOME -->
 <div class="page-content" id="page-home">
-<!-- LIVE NOTICE MARQUEE TICKER BAR -->
 <div id="live-marquee-bar" class="notice-marquee-bar hidden">
     <i class="fas fa-bullhorn"></i>
     <div class="notice-marquee-text">
         <marquee id="live-marquee-content" behavior="scroll" direction="left" scrollamount="6">Welcome to FF.PANEL Store!</marquee>
+    </div>
+</div>
+
+<div class="live-ticker-banner glass">
+    <i class="fas fa-bolt"></i>
+    <div style="overflow:hidden; white-space:nowrap; width:100%;">
+        <marquee behavior="scroll" direction="left" scrollamount="5" id="live-purchase-ticker-text">
+            🔥 User rahul***@gmail.com just purchased Free Fire Panel (30 Days) | ⚡ User amit***@gmail.com added ₹500 to wallet | ⭐ New update files uploaded!
+        </marquee>
     </div>
 </div>
 
@@ -660,7 +704,28 @@
 <button class="btn btn-primary" onclick="document.getElementById('search-input').value=''; document.getElementById('search-input').dispatchEvent(new Event('input'));" style="margin-top: 20px; width: auto; height: 40px;">Clear Search</button>
 </div>
 
-<div style="padding:40px 20px;text-align:center;margin-top:50px;border-top:1px solid rgba(255,255,255,0.1);">
+<div style="margin-top: 50px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1);">
+    <div class="dashboard-section-title">&gt;&gt; CLIENT REVIEWS & TESTIMONIALS</div>
+    <div id="dynamic-client-reviews-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; margin-top: 15px;">
+        <div class="glass" style="padding: 20px;">
+            <div style="color: var(--warning); margin-bottom: 8px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            <p style="font-size: 13px; color: white; margin-bottom: 12px; font-style: italic;">"Fastest delivery ever! Got my panel key instantly after payment. Trusted admin."</p>
+            <span style="font-size: 11px; color: var(--neon-cyan); font-weight: 700;">- Rohit S. (Pro Reseller)</span>
+        </div>
+        <div class="glass" style="padding: 20px;">
+            <div style="color: var(--warning); margin-bottom: 8px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            <p style="font-size: 13px; color: white; margin-bottom: 12px; font-style: italic;">"Daily check-in and spin wheel features are awesome. Earned free wallet cash!"</p>
+            <span style="font-size: 11px; color: var(--neon-cyan); font-weight: 700;">- Vicky K. (Verified User)</span>
+        </div>
+        <div class="glass" style="padding: 20px;">
+            <div style="color: var(--warning); margin-bottom: 8px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            <p style="font-size: 13px; color: white; margin-bottom: 12px; font-style: italic;">"Best customer support. Solved my issue within 5 minutes via support ticket."</p>
+            <span style="font-size: 11px; color: var(--neon-cyan); font-weight: 700;">- Aman M. (Reseller)</span>
+        </div>
+    </div>
+</div>
+
+<div style="padding:40px 20px;text-align:center;margin-top:40px;border-top:1px solid rgba(255,255,255,0.1);">
 <h2 style="color:#ff3b3b;font-weight:800;margin-bottom:10px;">FF PANEL STORE</h2>
 <p style="color:#ccc;font-size:14px;margin-bottom:20px;">
     Best Trusted Online Free Fire Store to Buy 100% Geniune. All Tipe FF Panel, Guild Glory Bot & Free Fire Uid Likes.
@@ -688,12 +753,35 @@
     </div>
 </div>
 
-<!-- PAGE: NOTIFICATIONS (SYNCED LIVE WITH ADMIN PANEL) -->
+<!-- PROFESSIONAL LUCKY SPIN WHEEL PAGE -->
+<div class="page-content hidden" id="page-spin-wheel">
+    <div class="page-header"><h2 class="page-title">Lucky Spin <span>Wheel</span></h2></div>
+    
+    <div class="glass" style="padding: 35px 25px; max-width: 550px; margin: 0 auto; text-align: center; border: 1px solid var(--warning);">
+        <h3 style="color:white; margin-bottom:5px; font-size:22px;">Spin & Win Cash!</h3>
+        <p style="color:var(--text-muted); font-size:13px; margin-bottom:20px;">
+            Spin the professional wheel once every 24 hours to win free wallet balance up to <strong style="color:var(--warning);">₹5.00</strong>!
+        </p>
+
+        <!-- CANVAS WHEEL & POINTER -->
+        <div class="wheel-container">
+            <div class="wheel-pointer"></div>
+            <canvas id="spin-canvas" width="400" height="400"></canvas>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.5); border: 1px dashed var(--warning); border-radius: 14px; padding: 15px; margin-bottom: 20px;">
+            <div id="spin-result-display" style="font-size: 18px; font-weight: 800; color: var(--neon-cyan);">Ready to Spin!</div>
+        </div>
+
+        <button class="btn btn-primary" id="btn-spin-now" onclick="executeLuckySpin()" style="height: 52px; font-size: 15px;"><i class="fas fa-play-circle"></i> SPIN NOW</button>
+    </div>
+</div>
+
+<!-- PAGE: NOTIFICATIONS -->
 <div class="page-content hidden" id="page-notifications">
     <div class="page-header"><h2 class="page-title">System <span>Notifications</span></h2></div>
     
     <div style="max-width: 700px; margin: 0 auto;" id="notifications-container">
-        <!-- Live Synced Admin Announcement Box -->
         <div id="admin-notice-card" class="glass" style="padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--neon-purple); box-shadow: 0 0 20px rgba(188, 19, 254, 0.2);">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
                 <h4 style="color: white; font-size: 16px; font-weight: 700;"><i class="fas fa-bullhorn" style="color: var(--neon-purple);"></i> Official Announcement</h4>
@@ -704,13 +792,59 @@
             </p>
         </div>
 
-        <!-- System Welcome Info Box -->
         <div class="glass" style="padding: 20px; margin-bottom: 15px; border-left: 4px solid var(--neon-cyan);">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
                 <h4 style="color: white; font-size: 15px; font-weight: 700;"><i class="fas fa-shield-alt" style="color: var(--neon-cyan);"></i> Welcome to FF.PANEL PREMIUM!</h4>
                 <span style="font-size: 11px; color: var(--text-muted);">System Notice</span>
             </div>
             <p style="font-size: 13px; color: var(--text-muted);">All panel transactions and key deliveries are processed 100% instantly automatically.</p>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE: FEEDBACK & REVIEWS (DEDICATED) -->
+<div class="page-content hidden" id="page-feedback">
+    <div class="page-header"><h2 class="page-title">Client <span>Feedback</span></h2></div>
+    
+    <div class="glass" style="padding: 30px; max-width: 650px; margin: 0 auto 30px auto;">
+        <h3 style="color: white; font-size: 18px; margin-bottom: 15px; font-weight: 700;"><i class="fas fa-star" style="color: var(--warning);"></i> Submit Your Review</h3>
+        <div class="input-group">
+            <label style="display:block; font-size:12px; color:var(--text-muted); margin-bottom:5px; font-weight:600;">Your Experience / Feedback</label>
+            <textarea id="user-feedback-input" placeholder="Write how your experience was with our panels..."></textarea>
+        </div>
+        <button class="btn btn-purchase" onclick="submitUserFeedback()"><i class="fas fa-paper-plane"></i> Submit Feedback</button>
+    </div>
+
+    <div style="max-width: 650px; margin: 0 auto;">
+        <h3 style="color:white; font-size:18px; margin-bottom:15px; font-weight:700;"><i class="fas fa-comments" style="color:var(--neon-cyan);"></i> What Our Clients Say</h3>
+        <div id="dedicated-feedback-list">
+            <div class="glass" style="padding: 20px; margin-bottom: 12px;">
+                <div style="color: var(--warning); margin-bottom: 6px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p style="font-size: 13px; color: white; margin-bottom: 10px; font-style: italic;">"Fastest delivery ever! Got my panel key instantly after payment. Trusted admin."</p>
+                <span style="font-size: 11px; color: var(--neon-cyan); font-weight: 700;">- Rohit S. (Pro Reseller)</span>
+            </div>
+            <div class="glass" style="padding: 20px; margin-bottom: 12px;">
+                <div style="color: var(--warning); margin-bottom: 6px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p style="font-size: 13px; color: white; margin-bottom: 10px; font-style: italic;">"Daily check-in and spin wheel features are awesome. Earned free wallet cash!"</p>
+                <span style="font-size: 11px; color: var(--neon-cyan); font-weight: 700;">- Vicky K. (Verified User)</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE: COMING SOON FEATURES (DEDICATED) -->
+<div class="page-content hidden" id="page-coming-soon">
+    <div class="page-header"><h2 class="page-title">Coming Soon <span>Features</span></h2></div>
+    
+    <div class="glass" style="padding: 40px 25px; max-width: 650px; margin: 0 auto; text-align: center; border: 1px solid var(--neon-pro);">
+        <i class="fas fa-rocket" style="font-size: 60px; color: var(--neon-pro); margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(255,0,127,0.5)); animation: bounceBar 1.2s infinite alternate;"></i>
+        <h3 style="color: white; font-size: 24px; font-weight: 800; margin-bottom: 10px;">Exciting Updates On The Way!</h3>
+        <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 30px;">
+            Our developers are working hard behind the scenes to bring advanced anti-ban bypasses, automated tournaments, and instant key generators straight to your panel. Stay tuned!
+        </p>
+        <div style="background: rgba(0,0,0,0.5); border: 1px dashed rgba(255,255,255,0.15); border-radius: 14px; padding: 20px;">
+            <div style="font-size: 13px; color: var(--neon-cyan); font-weight: 700; margin-bottom: 5px;"><i class="fas fa-bell"></i> Expected Release</div>
+            <div style="font-size: 16px; color: white; font-weight: 800;">Q3 2026 - Major Update v4.0</div>
         </div>
     </div>
 </div>
@@ -752,7 +886,6 @@
         </p>
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-bottom: 20px;">
-            <!-- Reseller Box -->
             <div id="plan-box-reseller" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(0,240,255,0.3); border-radius: 14px; padding: 20px; text-align: center;">
                 <h4 style="color: var(--neon-cyan); font-size: 16px; font-weight: 800; margin-bottom: 5px;">RESELLER</h4>
                 <p style="color: var(--text-muted); font-size: 11px; margin-bottom: 15px;">Get Reseller Pricing on all panels ($3)</p>
@@ -760,7 +893,6 @@
                 <button class="btn btn-primary" onclick="buyResellerTier('Silver', 195, 'Reseller')">BUY RESELLER</button>
             </div>
             
-            <!-- Pro Reseller Box with 6 Months Validity & Timer Tag -->
             <div id="plan-box-pro-reseller" style="background: rgba(0,0,0,0.5); border: 1px solid var(--neon-pro); border-radius: 14px; padding: 20px; text-align: center; position: relative;">
                 <div style="position: absolute; top: -10px; right: 10px; background: var(--neon-pro); color: #fff; font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">6 Months Validity</div>
                 <h4 style="color: var(--neon-pro); font-size: 16px; font-weight: 800; margin-bottom: 5px;">PRO RESELLER</h4>
@@ -775,7 +907,6 @@
             <h4 style="color: white; font-size: 16px; font-weight: 700;">You have reached the highest tier!</h4>
             <p style="color: var(--text-muted); font-size: 12px; margin-top: 5px;">Your account is currently upgraded to <span id="current-active-tier-name" style="color: var(--neon-pro); font-weight: bold;">Pro Reseller</span> tier.</p>
             
-            <!-- LIVE TIMER JUST BELOW THE NOTICE MESSAGE -->
             <div id="pro-timer-banner" class="hidden" style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(0,255,102,0.3);">
                 <div style="font-size: 11px; font-weight: 700; color: var(--neon-cyan); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">
                     <i class="fas fa-clock"></i> Plan Validity Time Remaining
@@ -851,6 +982,75 @@
 <strong id="prof-date">...</strong>
 </div>
 </div>
+</div>
+
+<!-- PAGE: SUPPORT & TICKETS -->
+<div class="page-content hidden" id="page-support">
+    <div class="page-header"><h2 class="page-title">Support <span>& Tickets</span></h2></div>
+    
+    <div class="glass" style="padding: 30px; max-width: 650px; margin: 0 auto 30px auto;">
+        <h3 style="color: white; font-size: 18px; margin-bottom: 15px; font-weight: 700;"><i class="fas fa-headset" style="color: var(--warning);"></i> Create New Support Ticket</h3>
+        
+        <div class="input-group">
+            <label style="display:block; font-size:12px; color:var(--text-muted); margin-bottom:5px; font-weight:600;">Issue Category</label>
+            <select id="ticket-category" style="width:100%; height:48px; background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.12); border-radius:12px; color:white; padding:0 16px; outline:none;">
+                <option value="Key Issue">Key Delivery / Activation Issue</option>
+                <option value="Deposit Issue">Deposit / Wallet Balance Issue</option>
+                <option value="Reseller Issue">Reseller Upgrade & Commission</option>
+                <option value="Other">Other Query / Problem</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label style="display:block; font-size:12px; color:var(--text-muted); margin-bottom:5px; font-weight:600;">Title / Subject</label>
+            <input type="text" id="ticket-subject" placeholder="e.g. Key not received after payment"/>
+        </div>
+
+        <div class="input-group">
+            <label style="display:block; font-size:12px; color:var(--text-muted); margin-bottom:5px; font-weight:600;">Detailed Description / Problem</label>
+            <textarea id="ticket-message" placeholder="Explain your issue in detail so admin can solve it quickly..."></textarea>
+        </div>
+
+        <button class="btn btn-purchase" onclick="submitSupportTicket()"><i class="fas fa-paper-plane"></i> Submit Support Ticket</button>
+    </div>
+
+    <div style="max-width: 650px; margin: 0 auto;">
+        <h3 style="color:white; font-size:18px; margin-bottom:15px; font-weight:700;"><i class="fas fa-history" style="color:var(--neon-cyan);"></i> My Support Tickets History</h3>
+        <div id="user-tickets-container">
+            <p style="text-align:center; color:var(--text-muted); padding:20px;">Loading your tickets...</p>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE: DONATE & SUPPORT US -->
+<div class="page-content hidden" id="page-donate">
+    <div class="page-header"><h2 class="page-title" id="donate-page-heading">Donate & <span>Support Us ❤️</span></h2></div>
+    
+    <div class="glass" style="padding: 35px 25px; max-width: 650px; margin: 0 auto 30px auto; text-align: center;">
+        <div id="donate-poster-container" style="width: 100%; max-height: 280px; border-radius: 14px; overflow: hidden; margin-bottom: 20px; border: 1px solid var(--neon-cyan-dim);">
+            <img id="donate-poster-img" src="https://i.imgur.com/3Z50P0X.jpg" alt="Donate Poster" style="width:100%; height:100%; object-fit:cover;"/>
+        </div>
+        
+        <p id="donate-caption-text" style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 25px; font-weight: 500;">
+            Your generous contribution helps us keep server updates, tools, and developer support running 24/7. Thank you for supporting our community!
+        </p>
+
+        <div style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 25px; text-align: left;">
+            <h4 style="color: white; font-size: 16px; margin-bottom: 15px; font-weight: 700; text-align: center;"><i class="fas fa-hand-holding-heart" style="color:var(--success);"></i> Send Donation</h4>
+            
+            <div class="input-group">
+                <label>Donation Amount (₹)</label>
+                <input type="number" id="donate-amount-input" placeholder="Enter amount (e.g. 100)"/>
+            </div>
+
+            <div class="input-group">
+                <label>UTR / Transaction ID or Message (Optional)</label>
+                <input type="text" id="donate-utr-input" placeholder="UTR number or sweet message for admin"/>
+            </div>
+
+            <button class="btn btn-purchase" onclick="submitDonationRecord()" style="height: 50px;"><i class="fas fa-heart"></i> DONATE NOW</button>
+        </div>
+    </div>
 </div>
 
 <!-- PAGE: HISTORY (MY KEYS) -->
@@ -1037,9 +1237,7 @@
             
             setTimeout(() => { fill.style.width = '40%'; }, 300);
             setTimeout(() => { fill.style.width = '80%'; }, 800);
-            setTimeout(() => { 
-                fill.style.width = '100%'; 
-            }, 1200);
+            setTimeout(() => { fill.style.width = '100%'; }, 1200);
             setTimeout(() => {
                 secValidationScreen.classList.add('hidden');
                 if(callback) callback();
@@ -1079,6 +1277,178 @@
             closeModal('modal-theme');
         };
 
+        /* PROFESSIONAL CANVAS SPIN WHEEL LOGIC SYNCED WITH ADMIN */
+        let wheelSlices = [
+            { label: '₹0.50', color: '#00f0ff', value: 0.50 },
+            { label: '₹1.00', color: '#bc13fe', value: 1.00 },
+            { label: '₹2.00', color: '#ff007f', value: 2.00 },
+            { label: '₹3.00', color: '#ffb800', value: 3.00 },
+            { label: '₹5.00', color: '#00ff66', value: 5.00 },
+            { label: '₹0.20', color: '#ff2a5f', value: 0.20 }
+        ];
+
+        let currentAngle = 0;
+        let isSpinning = false;
+
+        function initSpinWheelSettings() {
+            onValue(ref(db, 'settings/pro_features'), (snap) => {
+                if(snap.exists()) {
+                    const d = snap.val();
+                    if(d.spinRewards) {
+                        let rewardsArr = d.spinRewards.split(',').map(r => parseFloat(r.trim())).filter(r => !isNaN(r) && r >= 0);
+                        if(rewardsArr.length > 0) {
+                            const colorsPalette = ['#00f0ff', '#bc13fe', '#ff007f', '#ffb800', '#00ff66', '#ff2a5f', '#33ccff', '#9933ff'];
+                            wheelSlices = rewardsArr.map((val, idx) => ({
+                                label: `₹${val.toFixed(2)}`,
+                                color: colorsPalette[idx % colorsPalette.length],
+                                value: val
+                            }));
+                            drawSpinWheel(currentAngle);
+                        }
+                    }
+                }
+            });
+        }
+        initSpinWheelSettings();
+
+        function drawSpinWheel(angle = 0) {
+            const canvas = document.getElementById('spin-canvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const center = canvas.width / 2;
+            const radius = center - 10;
+            const arc = (2 * Math.PI) / wheelSlices.length;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(center, center);
+            ctx.rotate(angle);
+
+            wheelSlices.forEach((slice, i) => {
+                const startAngle = i * arc;
+                const endAngle = (i + 1) * arc;
+
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, radius, startAngle, endAngle);
+                ctx.closePath();
+                ctx.fillStyle = slice.color;
+                ctx.fill();
+                ctx.strokeStyle = '#050508';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                ctx.save();
+                ctx.rotate(startAngle + arc / 2);
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 16px Poppins';
+                ctx.fillText(slice.label, radius - 25, 6);
+                ctx.restore();
+            });
+
+            ctx.restore();
+
+            // Center Knob
+            ctx.beginPath();
+            ctx.arc(center, center, 28, 0, 2 * Math.PI);
+            ctx.fillStyle = '#050508';
+            ctx.fill();
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#00f0ff';
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 11px Poppins';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('SPIN', center, center);
+        }
+        drawSpinWheel(0);
+
+        window.executeLuckySpin = async () => {
+            if(!currentUser || isSpinning) return;
+            showLoader();
+            try {
+                const userRef = ref(db, `users/${currentUser.uid}`);
+                const snap = await get(userRef);
+                if(!snap.exists()) { hideLoader(); return; }
+                const data = snap.val();
+
+                if(data.lastSpinTime) {
+                    const diffHours = (new Date().getTime() - new Date(data.lastSpinTime).getTime()) / (1000 * 60 * 60);
+                    if(diffHours < 24) {
+                        hideLoader();
+                        return showToast("You have already spun the wheel today! Come back in 24 hours.", "warning");
+                    }
+                }
+
+                hideLoader();
+                isSpinning = true;
+                document.getElementById('btn-spin-now').disabled = true;
+
+                const winningIndex = Math.floor(Math.random() * wheelSlices.length);
+                const arc = (2 * Math.PI) / wheelSlices.length;
+                
+                const targetSliceCenter = winningIndex * arc + arc / 2;
+                const extraSpins = 5 * 2 * Math.PI;
+                const finalAngle = extraSpins + (1.5 * Math.PI - targetSliceCenter);
+
+                let startTime = null;
+                const duration = 4000;
+
+                function animateWheel(timestamp) {
+                    if(!startTime) startTime = timestamp;
+                    let progress = timestamp - startTime;
+                    let easeProgress = Math.min(progress / duration, 1);
+                    let currentEase = 1 - Math.pow(1 - easeProgress, 3);
+
+                    let animatedAngle = currentAngle + (finalAngle - currentAngle) * currentEase;
+                    drawSpinWheel(animatedAngle);
+
+                    if(progress < duration) {
+                        requestAnimationFrame(animateWheel);
+                    } else {
+                        currentAngle = finalAngle % (2 * Math.PI);
+                        isSpinning = false;
+                        const wonItem = wheelSlices[winningIndex];
+
+                        finishSpinReward(wonItem.value);
+                    }
+                }
+
+                requestAnimationFrame(animateWheel);
+
+            } catch(e) {
+                hideLoader();
+                isSpinning = false;
+                showToast("Error executing spin", "error");
+            }
+        };
+
+        async function finishSpinReward(wonAmount) {
+            showLoader();
+            try {
+                const userRef = ref(db, `users/${currentUser.uid}`);
+                const snap = await get(userRef);
+                const data = snap.val();
+                const currentBal = parseFloat(data.balance || 0);
+
+                await update(userRef, {
+                    balance: currentBal + wonAmount,
+                    lastSpinTime: new Date().toISOString()
+                });
+
+                document.getElementById('spin-result-display').innerHTML = `🎉 Congratulations! You won ₹${wonAmount.toFixed(2)}`;
+                showToast(`Won ₹${wonAmount.toFixed(2)} from Spin Wheel!`, "success");
+            } catch(e) {
+                showToast("Error updating wallet balance", "error");
+            } finally {
+                hideLoader();
+                document.getElementById('btn-spin-now').disabled = false;
+            }
+        }
+
         function checkReferralURL() {
             const urlParams = new URLSearchParams(window.location.search);
             const refNum = urlParams.get('ref');
@@ -1110,7 +1480,6 @@
         }
         initMaintenanceListener();
 
-        /* --- REAL-TIME ADMIN NOTIFICATION & MARQUEE LISTENER --- */
         function initAdminNoticeListener() {
             onValue(ref(db, 'settings/notice'), (snap) => {
                 const noticeVal = snap.val();
@@ -1119,11 +1488,8 @@
                 const adminNoticeText = document.getElementById('admin-notice-text');
                 
                 if (noticeVal && String(noticeVal).trim() !== "") {
-                    // Update Home Page Marquee Notice Ticker
                     if (marqueeText) marqueeText.innerText = noticeVal;
                     if (marqueeBar) marqueeBar.classList.remove('hidden');
-
-                    // Update System Notifications Page Content
                     if (adminNoticeText) adminNoticeText.innerText = noticeVal;
                 } else {
                     if (marqueeBar) marqueeBar.classList.add('hidden');
@@ -1132,6 +1498,235 @@
             });
         }
         initAdminNoticeListener();
+
+        function initProFeaturesSync() {
+            onValue(ref(db, 'settings/pro_features'), (snap) => {
+                if(snap.exists()) {
+                    const d = snap.val();
+                    const tickerEl = document.getElementById('live-purchase-ticker-text');
+                    if(tickerEl && d.liveTicker) {
+                        tickerEl.innerHTML = d.liveTicker;
+                    }
+                    const marqueeText = document.getElementById('live-marquee-content');
+                    const marqueeBar = document.getElementById('live-marquee-bar');
+                    if(d.noticeText && marqueeText && marqueeBar) {
+                        marqueeText.innerText = d.noticeText;
+                        marqueeBar.classList.remove('hidden');
+                    }
+                    if(d.reviewsData) {
+                        renderDynamicClientReviews(d.reviewsData);
+                    }
+                }
+            });
+        }
+        initProFeaturesSync();
+
+        function renderDynamicClientReviews(reviewsString) {
+            const container = document.getElementById('dynamic-client-reviews-container');
+            if(!container) return;
+            let lines = reviewsString.split('\n').filter(l => l.trim().length > 0);
+            if(lines.length === 0) return;
+
+            let html = '';
+            lines.forEach(line => {
+                html += `
+                    <div class="glass" style="padding: 20px;">
+                        <div style="color: var(--warning); margin-bottom: 8px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p style="font-size: 13px; color: white; margin-bottom: 12px; font-style: italic;">"${line}"</p>
+                        <span style="font-size: 11px; color: var(--neon-cyan); font-weight: 700;">- Verified Client</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        window.submitUserFeedback = async () => {
+            if(!currentUser) return showToast("Please login first!", "error");
+            const feedbackInput = document.getElementById('user-feedback-input');
+            const reviewText = feedbackInput.value.trim();
+
+            if(!reviewText) return showToast("Please write some feedback before submitting!", "error");
+
+            showLoader();
+            try {
+                const fbRef = push(ref(db, 'feedbacks'));
+                await set(fbRef, {
+                    uid: currentUser.uid,
+                    email: currentUser.email,
+                    review: reviewText,
+                    timestamp: new Date().toISOString()
+                });
+
+                showToast("Thank you for your valuable feedback!", "success");
+                feedbackInput.value = '';
+            } catch(e) {
+                showToast("Error submitting feedback: " + e.message, "error");
+            } finally {
+                hideLoader();
+            }
+        };
+
+        function fetchPublicFeedbacks() {
+            onValue(ref(db, 'feedbacks'), (snap) => {
+                const container = document.getElementById('dedicated-feedback-list');
+                if(!container) return;
+                
+                let listHtml = `
+                    <div class="glass" style="padding: 20px; margin-bottom: 12px;">
+                        <div style="color: var(--warning); margin-bottom: 6px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p style="font-size: 13px; color: white; margin-bottom: 10px; font-style: italic;">"Fastest delivery ever! Got my panel key instantly after payment. Trusted admin."</p>
+                        <span style="font-size: 11px; color: var(--neon-cyan); font-weight: 700;">- Rohit S. (Pro Reseller)</span>
+                    </div>
+                `;
+
+                if(snap.exists()) {
+                    snap.forEach(child => {
+                        const f = child.val();
+                        let emailMask = f.email ? f.email.substring(0, 3) + '***@gmail.com' : 'User***';
+                        listHtml += `
+                            <div class="glass" style="padding: 20px; margin-bottom: 12px;">
+                                <div style="color: var(--warning); margin-bottom: 6px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                                <p style="font-size: 13px; color: white; margin-bottom: 10px; font-style: italic;">"${f.review}"</p>
+                                <span style="font-size: 11px; color: var(--neon-cyan); font-weight: 700;">- ${emailMask} (Verified Client)</span>
+                            </div>
+                        `;
+                    });
+                }
+                container.innerHTML = listHtml;
+            });
+        }
+        fetchPublicFeedbacks();
+
+        function initDonatePageSettings() {
+            onValue(ref(db, 'settings/donate'), (snap) => {
+                if(snap.exists()) {
+                    const d = snap.val();
+                    const titleEl = document.getElementById('donate-page-heading');
+                    const posterImg = document.getElementById('donate-poster-img');
+                    const posterBox = document.getElementById('donate-poster-container');
+                    const captionEl = document.getElementById('donate-caption-text');
+
+                    if(d.title && titleEl) {
+                        titleEl.innerHTML = d.title.replace(/❤️/g, '<span>❤️</span>');
+                    }
+                    if(d.poster && posterImg && posterBox) {
+                        posterImg.src = d.poster;
+                        posterBox.style.display = 'block';
+                    } else if(posterBox) {
+                        posterBox.style.display = 'none';
+                    }
+                    if(d.caption && captionEl) {
+                        captionEl.innerText = d.caption;
+                    }
+                }
+            });
+        }
+        initDonatePageSettings();
+
+        window.submitDonationRecord = async () => {
+            if(!currentUser) return;
+            const amtInput = document.getElementById('donate-amount-input');
+            const utrInput = document.getElementById('donate-utr-input');
+            
+            const amount = parseFloat(amtInput.value);
+            const utr = utrInput.value.trim() || 'Direct Contribution';
+
+            if(!amount || amount <= 0) return showToast("Enter a valid donation amount!", "error");
+
+            showLoader();
+            try {
+                const donateRef = push(ref(db, 'donations'));
+                await set(donateRef, {
+                    uid: currentUser.uid,
+                    email: currentUser.email,
+                    amount: amount,
+                    utr: utr,
+                    timestamp: new Date().toISOString()
+                });
+
+                showToast("Thank you so much for your generous donation! ❤️", "success");
+                amtInput.value = '';
+                utrInput.value = '';
+            } catch(e) {
+                showToast("Error recording donation: " + e.message, "error");
+            } finally {
+                hideLoader();
+            }
+        };
+
+        window.submitSupportTicket = async () => {
+            if(!currentUser) return;
+            const category = document.getElementById('ticket-category').value;
+            const subject = document.getElementById('ticket-subject').value.trim();
+            const message = document.getElementById('ticket-message').value.trim();
+
+            if(!subject || !message) return showToast("Please fill subject and message", "error");
+
+            showLoader();
+            try {
+                const ticketRef = push(ref(db, 'tickets'));
+                await set(ticketRef, {
+                    uid: currentUser.uid,
+                    email: currentUser.email,
+                    category: category,
+                    subject: subject,
+                    message: message,
+                    status: 'Pending',
+                    reply: '',
+                    timestamp: new Date().toISOString()
+                });
+
+                showToast("Support ticket submitted successfully!");
+                document.getElementById('ticket-subject').value = '';
+                document.getElementById('ticket-message').value = '';
+            } catch(e) {
+                showToast("Error submitting ticket", "error");
+            } finally {
+                hideLoader();
+            }
+        };
+
+        function fetchUserTickets() {
+            if(!currentUser) return;
+            onValue(ref(db, 'tickets'), (snap) => {
+                const container = document.getElementById('user-tickets-container');
+                container.innerHTML = '';
+                if(!snap.exists()) {
+                    container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px;">No tickets submitted yet.</p>`;
+                    return;
+                }
+
+                let myTickets = [];
+                snap.forEach(child => {
+                    const t = child.val();
+                    if(t.uid === currentUser.uid) {
+                        myTickets.push({ id: child.key, ...t });
+                    }
+                });
+
+                if(myTickets.length === 0) {
+                    container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px;">No tickets submitted yet.</p>`;
+                    return;
+                }
+
+                myTickets.sort((a,b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+
+                myTickets.forEach(t => {
+                    let statusColor = t.status === 'Resolved' ? 'var(--success)' : (t.status === 'Closed' ? 'var(--error)' : 'var(--warning)');
+                    container.innerHTML += `
+                        <div class="glass" style="padding: 15px 20px; margin-bottom: 12px; border-left: 4px solid ${statusColor};">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                <strong style="color:white; font-size:15px;">${t.subject}</strong>
+                                <span style="font-size:11px; font-weight:800; padding:2px 8px; border-radius:8px; color:${statusColor}; border:1px solid ${statusColor};">${t.status}</span>
+                            </div>
+                            <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">[${t.category}] - ${formatFullDate(t.timestamp)}</div>
+                            <p style="font-size:13px; color:white; margin-bottom:10px;">${t.message}</p>
+                            ${t.reply ? `<div style="background:rgba(0,240,255,0.08); border:1px solid var(--neon-cyan-dim); padding:10px; border-radius:8px; margin-top:8px;"><strong style="color:var(--neon-cyan); font-size:12px;">Admin Reply:</strong> <span style="font-size:12px; color:white;">${t.reply}</span></div>` : ''}
+                        </div>
+                    `;
+                });
+            });
+        }
 
         async function logVisitorInfo(userObj) {
             if(!userObj) return;
@@ -1288,6 +1883,7 @@
                 initPromotions();
                 initGlobalHistoryListener();
                 checkDailyCheckinStatus();
+                fetchUserTickets();
                 navigate('home');
             } else {
                 currentUser = null;
@@ -1512,7 +2108,6 @@
             });
         }
 
-        // --- DAILY CHECK-IN BONUS LOGIC ---
         function checkDailyCheckinStatus() {
             if(!currentUser) return;
             onValue(ref(db, `users/${currentUser.uid}/lastCheckin`), (snap) => {
@@ -1562,7 +2157,6 @@
                     }
                 }
 
-                // Random reward between 0.40 and 1.00
                 const randomBonus = parseFloat((Math.random() * (1.00 - 0.40) + 0.40).toFixed(2));
                 const currentBal = parseFloat(data.balance || 0);
 
@@ -1691,7 +2285,7 @@
                 if (targetRole === 'Pro Reseller') {
                     if (userData.balance < 100) {
                         hideLoader();
-                        return showToast("You need at least ₹100 in your wallet to assign Pro Reseller status (First month free, subsequent ₹100 fee).", "error");
+                        return showToast("You need at least ₹100 in your wallet to assign Pro Reseller status.", "error");
                     }
                     let newBal = userData.balance - 100;
                     await update(ref(db, `users/${currentUser.uid}`), { balance: newBal });
@@ -1774,6 +2368,7 @@
             if(pageId === 'add-money') fetchDepositHistory();
             if(pageId === 'profile') fetchProfileStats();
             if(pageId === 'daily-checkin') checkDailyCheckinStatus();
+            if(pageId === 'support') fetchUserTickets();
             window.scrollTo(0,0);
         };
 
@@ -2083,7 +2678,7 @@
                             apiResult = JSON.parse(rawText);
                         } catch (jsonErr) {
                             console.error("Supplier Non-JSON Response:", rawText);
-                            throw new Error("Supplier API ne JSON ke bajaye HTML error diya hai. API URL ya SSL check karein!");
+                            throw new Error("Supplier API ne JSON ke bajaye HTML error diya hai.");
                         }
 
                         if(apiResult && (apiResult.status === true || apiResult.success === true || apiResult.keys || apiResult.key)) {
