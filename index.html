@@ -190,55 +190,74 @@
         .btn-tg:hover { background: var(--tg-color); color: #fff; box-shadow: 0 0 22px rgba(14, 165, 233, 0.6); }
 
         #main-app { display: none; width: 100%; }
+        
+        /* FIXED RESPONSIVE NAVBAR STYLING */
         .navbar {
-            position: fixed; top: 0; left: 0; width: 100%; height: 80px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 75px;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 28px; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.08);
-            border-radius: 0 0 22px 22px; background: rgba(3, 4, 7, 0.92);
+            padding: 0 18px; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0 0 22px 22px; background: rgba(3, 4, 7, 0.95);
             backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            gap: 10px;
         }
-        .logo { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 24px; color: white; letter-spacing: 2px; text-shadow: 0 0 14px rgba(0,240,255,0.35); }
-        .logo span { color: var(--neon-cyan); }
-        .nav-right { display: flex; align-items: center; gap: 14px; }
+        .logo { 
+            display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 14px; color: white; 
+            letter-spacing: 0.8px; text-shadow: 0 0 14px rgba(0,240,255,0.35); white-space: nowrap; 
+            max-width: 48%; line-height: 1.25;
+        }
+        .logo-text-wrap {
+            display: flex; flex-direction: column; overflow: hidden; text-overflow: ellipsis;
+        }
+        .logo-line-1 { font-weight: 800; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .logo-line-2 { font-weight: 800; color: var(--neon-cyan); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .nav-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
         .btn-how-to {
             background: linear-gradient(135deg, var(--error), #e11d48); color: white; border: none;
-            padding: 8px 16px; border-radius: 24px; font-weight: 700; font-size: 11px;
-            display: flex; align-items: center; gap: 6px; cursor: pointer; text-transform: uppercase;
-            box-shadow: 0 0 20px rgba(244, 63, 94, 0.5); text-decoration: none; transition: 0.3s;
+            padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 10px;
+            display: flex; align-items: center; gap: 5px; cursor: pointer; text-transform: uppercase;
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.5); text-decoration: none; transition: 0.3s;
+            white-space: nowrap;
         }
-        .btn-how-to:hover { transform: scale(1.06); box-shadow: 0 0 28px rgba(244, 63, 94, 0.8); }
+        .btn-how-to:hover { transform: scale(1.06); box-shadow: 0 0 25px rgba(244, 63, 94, 0.8); }
         .btn-palette-icon {
             background: rgba(0, 240, 255, 0.1); border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
-            width: 40px; height: 40px; border-radius: 12px; display: flex; justify-content: center;
-            align-items: center; cursor: pointer; font-size: 16px; box-shadow: 0 0 14px var(--neon-cyan-dim); transition: 0.3s;
+            width: 36px; height: 36px; border-radius: 10px; display: flex; justify-content: center;
+            align-items: center; cursor: pointer; font-size: 14px; box-shadow: 0 0 10px var(--neon-cyan-dim); transition: 0.3s;
+            flex-shrink: 0;
         }
         .btn-palette-icon:hover { background: var(--neon-cyan); color: #030407; }
 
         .balance-badge {
             background: rgba(0, 240, 255, 0.1); border: 1px solid var(--neon-cyan);
-            color: var(--neon-cyan); padding: 9px 20px; border-radius: 35px;
-            font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 9px;
-            box-shadow: 0 0 14px var(--neon-cyan-dim);
+            color: var(--neon-cyan); padding: 7px 12px; border-radius: 30px;
+            font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 6px;
+            box-shadow: 0 0 10px var(--neon-cyan-dim); white-space: nowrap; flex-shrink: 0;
         }
-        .menu-btn { background: none; border: none; color: white; font-size: 25px; cursor: pointer; transition: 0.3s; }
-        .menu-btn:hover { color: var(--neon-cyan); text-shadow: 0 0 14px var(--neon-cyan); }
+        .menu-btn { 
+            background: rgba(157, 0, 255, 0.15); border: 1px solid var(--neon-purple); color: white; 
+            width: 38px; height: 38px; border-radius: 10px; display: flex; justify-content: center; 
+            align-items: center; font-size: 18px; cursor: pointer; transition: 0.3s; flex-shrink: 0;
+            box-shadow: 0 0 14px rgba(157, 0, 255, 0.3);
+        }
+        .menu-btn:hover { color: var(--neon-cyan); border-color: var(--neon-cyan); background: rgba(0, 240, 255, 0.15); }
 
         .dropdown {
-            position: absolute; top: 90px; right: 28px; width: 255px;
-            border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,0.12);
+            position: fixed; top: 82px; right: 14px; width: 260px;
+            border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15);
             transform-origin: top right; transform: scale(0.9); opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.95); background: rgba(12, 16, 24, 0.96);
-            max-height: 80vh; overflow-y: auto; scrollbar-width: thin;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.95); background: rgba(12, 16, 24, 0.98);
+            max-height: 75vh; overflow-y: auto; scrollbar-width: thin; z-index: 2000;
         }
         .dropdown.active { transform: scale(1); opacity: 1; visibility: visible; }
         .dropdown-item {
-            padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.06);
-            cursor: pointer; display: flex; align-items: center; gap: 14px; font-size: 13px; font-weight: 500; transition: 0.3s;
+            padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.06);
+            cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 500; transition: 0.3s;
         }
-        .dropdown-item:hover { background: rgba(0, 240, 255, 0.15); color: var(--neon-cyan); padding-left: 24px; }
+        .dropdown-item:hover { background: rgba(0, 240, 255, 0.15); color: var(--neon-cyan); padding-left: 22px; }
 
-        .page-content { padding: 110px 22px 90px 22px; max-width: 1240px; margin: 0 auto; min-height: 100vh; animation: fadeIn 0.4s ease; }
+        .page-content { padding: 95px 18px 80px 18px; max-width: 1240px; margin: 0 auto; min-height: 100vh; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
         .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 16px; }
@@ -489,10 +508,10 @@
 
         @media (max-width: 480px) {
             .auth-card { padding: 35px 22px; }
-            .navbar { padding: 0 14px; height: 74px; }
-            .logo { font-size: 17px; }
-            .balance-badge { padding: 7px 12px; font-size: 11px; }
-            .btn-how-to { padding: 6px 10px; font-size: 9px; }
+            .navbar { padding: 0 10px; height: 70px; }
+            .logo { font-size: 13px; max-width: 42%; }
+            .balance-badge { padding: 6px 10px; font-size: 11px; }
+            .btn-how-to { padding: 5px 8px; font-size: 9px; }
             .page-header { flex-direction: column; align-items: stretch; gap: 16px; margin-bottom: 22px; }
             .search-container { max-width: 100%; width: 100%; flex: none; }
             .page-title { font-size: 24px; text-align: center; }
@@ -610,12 +629,15 @@
 <div id="main-app">
 <nav class="navbar glass">
 <div class="logo">
-<img id="site-logo" src="" style="height:35px;display:none; border-radius: 8px;"/>
-<span id="site-name">FF.PANEL-BY.MIG</span>
+<img id="site-logo" src="" style="height:30px; display:none; border-radius: 6px;"/>
+<div class="logo-text-wrap">
+    <div class="logo-line-1" id="site-name-1">RESELLER</div>
+    <div class="logo-line-2" id="site-name-2">STORE</div>
+</div>
 </div>
 <div class="nav-right">
 <a href="#" class="btn-how-to" onclick="navigate('add-money'); return false;"><i class="fab fa-youtube"></i> How To Deposit?</a>
-<div class="btn-palette-icon" onclick="openModal('modal-theme')"><i class="fas fa-palette"></i></div>
+<div class="btn-palette-icon" onclick="openModal('modal-theme')" title="Theme"><i class="fas fa-palette"></i></div>
 <div class="balance-badge"><i class="fas fa-wallet"></i> ₹<span id="nav-balance">0.00</span></div>
 <button class="menu-btn" id="menu-toggle"><i class="fas fa-bars"></i></button>
 </div>
@@ -2382,7 +2404,17 @@
             window.scrollTo(0,0);
         };
 
-        document.getElementById('menu-toggle').onclick = () => document.getElementById('dropdown-menu').classList.toggle('active');
+        document.getElementById('menu-toggle').onclick = (e) => {
+            e.stopPropagation();
+            document.getElementById('dropdown-menu').classList.toggle('active');
+        };
+
+        window.addEventListener('click', () => {
+            const dropdown = document.getElementById('dropdown-menu');
+            if(dropdown && dropdown.classList.contains('active')) {
+                dropdown.classList.remove('active');
+            }
+        });
 
         function fetchPaymentSettings() {
             onValue(ref(db, 'settings/payment'), (snap) => {
@@ -2462,7 +2494,6 @@
                     });
                 });
 
-                // FIXED SORTING LOGIC: Checks both 'order' and 'priority' fields safely
                 panelsArray.sort((a, b) => {
                     let orderA = (a.order !== undefined && a.order !== null && !isNaN(a.order)) ? parseInt(a.order) : 
                                  ((a.priority !== undefined && a.priority !== null && !isNaN(a.priority)) ? parseInt(a.priority) : 999);
@@ -2960,7 +2991,7 @@
                             
                             <div class="key-box">
                                 <span class="key-text" id="hist-key-${p.id}" style="white-space: pre-line;">${p.key}</span>
-                                <button class="btn btn-primary" style="padding: 0 14px; height: 36px; width: auto; font-size:11px;" onclick="copyToClipboard('hist-key-${p.id}', 'License Key')"><i class="fas fa-copy"></i> COPY</button>
+                                <button class="btn btn-primary" style="padding: 0 14px; height: 36px; width: auto; font-size:11px;" onclick="copyToClipboard('hist-key-${p.id}', 'License Key')"><i class="fas fa-copy"></i> COPY</i></button>
                             </div>
                             
                             <button class="btn-outline" style="width: 100%; border-color: var(--neon-cyan); color: var(--neon-cyan); height: 46px;" onclick="window.open('${p.link || '#'}', '_blank')">
@@ -2993,15 +3024,40 @@
         function initBranding(){
             onValue(ref(db, 'settings/branding'), (snap)=>{
                 const data = snap.val();
-                if(!data) return;
-                if(data.name) {
-                    document.getElementById('site-name').innerText = data.name;
-                    document.title = data.name + " | PREMIUM";
+                const nameLine1 = document.getElementById('site-name-1');
+                const nameLine2 = document.getElementById('site-name-2');
+                const logoEl = document.getElementById('site-logo');
+
+                if(!data) {
+                    nameLine1.innerText = "RESELLER";
+                    nameLine2.innerText = "STORE";
+                    document.title = "FF.PANEL | ENTERPRISE PREMIUM";
+                    return;
                 }
+
+                if(data.name) {
+                    let fullText = String(data.name).trim();
+                    let parts = fullText.split(' ');
+                    if(parts.length > 1) {
+                        let firstWord = parts[0];
+                        let restWords = parts.slice(1).join(' ');
+                        nameLine1.innerText = firstWord;
+                        nameLine2.innerText = restWords;
+                    } else {
+                        nameLine1.innerText = fullText;
+                        nameLine2.innerText = "";
+                    }
+                    document.title = fullText + " | PREMIUM";
+                } else {
+                    nameLine1.innerText = "RESELLER";
+                    nameLine2.innerText = "STORE";
+                }
+
                 if(data.logo && data.logo.length > 5){
-                    const logo = document.getElementById('site-logo');
-                    logo.src = data.logo;
-                    logo.style.display = "inline-block";
+                    logoEl.src = data.logo;
+                    logoEl.style.display = "inline-block";
+                } else {
+                    logoEl.style.display = "none";
                 }
             });
         }
