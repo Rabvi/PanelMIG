@@ -1656,7 +1656,7 @@
         initDonatePageSettings();
 
         window.submitDonationRecord = async () => {
-            if(!currentUser) return;
+            if(!currentUser) return showToast("Please login first!", "error");
             const amtInput = document.getElementById('donate-amount-input');
             const utrInput = document.getElementById('donate-utr-input');
             
@@ -1665,8 +1665,29 @@
 
             if(!amount || amount <= 0) return showToast("Enter a valid donation amount!", "error");
 
+            if(userData.balance < amount) {
+                return showToast("Insufficient balance in your wallet for donation!", "error");
+            }
+
             showLoader();
             try {
+                const userRef = ref(db, `users/${currentUser.uid}`);
+                const userSnap = await get(userRef);
+                let currentBal = userSnap.exists() ? (parseFloat(userSnap.val().balance) || 0) : 0;
+                let currentSpend = userSnap.exists() ? (parseFloat(userSnap.val().totalSpend) || 0) : 0;
+
+                if (currentBal < amount) {
+                    hideLoader();
+                    return showToast("Insufficient balance in your wallet!", "error");
+                }
+
+                // Deduct amount from wallet and add to total spend
+                await update(userRef, {
+                    balance: currentBal - amount,
+                    totalSpend: currentSpend + amount
+                });
+
+                // Push donation record to database for admin panel
                 const donateRef = push(ref(db, 'donations'));
                 await set(donateRef, {
                     uid: currentUser.uid,
