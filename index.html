@@ -8,6 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
 <!-- FontAwesome -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<!-- ZapUPI Single HTML Web Kit SDK -->
+<script src="https://zapupi.com/single-html-web-kit.js"></script>
 <style>
         :root {
             --bg-color: #030407;
@@ -83,9 +85,59 @@
             background: linear-gradient(135deg, var(--neon-pro), var(--neon-purple));
             box-shadow: 0 6px 30px rgba(255, 0, 127, 0.6); transform: translateY(-2px);
         }
+
+        .btn-gateway {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none; color: white; font-size: 14px; font-weight: 800;
+            padding: 12px 18px; border-radius: 14px; letter-spacing: 1.2px;
+            box-shadow: 0 4px 25px rgba(99, 102, 241, 0.45);
+            display: inline-flex; justify-content: center; align-items: center; gap: 10px; width: 100%; height: 52px; cursor: pointer; text-transform: uppercase;
+            transition: 0.3s;
+        }
+        .btn-gateway:hover:not(:disabled) {
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            box-shadow: 0 6px 30px rgba(139, 92, 246, 0.7); transform: translateY(-2px);
+        }
+
+        .gw-method-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+        .gw-method-btn {
+            background: rgba(15, 20, 32, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #fff;
+            padding: 14px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            text-align: center;
+        }
+        .gw-method-btn.active {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-color: #a78bfa;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        }
+        .gw-method-btn.support-btn {
+            border-color: rgba(244, 63, 94, 0.4);
+            color: var(--error);
+            background: rgba(244, 63, 94, 0.08);
+        }
+        .gw-method-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--neon-cyan);
+        }
+
         .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; filter: grayscale(1); }
 
-        .input-group { margin-bottom: 20px; width: 100%; position: relative; }
+        .input-group { margin-bottom: 18px; width: 100%; position: relative; text-align: left; }
+        .input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; letter-spacing: 0.8px; text-transform: uppercase; }
         .input-group input, .input-group textarea, .input-group select {
             width: 100%; max-width: 100%; padding: 0 20px; height: 52px; background: rgba(3, 4, 7, 0.75);
             border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; color: white;
@@ -171,7 +223,55 @@
         }
         .toast.success { border-left-color: var(--success); box-shadow: 0 15px 40px rgba(16, 185, 129, 0.3); }
         .toast.error { border-left-color: var(--error); box-shadow: 0 15px 40px rgba(244, 63, 94, 0.3); }
+        .toast.warning { border-left-color: var(--warning); box-shadow: 0 15px 40px rgba(245, 158, 11, 0.3); }
         @keyframes slideUp { from { opacity: 0; transform: translateY(35px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        /* PROFESSIONAL GREEN ANIMATED VERIFY PAYMENT POPUP STYLES */
+        .payment-status-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px);
+            display: flex; justify-content: center; align-items: center; z-index: 99999;
+            animation: fadeInModal 0.3s ease-out forwards;
+        }
+        .payment-status-wrapper.hidden { display: none !important; }
+        .success-card {
+            background: #0c1018; border: 1px solid rgba(16, 185, 129, 0.4);
+            padding: 35px 30px; border-radius: 22px; text-align: center;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.9), 0 0 35px rgba(16, 185, 129, 0.2);
+            max-width: 380px; width: 90%;
+        }
+        .checkmark {
+            width: 64px; height: 64px; border-radius: 50%; display: block;
+            stroke-width: 2.5; stroke: #10B981; stroke-miterlimit: 10; margin: 0 auto 20px auto;
+            box-shadow: inset 0px 0px 0px #10B981;
+            animation: fillCard .4s ease-in-out .4s forwards, scaleCard .3s ease-in-out .9s both;
+        }
+        .checkmark__circle {
+            stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 2.5;
+            stroke-miterlimit: 10; stroke: #10B981; fill: rgba(16, 185, 129, 0.12);
+            animation: strokeAnim 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+        .checkmark__check {
+            transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48;
+            animation: strokeAnim 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
+        }
+        @keyframes strokeAnim { 100% { stroke-dashoffset: 0; } }
+        @keyframes scaleCard { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } }
+        @keyframes fillCard { 100% { box-shadow: inset 0px 0px 0px 35px rgba(16, 185, 129, 0.15); } }
+        @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+
+        .verify-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(16, 185, 129, 0.15); color: #34D399;
+            border: 1px solid rgba(16, 185, 129, 0.45); padding: 8px 18px;
+            border-radius: 50px; font-size: 13px; font-weight: 700; letter-spacing: 0.8px;
+            text-transform: uppercase; margin-top: 15px;
+        }
+        .dot {
+            width: 8px; height: 8px; background-color: #34D399; border-radius: 50%;
+            box-shadow: 0 0 10px #34D399; animation: pulseDot 1.5s infinite;
+        }
+        @keyframes pulseDot { 0% { transform: scale(0.9); opacity: 0.7; } 50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 14px #34D399; } 100% { transform: scale(0.9); opacity: 0.7; } }
 
         #auth-screen { min-height: 100vh; min-height: 100dvh; display: flex; justify-content: center; align-items: center; padding: 20px; }
         .auth-card { width: 100%; max-width: 440px; padding: 45px 35px; text-align: center; box-shadow: 0 25px 65px rgba(0,0,0,0.9); border-top: 3px solid var(--neon-cyan); margin: auto; }
@@ -191,7 +291,6 @@
 
         #main-app { display: none; width: 100%; }
         
-        /* FIXED RESPONSIVE NAVBAR STYLING */
         .navbar {
             position: fixed; top: 0; left: 0; width: 100%; height: 75px;
             display: flex; justify-content: space-between; align-items: center;
@@ -205,9 +304,7 @@
             letter-spacing: 0.8px; text-shadow: 0 0 14px rgba(0,240,255,0.35); white-space: nowrap; 
             max-width: 48%; line-height: 1.25;
         }
-        .logo-text-wrap {
-            display: flex; flex-direction: column; overflow: hidden; text-overflow: ellipsis;
-        }
+        .logo-text-wrap { display: flex; flex-direction: column; overflow: hidden; text-overflow: ellipsis; }
         .logo-line-1 { font-weight: 800; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .logo-line-2 { font-weight: 800; color: var(--neon-cyan); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
@@ -405,12 +502,12 @@
         .theme-circle { width: 30px; height: 30px; border-radius: 50%; box-shadow: 0 0 14px currentColor; }
         .theme-option-card span { font-size: 11px; font-weight: 600; color: white; }
 
-        .payment-settings-card { padding: 45px 32px; text-align: center; max-width: 620px; margin: 0 auto 32px auto; width: 100%; }
-        .qr-image-container { margin: 22px auto; width: 250px; height: 250px; background: rgba(3,4,7,0.65); border-radius: 18px; overflow: hidden; border: 2px dashed var(--neon-cyan); display: flex; justify-content: center; align-items: center; padding: 12px; box-shadow: inset 0 0 40px rgba(0, 240, 255, 0.15); }
-        .qr-image-container img { width: 100%; height: 100%; border-radius: 12px; object-fit: cover; }
+        .payment-settings-card { padding: 38px 28px; text-align: center; max-width: 620px; margin: 0 auto 32px auto; width: 100%; }
+        .qr-image-container { margin: 20px auto; width: 240px; height: 240px; background: rgba(3,4,7,0.65); border-radius: 18px; overflow: hidden; border: 2px dashed var(--neon-cyan); display: flex; justify-content: center; align-items: center; padding: 12px; box-shadow: inset 0 0 40px rgba(0, 240, 255, 0.15); position: relative; }
+        .qr-image-container img { width: 100%; height: 100%; border-radius: 12px; object-fit: contain; background: #fff; padding: 6px; }
         .upi-box {
-            background: rgba(3,4,7,0.75); padding: 20px; border-radius: 14px; border: 1px solid var(--neon-cyan);
-            text-align: center; margin: 28px 0; word-break: break-all; cursor: pointer; transition: 0.3s;
+            background: rgba(3,4,7,0.75); padding: 18px; border-radius: 14px; border: 1px solid var(--neon-cyan);
+            text-align: center; margin: 24px 0; word-break: break-all; cursor: pointer; transition: 0.3s;
             box-shadow: 0 0 20px var(--neon-cyan-dim); animation: pulseBorder 2s infinite; display: flex; justify-content: center; align-items: center; gap: 12px;
         }
         @keyframes pulseBorder { 0% { box-shadow: 0 0 6px var(--neon-cyan-dim); } 50% { box-shadow: 0 0 32px rgba(0, 240, 255, 0.7); } 100% { box-shadow: 0 0 6px var(--neon-cyan-dim); } }
@@ -421,7 +518,7 @@
         .deposit-item { background: rgba(3,4,7,0.65); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 16px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
         .dep-status { font-size: 11px; padding: 4px 12px; border-radius: 22px; font-weight: 700; text-transform: uppercase; }
         .dep-status.pending { background: rgba(245, 158, 11, 0.18); color: var(--warning); border: 1px solid var(--warning); }
-        .dep-status.approved { background: rgba(16, 185, 129, 0.18); color: var(--success); border: 1px solid var(--success); }
+        .dep-status.approved, .dep-status.success { background: rgba(16, 185, 129, 0.18); color: var(--success); border: 1px solid var(--success); }
         .dep-status.rejected { background: rgba(244, 63, 94, 0.18); color: var(--error); border: 1px solid var(--error); }
 
         .history-list { display: flex; flex-direction: column; gap: 22px; max-width: 820px; margin: 0 auto; width: 100%; }
@@ -435,8 +532,8 @@
         .profile-stat { display: flex; justify-content: space-between; padding: 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 14px; align-items: center; flex-wrap: wrap; gap: 12px;}
         .profile-stat:last-child { border-bottom: none; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3,4,7,0.9); z-index: 2000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(12px); padding: 18px; }
-        .modal { background: var(--card-bg); border: 1px solid var(--neon-cyan); width: 100%; max-width: 460px; padding: 32px; border-radius: 24px; text-align: center; box-shadow: 0 0 70px rgba(0,240,255,0.3); animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3,4,7,0.9); z-index: 2000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(12px); padding: 18px; overflow-y: auto; }
+        .modal { background: var(--card-bg); border: 1px solid var(--neon-cyan); width: 100%; max-width: 460px; padding: 32px; border-radius: 24px; text-align: center; box-shadow: 0 0 70px rgba(0,240,255,0.3); animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin: auto; }
         @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .success-icon { font-size: 65px; color: var(--success); margin-bottom: 16px; filter: drop-shadow(0 0 20px rgba(16,185,129,0.6)); }
 
@@ -459,9 +556,8 @@
         .strike-price { text-decoration: line-through; color: var(--text-muted); font-size: 14px; font-weight: 500; }
         .discount-badge { background: rgba(157, 0, 255, 0.25); color: var(--neon-purple); font-size: 11px; padding: 5px 10px; border-radius: 8px; border: 1px solid var(--neon-purple); font-weight: bold; }
 
-        .checkout-actions { display: flex; gap: 12px; margin-top: 12px; }
-        .checkout-actions .btn-outline { flex: 1; height: 52px; font-size: 13px; }
-        .checkout-actions .btn-purchase { flex: 2; height: 52px; font-size: 14px; }
+        .checkout-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+        .checkout-actions .btn-outline { width: 100%; height: 50px; font-size: 13px; }
 
         .user-ref-card { background: rgba(3,4,7,0.55); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; text-align: left; }
 
@@ -478,32 +574,18 @@
         }
         .telegram-btn:hover { transform: scale(1.12) translateY(-5px); box-shadow: 0 18px 40px rgba(14,165,233,0.85); border-color: white; }
 
-        /* PROFESSIONAL SPIN WHEEL CONTAINER STYLES */
         .wheel-container {
-            position: relative;
-            width: 310px;
-            height: 310px;
-            margin: 0 auto 22px auto;
+            position: relative; width: 310px; height: 310px; margin: 0 auto 22px auto;
         }
         #spin-canvas {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            box-shadow: 0 0 40px rgba(0, 240, 255, 0.5);
-            border: 4px solid var(--neon-cyan);
+            width: 100%; height: 100%; border-radius: 50%;
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.5); border: 4px solid var(--neon-cyan);
         }
         .wheel-pointer {
-            position: absolute;
-            top: -16px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 13px solid transparent;
-            border-right: 13px solid transparent;
-            border-top: 26px solid var(--neon-pro);
-            z-index: 10;
-            filter: drop-shadow(0 0 12px var(--neon-pro));
+            position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 13px solid transparent;
+            border-right: 13px solid transparent; border-top: 26px solid var(--neon-pro);
+            z-index: 10; filter: drop-shadow(0 0 12px var(--neon-pro));
         }
 
         @media (max-width: 480px) {
@@ -522,7 +604,7 @@
             .coupon-box input, .coupon-box button { width: 100%; }
             .checkout-actions { flex-direction: column; }
             .checkout-actions .btn { width: 100%; }
-            .payment-settings-card { padding: 35px 16px; }
+            .payment-settings-card { padding: 32px 16px; }
             .qr-image-container { width: 210px; height: 210px; }
             .wheel-container { width: 270px; height: 270px; }
         }
@@ -539,6 +621,23 @@
     <div class="eq-bar"></div>
 </div>
 <p style="margin-top: 22px; color: var(--neon-cyan); font-weight: 700; letter-spacing: 2.2px; text-shadow: 0 0 14px var(--neon-cyan-dim);">INITIALIZING SYSTEM...</p>
+</div>
+
+<!-- PROFESSIONAL GREEN VERIFY PAYMENT POPUP ON REDIRECT -->
+<div id="paymentStatusContainer" class="payment-status-wrapper hidden">
+    <div class="success-card">
+        <div class="icon-container">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+        </div>
+        <h3 class="status-title" style="color:#ffffff; font-size:20px; font-weight:800; margin-bottom:8px;">Payment Verified!</h3>
+        <p class="status-subtitle" style="color:#94a3b8; font-size:13px; margin-bottom:15px;">Gateway payment verified successfully.</p>
+        <div class="verify-badge">
+            <span class="dot"></span> Verify Payment
+        </div>
+    </div>
 </div>
 
 <!-- SECURITY VALIDATION SCREEN -->
@@ -795,7 +894,6 @@
             Spin the professional wheel once every 24 hours to win free wallet balance up to <strong style="color:var(--warning);">₹5.00</strong>!
         </p>
 
-        <!-- CANVAS WHEEL & POINTER -->
         <div class="wheel-container">
             <div class="wheel-pointer"></div>
             <canvas id="spin-canvas" width="400" height="400"></canvas>
@@ -834,7 +932,7 @@
     </div>
 </div>
 
-<!-- PAGE: FEEDBACK & REVIEWS (DEDICATED) -->
+<!-- PAGE: FEEDBACK & REVIEWS -->
 <div class="page-content hidden" id="page-feedback">
     <div class="page-header"><h2 class="page-title">Client <span>Feedback</span></h2></div>
     
@@ -864,7 +962,7 @@
     </div>
 </div>
 
-<!-- PAGE: COMING SOON FEATURES (DEDICATED) -->
+<!-- PAGE: COMING SOON -->
 <div class="page-content hidden" id="page-coming-soon">
     <div class="page-header"><h2 class="page-title">Coming Soon <span>Features</span></h2></div>
     
@@ -951,28 +1049,81 @@
     </div>
 </div>
 
-<!-- PAGE: ADD MONEY -->
+<!-- PAGE: ADD MONEY (ZAP UPI SDK INTEGRATION) -->
 <div class="page-content hidden" id="page-add-money">
 <div class="page-header"><h2 class="page-title">Add <span>Funds</span></h2></div>
 <div class="glass payment-settings-card">
-<p style="color: var(--text-muted); font-size: 14px;"><i class="fas fa-camera"></i> Scan QR code or Copy UPI ID to make payment</p>
-<div class="qr-image-container" id="display-qr-container">
-<i class="fas fa-qrcode" id="qr-placeholder" style="font-size: 50px; color: rgba(255,255,255,0.12);"></i>
+<p style="color: var(--text-muted); font-size: 14px; margin-bottom: 15px;"><i class="fas fa-shield-alt"></i> Choose your preferred deposit mode</p>
+
+<!-- TOP MODE TABS -->
+<div style="display: flex; gap: 10px; margin-bottom: 24px;">
+    <button class="btn btn-primary" id="tab-manual-pay" onclick="switchAddMoneyTab('manual')" style="flex:1; height:44px; font-size:11px;">MANUAL UPI / QR</button>
+    <button class="btn btn-outline" id="tab-gateway-pay" onclick="switchAddMoneyTab('gateway')" style="flex:1; height:44px; font-size:11px; border-color:#8b5cf6; color:#a78bfa;">PAYMENT GATEWAY</button>
 </div>
-<div class="upi-box" onclick="copyToClipboard('display-upi', 'UPI ID')">
-<span id="display-upi">Loading UPI...</span>
-<i class="fas fa-copy" style="color: var(--text-muted); font-size: 16px;"></i>
+
+<!-- 1. MANUAL DEPOSIT SECTION -->
+<div id="section-manual-deposit">
+    <p style="color: var(--text-muted); font-size: 13px;"><i class="fas fa-camera"></i> Scan QR code or Copy UPI ID to make payment</p>
+    <div class="qr-image-container" id="display-qr-container">
+    <i class="fas fa-qrcode" id="qr-placeholder" style="font-size: 50px; color: rgba(255,255,255,0.12);"></i>
+    </div>
+    <div class="upi-box" onclick="copyToClipboard('display-upi', 'UPI ID')">
+    <span id="display-upi">Loading UPI...</span>
+    <i class="fas fa-copy" style="color: var(--text-muted); font-size: 16px;"></i>
+    </div>
+    <div class="input-group">
+    <input id="add-amount" placeholder="Amount Sent (₹1 - ₹80,000)" required="" type="number" min="1" max="80000"/>
+    </div>
+    <div class="input-group">
+    <input id="add-utr" placeholder="12 Digit UTR / Transaction ID" required="" type="text"/>
+    </div>
+    <div class="input-group">
+    <input id="add-phone" placeholder="Your Phone Number (For verification)" required="" type="tel"/>
+    </div>
+    <button class="btn btn-purchase" id="btn-submit-payment" style="width: 100%; height: 52px;"><i class="fas fa-paper-plane"></i> Submit Request</button>
 </div>
-<div class="input-group">
-<input id="add-amount" placeholder="Amount Sent (₹)" required="" type="number"/>
+
+<!-- 2. PAYMENT GATEWAY SECTION (ZAP UPI SDK) -->
+<div id="section-gateway-deposit" class="hidden">
+    
+    <div class="gw-method-grid">
+        <button type="button" class="gw-method-btn active" id="gw-btn-upi" onclick="selectGatewaySubMethod('upi')">INSTANT UPI</button>
+        <button type="button" class="gw-method-btn" id="gw-btn-binance" onclick="selectGatewaySubMethod('binance')">BINANCE / USDT</button>
+        <button type="button" class="gw-method-btn" id="gw-btn-bkash" onclick="selectGatewaySubMethod('bkash')">BKASH / NAGAD</button>
+        <button type="button" class="gw-method-btn support-btn" onclick="openPaymentSupport()">PAYMENT ISSUE SUPPORT</button>
+    </div>
+
+    <!-- INSTANT UPI DEPOSIT FORM (ZAP UPI SDK) -->
+    <div id="gw-sub-upi-box" style="background: rgba(3,4,7,0.65); border: 1px solid rgba(139, 92, 246, 0.35); border-radius: 18px; padding: 24px 18px;">
+        <h3 style="color: white; font-size: 18px; font-weight: 800; margin-bottom: 14px;"><i class="fas fa-bolt" style="color: var(--neon-cyan);"></i> Instant UPI Deposit (Zap UPI)</h3>
+        
+        <button type="button" onclick="navigate('support')" style="background: #dc2626; color: white; border: none; width: 100%; height: 42px; border-radius: 10px; font-weight: 800; font-size: 12px; letter-spacing: 0.8px; margin-bottom: 20px; cursor: pointer; text-transform: uppercase;">
+            HOW TO DEPOSIT?
+        </button>
+
+        <div class="input-group">
+            <label>AMOUNT (₹1 - ₹80,000)</label>
+            <input id="gw-upi-amount" placeholder="Min ₹1, Max ₹80,000" type="number" min="1" max="80000"/>
+        </div>
+
+        <div class="input-group">
+            <label>MOBILE NUMBER</label>
+            <input id="gw-upi-mobile" placeholder="Your Mobile Number" type="tel"/>
+        </div>
+
+        <button type="button" class="btn-gateway" onclick="initiateZapUpiPayment()">
+            <i class="fas fa-lock"></i> PAY INSTANTLY
+        </button>
+    </div>
+
+    <div id="gw-sub-coming-soon-box" class="hidden" style="background: rgba(3,4,7,0.65); border: 1px dashed var(--warning); border-radius: 18px; padding: 40px 20px;">
+        <i class="fas fa-clock" style="font-size: 46px; color: var(--warning); margin-bottom: 14px;"></i>
+        <h3 id="gw-cs-title" style="color: white; font-size: 20px; font-weight: 800; margin-bottom: 8px;">COMING SOON</h3>
+        <p style="color: var(--text-muted); font-size: 13px; line-height: 1.5;">This automated gateway method is currently under integration and will be available soon. Please use <strong>INSTANT UPI</strong> or <strong>MANUAL UPI / QR</strong>.</p>
+    </div>
+
 </div>
-<div class="input-group">
-<input id="add-utr" placeholder="12 Digit UTR / Transaction ID" required="" type="text"/>
-</div>
-<div class="input-group">
-<input id="add-phone" placeholder="Your Phone Number (For verification)" required="" type="tel"/>
-</div>
-<button class="btn btn-purchase" id="btn-submit-payment" style="width: 100%; height: 52px;"><i class="fas fa-paper-plane"></i> Submit Request</button>
+
 </div>
 
 <div class="deposit-history-container">
@@ -1054,7 +1205,7 @@
     </div>
 </div>
 
-<!-- PAGE: DONATE & SUPPORT US -->
+<!-- PAGE: DONATE -->
 <div class="page-content hidden" id="page-donate">
     <div class="page-header"><h2 class="page-title" id="donate-page-heading">Donate & <span>Support Us ❤️</span></h2></div>
     
@@ -1174,8 +1325,9 @@
     </div>
 
     <div class="checkout-actions">
+        <button class="btn btn-purchase" id="btn-confirm-pay" onclick="executePurchase()">PAY VIA WALLET</button>
+        <button class="btn-gateway" onclick="openGatewayFromCheckout()"><i class="fas fa-qrcode"></i> PAY VIA UPI GATEWAY</button>
         <button class="btn btn-outline" onclick="closeModal('modal-checkout')">CANCEL</button>
-        <button class="btn btn-purchase" id="btn-confirm-pay" onclick="executePurchase()">CONFIRM PAY</button>
     </div>
 </div>
 </div>
@@ -1246,11 +1398,14 @@
         let currentUser = null;
         let userData = { balance: 0, isReseller: false, resellerTier: 'Normal', refCodeNum: 1, totalSpend: 0, affiliateEarnings: 0, proExpiry: null };
         let paymentSettings = { upiId: "Not Set", qrImage: null };
+        let gatewaySettings = { enabled: true, zapApiKey: "", zapSecret: "", merchantUpi: "" };
         let activeTransferUid = null;
         
         let selectedGameFilter = 'all';
         let selectedDeviceFilter = 'all';
         let proTimerInterval = null;
+
+        const ZAP_API_KEY = "zap27cbbf853d59867336c27140625a4b06";
 
         const loader = document.getElementById('loader');
         const secValidationScreen = document.getElementById('security-validation-screen');
@@ -1309,7 +1464,185 @@
             closeModal('modal-theme');
         };
 
-        /* PROFESSIONAL CANVAS SPIN WHEEL LOGIC SYNCED WITH ADMIN */
+        window.switchAddMoneyTab = (tab) => {
+            const manualSec = document.getElementById('section-manual-deposit');
+            const gatewaySec = document.getElementById('section-gateway-deposit');
+            const btnManual = document.getElementById('tab-manual-pay');
+            const btnGateway = document.getElementById('tab-gateway-pay');
+
+            if(tab === 'manual') {
+                manualSec.classList.remove('hidden');
+                gatewaySec.classList.add('hidden');
+                btnManual.className = 'btn btn-primary';
+                btnManual.style.cssText = 'flex:1; height:44px; font-size:11px;';
+                btnGateway.className = 'btn btn-outline';
+                btnGateway.style.cssText = 'flex:1; height:44px; font-size:11px; border-color:#8b5cf6; color:#a78bfa;';
+            } else {
+                manualSec.classList.add('hidden');
+                gatewaySec.classList.remove('hidden');
+                btnGateway.className = 'btn btn-purchase';
+                btnGateway.style.cssText = 'flex:1; height:44px; font-size:11px;';
+                btnManual.className = 'btn btn-outline';
+                btnManual.style.cssText = 'flex:1; height:44px; font-size:11px; border-color:var(--neon-cyan); color:var(--neon-cyan);';
+                selectGatewaySubMethod('upi');
+            }
+        };
+
+        window.selectGatewaySubMethod = (method) => {
+            const btnUpi = document.getElementById('gw-btn-upi');
+            const btnBin = document.getElementById('gw-btn-binance');
+            const btnBka = document.getElementById('gw-btn-bkash');
+
+            const upiBox = document.getElementById('gw-sub-upi-box');
+            const csBox = document.getElementById('gw-sub-coming-soon-box');
+            const csTitle = document.getElementById('gw-cs-title');
+
+            btnUpi.classList.remove('active');
+            btnBin.classList.remove('active');
+            btnBka.classList.remove('active');
+
+            if(method === 'upi') {
+                btnUpi.classList.add('active');
+                upiBox.classList.remove('hidden');
+                csBox.classList.add('hidden');
+            } else if(method === 'binance') {
+                btnBin.classList.add('active');
+                upiBox.classList.add('hidden');
+                csBox.classList.remove('hidden');
+                csTitle.innerText = "BINANCE / USDT - COMING SOON";
+                showToast("Binance / USDT Gateway is Coming Soon!", "warning");
+            } else if(method === 'bkash') {
+                btnBka.classList.add('active');
+                upiBox.classList.add('hidden');
+                csBox.classList.remove('hidden');
+                csTitle.innerText = "BKASH / NAGAD - COMING SOON";
+                showToast("Bkash / Nagad Gateway is Coming Soon!", "warning");
+            }
+        };
+
+        window.openPaymentSupport = () => {
+            const tgLink = document.getElementById('global-telegram-btn')?.href;
+            if(tgLink && tgLink !== '#' && !tgLink.endsWith('#')) {
+                window.open(tgLink, '_blank');
+            } else {
+                navigate('support');
+            }
+        };
+
+        // Check return URL for gateway status verification animation
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('status') === 'success' || urlParams.get('order_id') || urlParams.get('verify') === 'completed') {
+                const statusPopup = document.getElementById('paymentStatusContainer');
+                if (statusPopup) {
+                    statusPopup.classList.remove('hidden');
+                    setTimeout(() => {
+                        statusPopup.classList.add('hidden');
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }, 4000);
+                }
+            }
+        });
+
+        // ────────────────────────────────────────────────────────────
+        // ZAP UPI SDK INTEGRATION FOR SINGLE HTML
+        // ────────────────────────────────────────────────────────────
+        ZapUPI.setPaymentCallbacks({
+            onSuccess: async function(orderId) {
+                hideLoader();
+                
+                // Show professional animated green verify payment banner
+                const statusPopup = document.getElementById('paymentStatusContainer');
+                if(statusPopup) statusPopup.classList.remove('hidden');
+
+                try {
+                    const payRef = push(ref(db, 'payments'));
+                    await set(payRef, {
+                        uid: currentUser.uid,
+                        email: currentUser.email,
+                        amount: parseFloat(window.currentZapAmount || 0),
+                        utr: orderId,
+                        phone: window.currentZapMobile || "",
+                        method: "Zap UPI Gateway",
+                        status: "success",
+                        timestamp: new Date().toISOString()
+                    });
+
+                    // Credit balance instantly
+                    const userRef = ref(db, `users/${currentUser.uid}`);
+                    const userSnap = await get(userRef);
+                    if(userSnap.exists()) {
+                        let currentBal = parseFloat(userSnap.val().balance || 0);
+                        let addedAmt = parseFloat(window.currentZapAmount || 0);
+                        await update(userRef, { balance: currentBal + addedAmt });
+                        showToast(`₹${addedAmt} added to your wallet successfully!`, "success");
+                    }
+
+                    fetchDepositHistory();
+                    navigate('add-money');
+
+                    setTimeout(() => {
+                        if(statusPopup) statusPopup.classList.add('hidden');
+                    }, 4000);
+
+                } catch(e) {
+                    console.error("Deposit logging error:", e);
+                }
+            },
+            onFailed: function(orderId) {
+                hideLoader();
+                showToast("Payment Failed. Order: " + orderId, "error");
+            },
+            onTimeout: function(orderId) {
+                hideLoader();
+                showToast("Payment Timed Out. Order: " + orderId, "warning");
+            }
+        });
+
+        window.initiateZapUpiPayment = async () => {
+            if(!currentUser) return showToast("Please login first!", "error");
+            
+            const amount = parseFloat(document.getElementById('gw-upi-amount').value);
+            const mobile = document.getElementById('gw-upi-mobile').value.trim();
+
+            if(!amount || amount < 1 || amount > 80000) return showToast("Please enter a valid amount between ₹1 and ₹80,000", "error");
+            if(!mobile || mobile.length < 10) return showToast("Please enter a valid 10-digit mobile number", "error");
+
+            window.currentZapAmount = amount;
+            window.currentZapMobile = mobile;
+
+            showLoader();
+
+            ZapUPI.createOrder(
+                {
+                    zap_key: ZAP_API_KEY,
+                    order_id: "ORD" + Date.now(),
+                    amount: amount.toString(),
+                    customer_mobile: mobile,
+                    remark: "Wallet Deposit | " + currentUser.uid
+                },
+                {
+                    onResponse: function(paymentUrl, orderId, data) {
+                        hideLoader();
+                        ZapUPI.loadPayment(paymentUrl);
+                    },
+                    onError: function(err) {
+                        hideLoader();
+                        showToast("Order Error: " + err, "error");
+                    }
+                }
+            );
+        };
+
+        window.openGatewayFromCheckout = () => {
+            const priceToPay = window.currentCheckout.finalPrice || 0;
+            closeModal('modal-checkout');
+            navigate('add-money');
+            switchAddMoneyTab('gateway');
+            document.getElementById('gw-upi-amount').value = priceToPay.toFixed(2);
+            showToast(`Enter your mobile number to pay ₹${priceToPay.toFixed(2)} via Zap UPI`, "warning");
+        };
+
         let wheelSlices = [
             { label: '₹0.50', color: '#00f0ff', value: 0.50 },
             { label: '₹1.00', color: '#9d00ff', value: 1.00 },
@@ -1381,7 +1714,6 @@
 
             ctx.restore();
 
-            // Center Knob
             ctx.beginPath();
             ctx.arc(center, center, 30, 0, 2 * Math.PI);
             ctx.fillStyle = '#030407';
@@ -1681,13 +2013,11 @@
                     return showToast("Insufficient balance in your wallet!", "error");
                 }
 
-                // Deduct amount from wallet and add to total spend
                 await update(userRef, {
                     balance: currentBal - amount,
                     totalSpend: currentSpend + amount
                 });
 
-                // Push donation record to database for admin panel
                 const donateRef = push(ref(db, 'donations'));
                 await set(donateRef, {
                     uid: currentUser.uid,
@@ -1933,6 +2263,7 @@
                 logVisitorInfo(user);
                 initUserData();
                 fetchPaymentSettings();
+                fetchGatewaySettings();
                 initPromotions();
                 initGlobalHistoryListener();
                 checkDailyCheckinStatus();
@@ -2453,6 +2784,14 @@
             });
         }
 
+        function fetchGatewaySettings() {
+            onValue(ref(db, 'settings/gateway'), (snap) => {
+                if(snap.exists()) {
+                    gatewaySettings = snap.val();
+                }
+            });
+        }
+
         window.setGameFilter = (game, el) => {
             selectedGameFilter = game;
             document.querySelectorAll('#game-filter-buttons .filter-btn-chip').forEach(b => b.classList.remove('active'));
@@ -2791,7 +3130,7 @@
                         console.error("External API Buy Error:", apiErr);
                         hideLoader();
                         btn.disabled = false;
-                        btn.innerHTML = `CONFIRM PAY`;
+                        btn.innerHTML = `PAY VIA WALLET`;
                         return showToast(apiErr.message || "Failed to fetch key from supplier API!", "error");
                     }
                 } else {
@@ -2800,7 +3139,7 @@
                     if(!stockSnap.exists()) {
                         hideLoader();
                         btn.disabled = false;
-                        btn.innerHTML = `CONFIRM PAY`;
+                        btn.innerHTML = `PAY VIA WALLET`;
                         return showToast("Stock currently out of stock for this plan!", "error");
                     }
 
@@ -2815,7 +3154,7 @@
                     if(availableKeys.length < checkout.quantity) {
                         hideLoader();
                         btn.disabled = false;
-                        btn.innerHTML = `CONFIRM PAY`;
+                        btn.innerHTML = `PAY VIA WALLET`;
                         return showToast(`Not enough stock available! Only ${availableKeys.length} left.`, "error");
                     }
 
@@ -2883,17 +3222,17 @@
             } finally {
                 hideLoader();
                 btn.disabled = false;
-                btn.innerHTML = `CONFIRM PAY`;
+                btn.innerHTML = `PAY VIA WALLET`;
             }
         };
 
         document.getElementById('btn-submit-payment').onclick = async () => {
-            const amt = document.getElementById('add-amount').value;
+            const amt = parseFloat(document.getElementById('add-amount').value);
             const utr = document.getElementById('add-utr').value.trim();
             const phone = document.getElementById('add-phone').value.trim();
             const btn = document.getElementById('btn-submit-payment');
 
-            if(!amt || amt <= 0) return showToast("Enter a valid amount", "error");
+            if(!amt || amt < 1 || amt > 80000) return showToast("Enter amount between ₹1 and ₹80,000", "error");
             if(!utr || utr.length < 8) return showToast("Enter a valid UTR", "error");
             if(!phone || phone.length < 10) return showToast("Enter a valid Phone", "error");
 
@@ -2905,9 +3244,10 @@
                 await set(payRef, {
                     uid: currentUser.uid,
                     email: currentUser.email,
-                    amount: parseFloat(amt),
+                    amount: amt,
                     utr: utr,
                     phone: phone,
+                    method: "Manual UPI / QR",
                     status: "pending",
                     timestamp: new Date().toISOString()
                 });
@@ -2952,13 +3292,14 @@
                 myDeposits.forEach(dep => {
                     const statusClass = dep.status || 'pending';
                     const dateDisplay = formatFullDate(dep.timestamp);
+                    const methodTag = dep.method ? ` • <span style="color:var(--neon-cyan);">${dep.method}</span>` : '';
 
                     const div = document.createElement('div');
                     div.className = 'deposit-item';
                     div.innerHTML = `
                         <div>
                             <div style="font-weight:700; color:white; font-size:15px;">₹${parseFloat(dep.amount).toFixed(2)}</div>
-                            <div style="font-size:11px; color:var(--text-muted);">UTR: ${dep.utr} | ${dateDisplay}</div>
+                            <div style="font-size:11px; color:var(--text-muted);">UTR: ${dep.utr} | ${dateDisplay}${methodTag}</div>
                         </div>
                         <span class="dep-status ${statusClass}">${statusClass}</span>
                     `;
@@ -3056,23 +3397,18 @@
                     return;
                 }
 
-                if(data.name) {
+                (data.name) ? (() => {
                     let fullText = String(data.name).trim();
                     let parts = fullText.split(' ');
                     if(parts.length > 1) {
-                        let firstWord = parts[0];
-                        let restWords = parts.slice(1).join(' ');
-                        nameLine1.innerText = firstWord;
-                        nameLine2.innerText = restWords;
+                        nameLine1.innerText = parts[0];
+                        nameLine2.innerText = parts.slice(1).join(' ');
                     } else {
                         nameLine1.innerText = fullText;
                         nameLine2.innerText = "";
                     }
                     document.title = fullText + " | PREMIUM";
-                } else {
-                    nameLine1.innerText = "RESELLER";
-                    nameLine2.innerText = "STORE";
-                }
+                })() : null;
 
                 if(data.logo && data.logo.length > 5){
                     logoEl.src = data.logo;
